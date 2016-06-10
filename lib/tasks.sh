@@ -26,8 +26,9 @@ wrap_text() {
 }
 
 show_tasks() {
+  local file=$YACT_DIR/$TODO_FILE
   local IFS=''
-  local header=$(head -n1 $TODO_FILE)
+  local header=$(head -n1 $file)
   printf '\n %s\n\n' $(color "${header}" $underline $bold)
 
   local doneText=''
@@ -47,7 +48,7 @@ show_tasks() {
       fi
     fi
     printf " %3d [%-2s] %s %s\n" $id "$doneText" $(wrap_text $task)
-  done <<< "$(sed '1,2d'  $TODO_FILE | sort -t';' -n -k3.1)"
+  done <<< "$(sed '1,2d'  $file | sort -t';' -n -k3.1)"
   printf '\n'
 
 }
@@ -57,9 +58,18 @@ set_done() {
  if [ -z $1 ]; then
    fatal "Missing task id. Please provide it in order to set it to done."
  fi
- sed -ie "s/^\($1;.*\)[01]$/\1$2/w .changed"  $TODO_FILE
+ sed -ie "s/^\($1;.*\)[01]$/\1$2/w .changed"  $YACT_DIR/$TODO_FILE
  if [ ! -s .changed ]; then
   fatal "Cannot find task with id $1"
  fi
+ show_tasks
+}
+
+add_task() {
+ maxId=$(sed '1,2d' $YACT_DIR/$TODO_FILE | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
+
+ ((maxId++))
+
+ printf '%d;%s;0\n' $maxId "$*" >> $YACT_DIR/$TODO_FILE
  show_tasks
 }

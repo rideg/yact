@@ -26,7 +26,7 @@ if [ "$1" = '-l' ]; then
   done
   file_name="_$(timestamp).txt"
   printf "$*\n\n" > $YACT_DIR/$file_name
-  printf 'TODO_FILE=%s\n' "$YACT_DIR/$file_name" > $YACT_DIR/.last
+  printf 'TODO_FILE=%s\n' $file_name > $YACT_DIR/.last
  elif [ "$2" = "--switch" -o "$2" = "-s" ]; then
    if [ -z $3 ]; then
      fatal "Missing list id, please provide it."
@@ -48,5 +48,9 @@ fi
 test $# -eq 0 && show_tasks
 test "$1" = '--done' -o "$1" = '-d' && set_done "$2" 1
 test "$1" = '--undone' -o "$1" = '-u' && set_done "$2" 0
-
+if [ "$1" = '--add' -o "$1" = '-a' ]; then
+  shift
+  test -z "$*" && fatal "Please provide task description"
+  add_task "$*"
+fi
 exit_ 0
