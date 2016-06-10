@@ -34,6 +34,10 @@ show_tasks() {
   IFS=';'
   local addSeparator=0
   while read -r id task is_done; do
+    if [ -z "$id" ]; then
+      printf ' %s\n' "There are now tasks defined yet." 
+      break
+    fi
     doneText=''
     if [ "$is_done" = '1' ]; then
       doneText=$(color ok $green)
