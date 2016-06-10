@@ -12,8 +12,7 @@ test ! -e $YACT_DIR && mkdir -p $YACT_DIR
 test -e $YACT_DIR/config && . $YACT_DIR/config
 . lib/util.sh
 . lib/colors.sh
-. lib/show.sh
-. lib/done.sh
+. lib/tasks.sh
 
 if [ "$1" = '-l' ]; then
  if [ "$2" = "--new" -o "$2" = "-n" ]; then
