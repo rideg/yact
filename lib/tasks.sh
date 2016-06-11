@@ -33,7 +33,6 @@ show_tasks() {
 
   local doneText=''
   IFS=';'
-  local addSeparator=0
   while read -r id task is_done; do
     if [ -z "$id" ]; then
       printf ' %s\n' "There are now tasks defined yet."
@@ -41,14 +40,11 @@ show_tasks() {
     fi
     doneText=''
     if [ "$is_done" = '1' ]; then
+      is_true $HIDE_DONE && continue 
       doneText=$(color ok $green)
-      if [ $SEPARATE_DONE -eq 1 -a $addSeparator -eq 0 ]; then
-        printf "\n"
-        addSeparator=1
-      fi
     fi
     printf " %3d [%-2s] %s %s\n" $id "$doneText" $(wrap_text $task)
-  done <<< "$(sed '1,2d'  $file | sort -t';' -n -k3.1)"
+  done <<< "$(sed '1,2d'  $file | sort -t';' -n -k1)"
   printf '\n'
 
 }
