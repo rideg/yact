@@ -12,30 +12,15 @@ test ! -e $YACT_DIR && mkdir -p $YACT_DIR
 test -e $YACT_DIR/config && . $YACT_DIR/config
 . lib/util.sh
 . lib/colors.sh
+. lib/lists.sh
 . lib/tasks.sh
 
 if [ "$1" = '-l' ]; then
  if [ "$2" = "--new" -o "$2" = "-n" ]; then
   shift 2
-  if [ -z "$*" ]; then
-    fatal "Please provide description for the new list." 
-  fi
-  id=$(timestamp)
-  while [ -e $YACT_DIR/"_${id}.txt" ]; do
-    ((id++))
-  done
-  file_name="_$(timestamp).txt"
-  printf "$*\n\n" > $YACT_DIR/$file_name
-  printf 'TODO_FILE=%s\n' $file_name > $YACT_DIR/.last
+  new_list $* 
  elif [ "$2" = "--switch" -o "$2" = "-s" ]; then
-   if [ -z $3 ]; then
-     fatal "Missing list id, please provide it."
-   fi
-   file_name=$YACT_DIR/_${3}.txt
-   if [ ! -f $file_name ]; then
-    fatal "Nonexisting list id $3"
-   fi
-   printf 'TODO_FILE=%s\n' "$YACT_DIR/$file_name" > $YACT_DIR/.last
+  switch_list $3
  fi
 fi
 
