@@ -15,9 +15,10 @@ switch_list() {
    if [ -z $1 ]; then
      fatal "Missing list id, please provide it."
    fi
-   file_name=$YACT_DIR/_${1}.txt
-   if [ ! -f $file_name ]; then
+   file_name=_${1}.txt
+   if [ ! -f $YACT_DIR/$file_name ]; then
     fatal "Nonexisting list id $1"
    fi
-   printf 'TODO_FILE=%s\n' "$YACT_DIR/$file_name" > $YACT_DIR/.last
+   printf 'TODO_FILE=%s\n' $file_name > $YACT_DIR/.last
 }
+
