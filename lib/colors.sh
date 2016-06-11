@@ -16,7 +16,6 @@ if [ $has_colors -eq 1 ]; then
   cyan=$(tput setaf 6)
   white=$(tput setaf 7)
   bold=$(tput bold)
-  normal=$(tput sgr0)
   reverse=$(tput smso)
   underline=$(tput smul)
 
@@ -28,6 +27,7 @@ if [ $has_colors -eq 1 ]; then
   bg_magenta=$(tput setab 5)
   bg_cyan=$(tput setab 6)
   bg_white=$(tput setab 7)
+  normal=$(tput sgr0)
 fi
 
 color() {

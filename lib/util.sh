@@ -9,7 +9,7 @@ timestamp() {
 }
 
 exit_() {
-  rm -f .changed &> /dev/null
+  rm -f $YACT_DIR/.run/* &> /dev/null
   popd &> /dev/null
   exit $1
 }

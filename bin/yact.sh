@@ -4,12 +4,13 @@ pushd $(dirname $0) &> /dev/null
 cd ..
 
 test -z ${YACT_DIR} && YACT_DIR=~/.yact
+RUN=$YACT_DIR/.run
 
-test ! -e $YACT_DIR && mkdir -p $YACT_DIR
-
+test ! -e $RUN && mkdir -p $RUN
 . ./config
 
 test -e $YACT_DIR/config && . $YACT_DIR/config
+
 . lib/util.sh
 . lib/colors.sh
 . lib/lists.sh
@@ -30,11 +31,11 @@ if [ -z $TODO_FILE ]; then
   fatal "No todo list has been selected, please select/create one."
 fi
 
+FILE=$YACT_DIR/$TODO_FILE
+
 test $# -eq 0 && show_tasks
 test "$1" = '--done' -o "$1" = '-d' && set_done "$2" 1
 test "$1" = '--undone' -o "$1" = '-u' && set_done "$2" 0
-if [ "$1" = '--add' -o "$1" = '-a' ]; then
-  shift
-  add_task "$*"
-fi
+test "$1" = '--add' -o "$1" = '-a' && shift && add_task "$*"
+test "$1" = "--delete" && delete_task $2
 exit_ 0
