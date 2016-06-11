@@ -29,23 +29,33 @@ show_tasks() {
   local file=$YACT_DIR/$TODO_FILE
   local IFS=''
   local header=$(head -n1 $file)
-  printf '\n %s\n\n' $(color "${header}" $underline $bold)
 
-  local doneText=''
+  local done_text=''
+  local list_text=''
+  local nr_of_done=0
+  local nr_of_tasks=0
   IFS=';'
   while read -r id task is_done; do
     if [ -z "$id" ]; then
-      printf ' %s\n' "There are now tasks defined yet."
-      break
+      break 
     fi
-    doneText=''
+    ((nr_of_tasks++))
+    done_text=''
     if [ "$is_done" = '1' ]; then
       is_true $HIDE_DONE && continue 
-      doneText=$(color ok $green)
+      done_text=$(color ok $green)
+      ((nr_of_done++))
     fi
-    printf " %3d [%-2s] %s %s\n" $id "$doneText" $(wrap_text $task)
+    list_text=$list_text$(printf " %3d [%-2s] %s %s\n" $id "$done_text" $(wrap_text $task))
+    list_text="$list_text\n"
   done <<< "$(sed '1,2d'  $file | sort -t';' -n -k1)"
-  printf '\n'
+
+  printf '\n %s - (%d/%d)\n\n' $(color "${header}" $underline $bold) $nr_of_done $nr_of_tasks
+  if [ $nr_of_tasks -eq 0 ]; then
+    printf " There are now tasks defined yet.\n\n"
+  else 
+    printf "$list_text\n"
+  fi
 
 }
 
