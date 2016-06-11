@@ -44,5 +44,6 @@ test $# -eq 0 && show_tasks
 test "$1" = '--done' -o "$1" = '-d' && set_done "$2" 1
 test "$1" = '--undone' -o "$1" = '-u' && set_done "$2" 0
 test "$1" = '--add' -o "$1" = '-a' && shift && add_task "$*"
+test "$1" = '--modify' -o "$1" = '-m' && shift && modify_task $@
 test "$1" = "--delete" && delete_task $2
 exit_ 0

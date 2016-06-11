@@ -27,24 +27,22 @@ wrap_text() {
 }
 
 set_done() {
- if [ -z $1 ]; then
-   fatal "Missing task id. Please provide it in order to set it to done."
- fi
- sed -ie "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" $FILE
- if [ ! -s $RUN/.changed ]; then
-  fatal "Cannot find task with id $1"
- fi
- show_tasks
+  if [ -z $1 ]; then
+    fatal "Missing task id. Please provide it in order to set it to done."
+  fi
+  sed -ie "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" $FILE
+  if [ ! -s $RUN/.changed ]; then
+   fatal "Cannot find task with id $1"
+  fi
+  show_tasks
 }
 
 add_task() {
- test -z "$*" && fatal "Please provide task description."
- maxId=$(sed '1,2d' $FILE | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
-
- ((maxId++))
-
- printf '%d;%s;0\n' $maxId "$*" >> $FILE
- show_tasks
+  test -z "$*" && fatal "Please provide task description."
+  maxId=$(sed '1,2d' $FILE | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
+  ((maxId++))
+  printf '%d;%s;0\n' $maxId "$*" >> $FILE
+  show_tasks
 }
 
 delete_task() {
@@ -57,6 +55,18 @@ delete_task() {
   fi
   mv $RUN/.tmp $FILE
   show_tasks 
+}
+
+modify_task() {
+  test -z "$1" && fatal "Please provide a task id."
+  local id=$1
+  shift 
+  test -z "$*" && fatal "Please provide the new description."
+  sed -ie "s/^\($id;\).*\(;.*\)$/\1$*\2/w $RUN/.changed" $FILE
+  if [ ! -s $RUN/.changed ]; then
+   fatal "Cannot find task with id $id"
+  fi
+  show_tasks
 }
 
 show_tasks() {
