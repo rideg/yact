@@ -1,7 +1,7 @@
 #!/bin/sh
 
 pushd $(dirname $0) &> /dev/null
-
+cd ..
 
 test -z ${YACT_DIR} && YACT_DIR=~/.yact
 
