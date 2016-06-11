@@ -1,3 +1,5 @@
+#!/bin/bash
+
 is_true() {
   test $1 -eq 1
 }

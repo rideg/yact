@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 pushd $(dirname $0) &> /dev/null
 cd ..
@@ -35,7 +35,6 @@ test "$1" = '--done' -o "$1" = '-d' && set_done "$2" 1
 test "$1" = '--undone' -o "$1" = '-u' && set_done "$2" 0
 if [ "$1" = '--add' -o "$1" = '-a' ]; then
   shift
-  test -z "$*" && fatal "Please provide task description"
   add_task "$*"
 fi
 exit_ 0

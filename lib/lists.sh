@@ -1,3 +1,5 @@
+#!/bin/bash
+
 new_list() {
   if [ -z "$*" ]; then
     fatal "Please provide description for the new list." 
