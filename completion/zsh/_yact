@@ -1,0 +1,34 @@
+#compdef yact
+#autoload
+
+local -a task_arguments
+local -a list_arguments
+
+task_arguments=(
+ 'add:Add a new task to the current list.'
+ 'delete:Remove a task from the current list.'
+ 'modify:Change a task description on the current list.'
+ 'done:Mark task as done.'
+ 'undone:Mark task as not done.'
+ 'list:Show all tasks on the current list.'
+)
+
+list_arguments=(
+ 'add:Create a new tasklist.'
+ 'delete:Delete a tasklist.'
+ 'modify:Change tasklist description.'
+ 'switch:Switch to another tasklist.'
+ 'show:Show all available tasklists.'
+)
+
+_arguments \
+  '-v[show version]' \
+  '-h[show help]'\
+  '-l[list related operations]'\
+  '*:: :->subcmds' && return 0 
+
+if (( CURRENT == 1 )); then 
+ _describe -t commands "Task operations" task_arguments
+fi
+
+
