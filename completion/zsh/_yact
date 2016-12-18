@@ -10,7 +10,7 @@ task_arguments=(
  'modify:Change a task description on the current list.'
  'done:Mark task as done.'
  'undone:Mark task as not done.'
- 'list:Show all tasks on the current list.'
+ 'list:Show all tasks from the current list.'
 )
 
 list_arguments=(
