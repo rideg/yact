@@ -1,4 +1,7 @@
 #!/bin/bash
+# YACT - Yet Another Command line TODO
+# Copyright(c) 2016 Sandor Rideg
+# MIT Licensed
 
 update_file_and_show() {
   # shellcheck source=/dev/null

@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck source=/dev/null
-
+# YACT - Yet Another Command line TODO
+# Copyright(c) 2016 Sandor Rideg
+# MIT Licensed
 
 pushd "$(dirname "$0")" &> /dev/null
 cd ..
