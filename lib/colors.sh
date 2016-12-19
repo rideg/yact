@@ -2,11 +2,14 @@
 
 has_colors=0
 
-if [ $(tput colors) -gt 2 ] 2> /dev/null; then
+if [ "$(tput colors)" -gt 2 ] 2> /dev/null; then
   has_colors=1
 fi
 
 if [ $has_colors -eq 1 ]; then
+  export black red green yellow blue magenta cyan white bold reverse underline \
+         bg_black bg_red bg_green bg_yellow bg_blue bg_magenta bg_cyan bg_white \
+         normal
   black=$(tput setaf 0)
   red=$(tput setaf 1)
   green=$(tput setaf 2)
@@ -34,6 +37,5 @@ color() {
  local word=$1
  shift
  local IFS=''
- printf "$*${word}${normal}"
+ printf "%s%s%s" "$*" "$word" "$normal"
 }
-

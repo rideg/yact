@@ -1,7 +1,7 @@
 #!/bin/bash
 
 is_true() {
-  test $1 -eq 1
+  test "$1" -eq 1
 }
 
 timestamp() {
@@ -9,13 +9,12 @@ timestamp() {
 }
 
 exit_() {
-  rm -f $YACT_DIR/.run/* &> /dev/null
+  rm -f "$YACT_DIR"/.run/* &> /dev/null
   popd &> /dev/null
-  exit $1
+  exit "$1"
 }
 
 fatal() {
- printf "$1\n"
+ printf '%s\n' "$1"
  exit_ 1
 }
-
