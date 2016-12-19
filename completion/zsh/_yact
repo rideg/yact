@@ -4,8 +4,7 @@
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
 
-zstyle -T ':completion:*:*:yact:*' tag-order && \
-	zstyle ':completion:*:*:yact:*' tag-order 'task-commands'
+zstyle -T ':completion:*:*:yact:*' tag-order && zstyle ':completion:*:*:yact:*' tag-order 'task-commands'
 
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 
@@ -34,6 +33,15 @@ __yact_task_commands() {
   _describe -t task-commands 'task related commands' list && ret=0
 }
 
+__show_list_ids() {
+  local -a list
+  list=()
+  for filename in "$YACT_DIR"/*.txt; do
+    list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
+  done
+  _describe -t list-ids 'list ids' list && ret=0;
+}
+
 __yact_main() {
   local curcontext="$curcontext" state state_descr line
 	typeset -A opt_args
@@ -41,14 +49,18 @@ __yact_main() {
 
   _arguments -C \
 		'-l[Work with lists]: :->lists' \
-		'-v[version]' \
-		'-h[help]' \
-		'(-): :->tasks' \
+		'-v[version]: :->end' \
+		'-h[help]: :->end' \
+		': :->tasks' \
 		'(-)*:: :->arg' && return
 
-    case "$state" in
+   case "$state" in
        (tasks)
+          if [ ! -z "$opt_args" ]; then
+            __show_list_ids
+          else
             __yact_task_commands
+          fi
         ;;
         (lists)
             __yact_list_commands
