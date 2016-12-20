@@ -13,7 +13,7 @@ __yact_list_commands() {
    list=(
      new:'Creates a new list.'
      delete:'Deletes and existing list'
-     modify:'Modifies the description of a curretn a list'
+     modify:'Modifies the description of a current a list'
      switch:'Switches to the given list'
      show:'Shows all the extisting lists'
    )
@@ -23,7 +23,7 @@ __yact_list_commands() {
 __yact_task_commands() {
   local -a list
   list=(
-    add:'Adds a new task to the current list'
+    new:'Adds a new task to the current list'
     delete:'Removes the given task from the current list'
     done:'Marks the given task as completed'
     undone:'Marks the given task as not yet finished'
@@ -38,7 +38,11 @@ __show_list_ids() {
   for filename in "$YACT_DIR"/*.txt; do
     list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
   done
-  _describe -t list-ids 'list ids' list
+  if [ ${#list} -ne 0 ]; then
+    _describe -t list-ids 'list ids' list
+  else
+    _message -r "Cannot find list, have you created one?"
+  fi
 }
 
 # shellcheck source=/dev/null
@@ -58,7 +62,13 @@ __yact_list_tasks() {
         list+=("$id":$task)
      fi
    done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
-   _describe -t task-ids 'task ids' list
+    if [ ${#list} -ne 0 ]; then
+      _describe -t task-ids 'task ids' list
+    else
+       _message -r "There is no appropriate task on this list."
+    fi 
+  else
+     _message -r "You don't have any list, please create on first"
   fi
 }
 
