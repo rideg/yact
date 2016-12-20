@@ -41,14 +41,14 @@ delete_list() {
   if [ ! -z "$1" ]; then
     to_delete="$YACT_DIR/_${1}.txt"
   fi
-  rm -f "$to_delete" & > /dev/null
+  rm -f "$to_delete" &> /dev/null
   if [ "$to_delete" = "$FILE" ]; then
     local next_file
-    next_file="$(ls -ur "$YACT_DIR/_*.txt" 2> /dev/null | head -n1)"
+    next_file="$(ls -ur "$YACT_DIR"/_*.txt 2> /dev/null | head -n1)"
     if [ -z "$next_file" ]; then
-      rm "$YACT_DIR/.last"
+      rm "$YACT_DIR"/.last
     else
-      printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR/.last"
+      printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
       update_file_and_show
     fi
   fi
