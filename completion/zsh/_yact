@@ -17,7 +17,7 @@ __yact_list_commands() {
      switch:'Switches to the given list'
      show:'Shows all the extisting lists'
    )
-   _describe -t list-commands 'list related commands' list && ret=0
+   _describe -t list-commands 'list related commands' list
 }
 
 __yact_task_commands() {
@@ -29,7 +29,7 @@ __yact_task_commands() {
     undone:'Marks the given task as not yet finished'
     show:'Shows the tasks from the current list'
   )
-  _describe -t task-commands 'task related commands' list && ret=0
+  _describe -t task-commands 'task related commands' list
 }
 
 __show_list_ids() {
@@ -38,7 +38,7 @@ __show_list_ids() {
   for filename in "$YACT_DIR"/*.txt; do
     list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
   done
-  _describe -t list-ids 'list ids' list && ret=0
+  _describe -t list-ids 'list ids' list
 }
 
 # shellcheck source=/dev/null
@@ -58,7 +58,7 @@ __yact_list_tasks() {
         list+=("$id":$task)
      fi
    done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
-   _describe -t task-ids 'task ids' list && ret=0
+   _describe -t task-ids 'task ids' list
   fi
 }
 

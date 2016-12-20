@@ -91,14 +91,14 @@ show_tasks() {
     done_text=''
     if [ "$is_done" = '1' ]; then
       is_true "$HIDE_DONE" && continue
-      done_text=$(color ok "$green")
+      done_text=$(color ok "$GREEN")
       ((nr_of_done++))
     fi
     list_text=$list_text$(printf ' %3d [%-2s] %s\n' "$id" "$done_text" "$(_wrap_text "$task")")
     list_text="$list_text\n"
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
   
-  printf '\n %s - (%d/%d)\n\n' "$(color "$header" "$underline" "$bold")" $nr_of_done $nr_of_tasks
+  printf '\n %s - (%d/%d)\n\n' "$(color "$header" "$UNDRLINE" "$BOLD")" $nr_of_done $nr_of_tasks
   if [ $nr_of_tasks -eq 0 ]; then
     echo -e " There are now tasks defined yet.\n"
   else

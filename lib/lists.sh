@@ -59,7 +59,7 @@ file_header_with_info() {
 }
 
 show_list() {
-  printf "\n %s:\n\n" "$(color 'You have the following lists' "$bold" "$underline")"
+  printf "\n %s:\n\n" "$(color 'You have the following lists' "$BOLD" "$UNDERLINE")"
   for actual_file in $(ls -ur "$YACT_DIR"/_*.txt); do
     if [ "$actual_file" = "$FILE" ]; then
      indicator='*'
