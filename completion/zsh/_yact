@@ -8,8 +8,7 @@ zstyle -T ':completion:*:*:yact:*' tag-order && zstyle ':completion:*:*:yact:*' 
 
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 
-__yact_list_commands() 
-{
+__yact_list_commands() {
    local -a list
    list=(
      new:'Creates a new list.'
@@ -39,13 +38,33 @@ __show_list_ids() {
   for filename in "$YACT_DIR"/*.txt; do
     list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
   done
-  _describe -t list-ids 'list ids' list && ret=0;
+  _describe -t list-ids 'list ids' list && ret=0
+}
+
+# shellcheck source=/dev/null
+__yact_list_tasks() {
+  local -a file list
+  local IFS
+  local cmd;
+  cmd=$1
+  test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
+  file=$YACT_DIR/$TODO_FILE
+  IFS=';'
+  list=()
+  if [ ! -z "$file" ] && [ -e "$file" ]; then
+   while read -r id task task_status; do
+     if [[ ($cmd = 'done' &&  "$task_status" -eq '0') \
+         || ($cmd = 'undone' && "$task_status" -eq '1' ) ]]; then
+        list+=("$id":$task)
+     fi
+   done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
+   _describe -t task-ids 'task ids' list && ret=0
+  fi
 }
 
 __yact_main() {
-  local curcontext="$curcontext" state state_descr line
+  local curcontext="$curcontext" state line
 	typeset -A opt_args
-	local -a orig_words
 
   _arguments -C \
 		'-l[Work with lists]: :->lists' \
@@ -56,14 +75,23 @@ __yact_main() {
 
    case "$state" in
        (tasks)
-          if [ ! -z "$opt_args" ]; then
-            __show_list_ids
-          else
-            __yact_task_commands
-          fi
+          case "$opt_args" in
+           (delete|switch|modify) __show_list_ids;;
+           (new|show) ;;
+           *) __yact_task_commands;;
+          esac;
         ;;
         (lists)
             __yact_list_commands
+        ;;
+        (arg)
+           case "${${line[@]}[1]}" in
+            ('done'|undone|delete|modify)
+              if [ ${#${line[@]}} -eq 1 ]; then
+                __yact_list_tasks ${${line[@]}[1]}
+              fi 
+            ;;
+           esac;
         ;;
     esac;
 }

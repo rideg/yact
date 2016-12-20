@@ -21,7 +21,7 @@ new_list() {
   file_name="_$id.txt"
   printf "%s\n\n" "$*" > "$YACT_DIR/$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
-  update_file_and_show 
+  update_file_and_show
 }
 
 switch_list() {
@@ -33,7 +33,7 @@ switch_list() {
     fatal "Non-existing list id $1"
    fi
    printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
-   update_file_and_show 
+   update_file_and_show
 }
 
 delete_list() {

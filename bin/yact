@@ -24,9 +24,9 @@ test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
 export FILE=$YACT_DIR/$TODO_FILE
 
 if [ "$1" = '-l' ]; then
- if [ "$2" = "--add" ] || [ "$2" = "-a" ]; then
+ if [ "$2" = "add" ]; then
   shift 2
-  new_list "$*" 
+  new_list "$*"
  fi
 fi
 
@@ -35,19 +35,20 @@ if [ -z "$TODO_FILE" ]; then
 fi
 
 if [ "$1" = '-l' ]; then
- if [ "$2" = "--switch" ] || [ "$2" = "-s" ]; then
+ if [ "$2" = "switch" ]; then
   switch_list "$3"
- elif [ "$2" = "--delete" ]; then
+ elif [ "$2" = "delete" ]; then
   delete_list "$3"
  else
   show_list
- fi 
+ fi
 fi
 
 test $# -eq 0 && show_tasks
-test "$1" = '--done' -o "$1" = '-d' && set_done "$2" 1
-test "$1" = '--undone' -o "$1" = '-u' && set_done "$2" 0
-test "$1" = '--add' -o "$1" = '-a' && shift && add_task "$*"
-test "$1" = '--modify' -o "$1" = '-m' && shift && modify_task "$@"
-test "$1" = "--delete" && delete_task "$2"
+
+test "$1" = 'done' && set_done "$2" 1
+test "$1" = 'undone' && set_done "$2" 0
+test "$1" = 'add' && shift && add_task "$*"
+test "$1" = 'modify' && shift && modify_task "$@"
+test "$1" = "delete" && delete_task "$2"
 exit_ 0

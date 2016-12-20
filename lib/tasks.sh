@@ -58,13 +58,13 @@ delete_task() {
    fatal "Cannot find line with id: $1"
   fi
   mv "$RUN/.tmp" "$FILE"
-  show_tasks 
+  show_tasks
 }
 
 modify_task() {
   test -z "$1" && fatal "Please provide a task id."
   local id=$1
-  shift 
+  shift
   test -z "$*" && fatal "Please provide the new description."
   sed -ie "s/^\($id;\).*\(;.*\)$/\1$*\2/w $RUN/.changed" "$FILE"
   if [ ! -s "$RUN/.changed" ]; then
@@ -85,12 +85,12 @@ show_tasks() {
   IFS=';'
   while read -r id task is_done; do
     if [ -z "$id" ]; then
-      break 
+      break
     fi
     ((nr_of_tasks++))
     done_text=''
     if [ "$is_done" = '1' ]; then
-      is_true "$HIDE_DONE" && continue 
+      is_true "$HIDE_DONE" && continue
       done_text=$(color ok "$green")
       ((nr_of_done++))
     fi
@@ -101,7 +101,7 @@ show_tasks() {
   printf '\n %s - (%d/%d)\n\n' "$(color "$header" "$underline" "$bold")" $nr_of_done $nr_of_tasks
   if [ $nr_of_tasks -eq 0 ]; then
     echo -e " There are now tasks defined yet.\n"
-  else 
+  else
     echo -e "$list_text"
   fi
 }
