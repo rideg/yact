@@ -41,7 +41,7 @@ modify_task() {
   test -z "$1" && fatal "Please provide a task id."
   id=$1
   shift
-  if [[ ! -z "$*" ]]; then
+  if [[ -n "$*" ]]; then
     description="$*"
   else
     local tmp_file

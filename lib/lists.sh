@@ -31,7 +31,7 @@ switch_list() {
 
 delete_list() {
   local to_delete="$FILE"
-  if [[ ! -z "$1" ]]; then
+  if [[ -n "$1" ]]; then
     to_delete="$YACT_DIR/_${1}.txt"
   fi
   rm -f "$to_delete" &> /dev/null

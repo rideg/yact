@@ -4,7 +4,7 @@
 # MIT Licensed
 
 init_colors() {
-  if [[ "$(tput colors)" -gt 2 ]] 2> /dev/null; then
+  if [[ "$(tput colors)" -gt 2 && $USE_COLORS -eq 1 ]] 2> /dev/null; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE UNDERLINE \
           BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN BG_WHITE \
           NORMAL

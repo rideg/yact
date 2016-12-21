@@ -49,28 +49,26 @@ __show_list_ids() {
 # shellcheck source=/dev/null
 __yact_list_tasks() {
   local -a file list
-  local IFS
   local cmd;
   cmd=$1
   test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
   file=$YACT_DIR/$TODO_FILE
-  IFS=';'
-  list=()
-  if [[ ! -z "$file" ]] && [[ -e "$file" ]]; then
-   while read -r id task task_status; do
-     if [[ ($cmd == 'done' &&  "$task_status" -eq 0) \
-         || ($cmd == 'undone' && "$task_status" -eq 1 ) \
-         || $cmd == 'delete' || $cmd == 'modify' ]]; then
-        list+=("$id":$task)
-     fi
-   done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
-    if [[ ${#list} -ne 0 && ! -z ${list[0]} ]]; then
+  if [[ -n "$file" ]] && [[ -e "$file" ]]; then
+    while IFS=';' read -r id task task_status; do
+      if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
+            || ($cmd == 'undone' && "$task_status" -eq 1 ) \
+            || $cmd == 'delete' || $cmd == 'modify' ) \
+            && -n "$task" ]]; then
+        list+=("$id":"$task")
+      fi
+    done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
+    if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
       _describe -t task-ids 'task ids' list
     else
-       _message -r "There is no appropriate task on this list."
-    fi 
+      _message -r "There is no appropriate task on this list."
+    fi
   else
-     _message -r "You don't have any list, please create on first"
+    _message -r "You don't have any list, please create on first"
   fi
 }
 

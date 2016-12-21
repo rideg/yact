@@ -32,7 +32,7 @@ create_tmp_file() {
 	EOF
   test $? -eq 1 && fatal "Cannot create tmp file: $file_name"
   # Appends the given line to the file.
-  test ! -z "$*" && echo "$*" >> "$file_name"
+  test -n "$*" && echo "$*" >> "$file_name"
   printf '%s' "$file_name"
 }
 
