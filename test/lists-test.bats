@@ -5,6 +5,8 @@ load 'helper'
 
 setup() {
   _setup_yact
+  _set_no_color
+  _spy_tool date "printf '1234123'"
 }
 
 teardown() {
@@ -19,8 +21,6 @@ teardown() {
 }
 
 @test "It should create a new list" {
-    # given
-    _spy_tool date 1234123
     # when
     run $YACT -l new This is a list.
     # then
@@ -29,9 +29,8 @@ teardown() {
 
 @test "It should create two lists" {
     # given
-    _spy_tool date 1234123
-    # when
     run $YACT -l new This is a list.
+    # when
     run $YACT -l new This is a list2.
     # then
     assert_output --partial $(printf ' 1234123\tThis is a list. (0/0)')
@@ -40,10 +39,9 @@ teardown() {
 
 @test "It should set the actual list after deletion" {
     # given
-    _spy_tool date 1234123
-    # when
     run $YACT -l new This is a list.
     run $YACT -l new This is a list2.
+    # when
     run $YACT -l delete 1234124
     # then
     assert_output --partial $(printf ' * 1234123\tThis is a list. (0/0)')
@@ -51,9 +49,8 @@ teardown() {
 
 @test "It should show message after deleting the last list" {
     # given
-    _spy_tool date 1234123
-    # when
     run $YACT -l new This is a list.
+    # when
     run $YACT -l delete 1234123
     # then
     assert_success
@@ -61,7 +58,6 @@ teardown() {
 
 @test "It should switch other list" {
     # given
-    _spy_tool date 1234123
     run $YACT -l new This is a list.
     run $YACT -l new This is a list2.
     #when
@@ -69,4 +65,16 @@ teardown() {
     # then
     assert_output --partial $(printf ' * 1234123\tThis is a list. (0/0)')
     assert_output --partial $(printf ' 1234124\tThis is a list2. (0/0)')
+}
+
+@test "It should update list information based on the task" {
+    # given 
+    run $YACT -l new This is a list.
+    run $YACT new this is a task
+    run $YACT new this is a task2
+    run $YACT done 1
+    # when
+    run $YACT -l
+    # then
+    assert_output --partial $(printf ' * 1234123\tThis is a list. (1/2)')
 }

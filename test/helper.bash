@@ -10,11 +10,15 @@ _setup_yact() {
    export PATH="${EXECUTABLE_DIR}:${PATH}"
 }
 
+_set_no_color() {
+    echo "USE_COLORS=0" >> "${YACT_DIR}"/config
+}
+
 _clean_test_dir() {
     rm -rf "${YACT_TEST_DIR}"
 }
 
 _spy_tool() {
-    echo -e "#!/usr/bin/env bash\n printf '%s' '$2'" > "${EXECUTABLE_DIR}/$1"
+    echo -e "#!/usr/bin/env bash\n$2" > "${EXECUTABLE_DIR}/$1"
     chmod +x "${EXECUTABLE_DIR}"/"$1"
 }
