@@ -42,7 +42,7 @@ delete_list() {
       rm "$YACT_DIR"/.last
     else
       printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
-      update_file_and_show
+      _update_file_and_show
     fi
   fi
 }
