@@ -3,38 +3,12 @@
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
 
-_wrap_text() {
-  local text=$*
-  local length=${#text}
-  if [ "$length" -gt "$LINE_LENGTH" ]; then
-    local IFS=' '
-    local line=''
-    local wrapped=''
-    for word in $text; do
-      local t="$line $word"
-      if [ ${#t} -gt "$LINE_LENGTH" ]; then
-        wrapped="$wrapped$line\n          "
-        line=''
-      fi
-      if [ ${#line} -gt 0 ]; then
-       line=$t
-      else
-       line=$word
-      fi
-    done
-  else
-    line=$text
-  fi
-  wrapped="$wrapped$line"
-  printf '%s' "$wrapped"
-}
-
 set_done() {
-  if [ -z "$1" ]; then
+  if [[ -z "$1" ]]; then
     fatal "Missing task id. Please provide it in order to set it to done."
   fi
   sed -ie "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
-  if [ ! -s "$RUN/.changed" ]; then
+  if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $1"
   fi
   show_tasks
@@ -54,7 +28,7 @@ delete_task() {
   awk 'BEGIN{id=1; FS=";"; OFS=";"}; {if (NR > 2) {$1=id++;}; print}' > "$RUN/.tmp"
   local ch_lines
   ch_lines=$(comm -2 -3 "$FILE" "$RUN/.tmp" 2>/dev/null | wc -l | sed 's/ *//')
-  if [ "$ch_lines" = '0' ]; then
+  if [[ "$ch_lines" = '0' ]]; then
    fatal "Cannot find line with id: $1"
   fi
   mv "$RUN/.tmp" "$FILE"
@@ -67,7 +41,7 @@ modify_task() {
   test -z "$1" && fatal "Please provide a task id."
   id=$1
   shift
-  if [ ! -z "$*" ]; then
+  if [[ ! -z "$*" ]]; then
     description="$*"
   else
     local tmp_file
@@ -77,7 +51,7 @@ modify_task() {
   fi
   test -z "$description" && fatal "Please provide the new description."
   sed -ie "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
-  if [ ! -s "$RUN/.changed" ]; then
+  if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $id"
   fi
   show_tasks
@@ -94,12 +68,12 @@ show_tasks() {
   local nr_of_tasks=0
   IFS=';'
   while read -r id task is_done; do
-    if [ -z "$id" ]; then
+    if [[ -z "$id" ]]; then
       break
     fi
     ((nr_of_tasks++))
     done_text=''
-    if [ "$is_done" = '1' ]; then
+    if [[ "$is_done" = '1' ]]; then
       is_true "$HIDE_DONE" && continue
       done_text=$(color ok "$GREEN")
       ((nr_of_done++))
@@ -109,9 +83,35 @@ show_tasks() {
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
   
   printf '\n %s - (%d/%d)\n\n' "$(color "$header" "$UNDRLINE" "$BOLD")" $nr_of_done $nr_of_tasks
-  if [ $nr_of_tasks -eq 0 ]; then
+  if [[ $nr_of_tasks -eq 0 ]]; then
     echo -e " There are now tasks defined yet.\n"
   else
     echo -e "$list_text"
   fi
+}
+
+_wrap_text() {
+  local text=$*
+  local length=${#text}
+  if [[ "$length" -gt "$LINE_LENGTH" ]]; then
+    local IFS=' '
+    local line=''
+    local wrapped=''
+    for word in $text; do
+      local t="$line $word"
+      if [[ ${#t} -gt "$LINE_LENGTH" ]]; then
+        wrapped="$wrapped$line\n          "
+        line=''
+      fi
+      if [[ ${#line} -gt 0 ]]; then
+       line=$t
+      else
+       line=$word
+      fi
+    done
+  else
+    line=$text
+  fi
+  wrapped="$wrapped$line"
+  printf '%s' "$wrapped"
 }

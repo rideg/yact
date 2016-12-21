@@ -4,6 +4,8 @@
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
 
+[[ "$TRACE" ]] && set -x
+
 pushd "$(dirname "$0")" &> /dev/null
 cd ..
 
@@ -23,21 +25,21 @@ test -e $YACT_DIR/config && . "$YACT_DIR"/config
 test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
 export FILE=$YACT_DIR/$TODO_FILE
 
-if [ "$1" = '-l' ]; then
- if [ "$2" = "new" ]; then
+if [[ "$1" = '-l' ]]; then
+ if [[ "$2" = "new" ]]; then
   shift 2
   new_list "$*"
  fi
 fi
 
-if [ -z "$TODO_FILE" ]; then
+if [[ -z "$TODO_FILE" ]]; then
   fatal "No todo list has been selected, please select/create one."
 fi
 
-if [ "$1" = '-l' ]; then
- if [ "$2" = "switch" ]; then
+if [[ "$1" = '-l' ]]; then
+ if [[ "$2" = "switch" ]]; then
   switch_list "$3"
- elif [ "$2" = "delete" ]; then
+ elif [[ "$2" = "delete" ]]; then
   delete_list "$3"
  else
   show_list
