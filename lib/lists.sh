@@ -63,7 +63,18 @@ show_list() {
 }
 
 _file_header_with_info() {
-  awk 'BEGIN{done=0;count=0;FS=";";}{if(NR==1){printf $0};if(NR>2){count++;if($3=="1"){done++;}}};END{printf " (%d/%d)",done,count;}' "$1"
+  local file="$1"
+  local number_of_done=0
+  local number_of_tasks=0
+  while IFS=';' read -r -s id description status; do
+    if [[ -n $description ]]; then
+      ((number_of_tasks++))
+      if [[ $status -eq 1 ]]; then
+        ((number_of_done++))
+      fi
+    fi
+  done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
+  printf '%s (%d/%d)' "$(head -n1 "$file")" $number_of_done $number_of_tasks
 }
 
 _update_file_and_show() {
