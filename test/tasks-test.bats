@@ -29,7 +29,7 @@ teardown() {
     assert_output --partial "1 [  ] A new task for test"
 }
 
-@test "Should add new item to the list" {
+@test "Should mark item as done" {
     # given
     run $YACT new "A new task for test"
     # when
@@ -39,7 +39,7 @@ teardown() {
     assert_output --partial "1 [ok] A new task for test"
 }
 
-@test "Should add new item to the list" {
+@test "Should mark done item as not done" {
     # given
     run $YACT new "A new task for test"
     run $YACT done 1

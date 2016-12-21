@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-# YACT - Yet Another Command line TODO
-# Copyright(c) 2016 Sandor Rideg
-# MIT Licensed
 
+################################################################################
+# Creates a new list with the given description and marks it as current.
+# -- Globals:
+#  YACT_DIR - Working directory for YACT.
+# -- Input:
+#  Description - The description of the new list.
+# -- Output: The list status after adding the new list
+################################################################################
 new_list() {
   if [[ -z "$*" ]]; then
     fatal "Please provide description for the new list." 
@@ -17,18 +22,37 @@ new_list() {
   _update_file_and_show
 }
 
+################################################################################
+# Marks the given list as current.
+# -- Globals:
+#  YACT_DIR - Working directory for YACT.
+# -- Input:
+#  id - The id of the list to be marked.
+# -- Output: The list status after changing the current.
+################################################################################
 switch_list() {
-   if [[ -z "$1" ]]; then
-     fatal "Missing list id, please provide it."
-   fi
-   file_name="_${1}.txt"
-   if [[ ! -f "$YACT_DIR/$file_name" ]]; then
-    fatal "Non-existing list id $1"
-   fi
-   printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
-   _update_file_and_show
+  let list_id="$1"
+  if [[ -z "$list_id" ]]; then
+    fatal "Missing list id, please provide it."
+  fi
+  file_name="_${list_id}.txt"
+  if [[ ! -f "$YACT_DIR/$file_name" ]]; then
+    fatal "Non-existing list id $list_id"
+  fi
+  printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
+  _update_file_and_show
 }
 
+################################################################################
+# Deletes the given list and marks the last recently used as current. Or if no 
+# id is provided it deletes the current list.
+# -- Globals:
+#  YACT_DIR - Working directory for YACT.
+#  FILE - current todo list
+# -- Input:
+#  id? -  Id of the list to be deleted.
+# -- Output: The list status after deleting the list.
+################################################################################
 delete_list() {
   local to_delete="$FILE"
   if [[ -n "$1" ]]; then
@@ -47,21 +71,39 @@ delete_list() {
   fi
 }
 
+################################################################################
+# List the currently available todo lists and indicates the current with a * 
+# mark.
+# -- Globals:
+#  YACT_DIR - Working directory for YACT.
+#  FILE - current todo list
+#  BOLD - bold formatting
+#  UNDERLINE - underline formatting
+# -- Input: None
+# -- Output: The list status.
+################################################################################
 show_list() {
-  printf "\n %s:\n\n" "$(color 'You have the following lists' "$BOLD" "$UNDERLINE")"
+  local indicator
+  printf \
+    "\n %s:\n\n" "$(format 'You have the following lists' "$BOLD" "$UNDERLINE")"
   for actual_file in $(ls -ur "$YACT_DIR"/_*.txt); do
     if [[ "$actual_file" = "$FILE" ]]; then
      indicator='*'
-    else
-     indicator=''
     fi
     printf ' %-1s %s\t%s\n' "$indicator" \
             "$(_TMP=${actual_file/*_/}; printf '%s' "${_TMP/\.txt/}")" \
             "$(_file_header_with_info "$actual_file")"
+    indicator=''
   done
   printf '\n'
 }
 
+################################################################################
+# Prints the current list status to the stdout.
+# -- Globals: None
+# -- Input: None
+# -- Output: The list status.
+################################################################################
 _file_header_with_info() {
   local file="$1"
   local number_of_done=0
@@ -77,6 +119,14 @@ _file_header_with_info() {
   printf '%s (%d/%d)' "$(head -n1 "$file")" $number_of_done $number_of_tasks
 }
 
+################################################################################
+# Updates FILE global.
+# -- Globals:
+#  YACT_DIR - Working directory for YACT.
+#  TODO_FILE - The file name of the current list.
+# -- Input: None
+# -- Output: The list status.
+################################################################################
 _update_file_and_show() {
   # shellcheck source=/dev/null
   . "$YACT_DIR/.last"

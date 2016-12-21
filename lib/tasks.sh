@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# YACT - Yet Another Command line TODO
-# Copyright(c) 2016 Sandor Rideg
-# MIT Licensed
 
+################################################################################
+# Marks a given task as done.
+# -- Globals:
+#  RUN - Directory for runtime temproray files.
+#  FILE - Current todo list's file.
+# -- Input:
+#  id - Id of task to be changed.
+# -- Output: The item status after the change.
+################################################################################
 set_done() {
   if [[ -z "$1" ]]; then
     fatal "Missing task id. Please provide it in order to set it to done."
@@ -14,7 +20,15 @@ set_done() {
   show_tasks
 }
 
-add_task() {
+################################################################################
+# Adds a new task to the current list.
+# -- Globals:
+#  FILE - Current todo list's file.
+# -- Input:
+#  description -  Description of the new task.
+# -- Output: The item status after the change.
+################################################################################
+new_task() {
   test -z "$*" && fatal "Please provide task description."
   maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((maxId++))
@@ -22,24 +36,43 @@ add_task() {
   show_tasks
 }
 
+################################################################################
+# Removes task from the current list.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  RUN - Directory for runtime temproray files.
+# -- Input:
+#  id -  Task id to be deleted.
+# -- Output: The item status after the deletion.
+################################################################################
 delete_task() {
-  test -z "$1" && fatal "Please provide a task id."
+  local task_id="$1"
+  test -z "${task_id}" && fatal "Please provide a task id."
   grep -v "^$1;.*$" "$FILE" |  \
-  awk 'BEGIN{id=1; FS=";"; OFS=";"}; {if (NR > 2) {$1=id++;}; print}' > "$RUN/.tmp"
+  awk 'BEGIN{id=1; FS=";"; OFS=";"}; {if (NR > 2) {$1=id++;}; print}' \
+    > "$RUN/.tmp"
   local ch_lines
   ch_lines=$(comm -2 -3 "$FILE" "$RUN/.tmp" 2>/dev/null | wc -l | sed 's/ *//')
   if [[ "$ch_lines" = '0' ]]; then
-   fatal "Cannot find line with id: $1"
+   fatal "Cannot find line with id: ${task_id}"
   fi
   mv "$RUN/.tmp" "$FILE"
   show_tasks
 }
 
+################################################################################
+# Updates the given task's description.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  RUN - Directory for runtime temproray files.
+# -- Input:
+#  id -  Task id to be deleted.
+# -- Output: The item status after the change.
+################################################################################
 modify_task() {
   local description
-  local id
-  test -z "$1" && fatal "Please provide a task id."
-  id=$1
+  local id=$1
+  test -z "$id" && fatal "Please provide a task id."
   shift
   if [[ -n "$*" ]]; then
     description="$*"
@@ -57,17 +90,26 @@ modify_task() {
   show_tasks
 }
 
+################################################################################
+# Shows a summary of the current list, which includes the list's' name and
+# and a list of tasks.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  HIDE_DONE - Global indicating whether the done task should be shown or not.
+#  GREEN - Green color.
+#  UNDRLINE - Underline formatting.
+#  BOLD - Bold formatting.
+# -- Input: None
+# -- Output: The summary of the current list.
+################################################################################
 show_tasks() {
-  local IFS=''
-  local header
-  header=$(head -n1 "$FILE")
-
+  local line_text
   local done_text=''
   local list_text=''
   local nr_of_done=0
   local nr_of_tasks=0
-  IFS=';'
-  while read -r id task is_done; do
+
+  while IFS=';' read -r id task is_done; do
     if [[ -z "$id" ]]; then
       break
     fi
@@ -75,43 +117,22 @@ show_tasks() {
     done_text=''
     if [[ "$is_done" = '1' ]]; then
       is_true "$HIDE_DONE" && continue
-      done_text=$(color ok "$GREEN")
+      done_text=$(format ok "$GREEN")
       ((nr_of_done++))
     fi
-    list_text=$list_text$(printf ' %3d [%-2s] %s\n' "$id" "$done_text" "$(_wrap_text "$task")")
-    list_text="$list_text\n"
+    line_text=$(printf ' %3d [%-2s] %s\n' \
+              "$id" "$done_text" "$(wrap_text "$task")")
+    list_text="${list_text}${line_text}\n"
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
   
-  printf '\n %s - (%d/%d)\n\n' "$(color "$header" "$UNDRLINE" "$BOLD")" $nr_of_done $nr_of_tasks
+  printf '\n %s - (%d/%d)\n\n' \
+         "$(format "$(head -n1 "$FILE")" \
+         "$UNDRLINE" "$BOLD")" \
+         $nr_of_done $nr_of_tasks
+
   if [[ $nr_of_tasks -eq 0 ]]; then
     echo -e " There are now tasks defined yet.\n"
   else
     echo -e "$list_text"
   fi
-}
-
-_wrap_text() {
-  local text=$*
-  local length=${#text}
-  if [[ "$length" -gt "$LINE_LENGTH" ]]; then
-    local IFS=' '
-    local line=''
-    local wrapped=''
-    for word in $text; do
-      local t="$line $word"
-      if [[ ${#t} -gt "$LINE_LENGTH" ]]; then
-        wrapped="$wrapped$line\n          "
-        line=''
-      fi
-      if [[ ${#line} -gt 0 ]]; then
-       line=$t
-      else
-       line=$word
-      fi
-    done
-  else
-    line=$text
-  fi
-  wrapped="$wrapped$line"
-  printf '%s' "$wrapped"
 }

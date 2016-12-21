@@ -1,56 +1,67 @@
 #!/usr/bin/env bash
+
+################################################################################
+# Main entry point for YACT.
+# -- Globals:
+#  TRACE - enables tracing if set.
+#  YACT_DIR - Working directory for YACT.
+#  TODO_FILE - The file name of the current list.
+#  RUN - Directory for runtime temproray files.
+# -- Input: Command.
+# -- Output: The result of the command.
+################################################################################
 # shellcheck source=/dev/null
-# YACT - Yet Another Command line TODO
-# Copyright(c) 2016 Sandor Rideg
-# MIT Licensed
+main() {
+  [[ "$TRACE" ]] && set -x
 
-[[ "$TRACE" ]] && set -x
+  pushd "$(dirname "$0")" &> /dev/null
+  cd ..
 
-pushd "$(dirname "$0")" &> /dev/null
-cd ..
+  test ! -d "${YACT_DIR}" && YACT_DIR=~/.yact
+  RUN=$YACT_DIR/.run
 
-test ! -d "${YACT_DIR}" && YACT_DIR=~/.yact
-RUN=$YACT_DIR/.run
+  test ! -d $RUN && mkdir -p $RUN
+  . ./config
 
-test ! -d $RUN && mkdir -p $RUN
-. ./config
+  test -f $YACT_DIR/config && . "$YACT_DIR"/config
 
-test -f $YACT_DIR/config && . "$YACT_DIR"/config
+  . lib/util.sh
+  . lib/formatting.sh
+  . lib/lists.sh
+  . lib/tasks.sh
 
-. lib/util.sh
-. lib/colors.sh
-. lib/lists.sh
-. lib/tasks.sh
+  test -f $YACT_DIR/.last && . "$YACT_DIR"/.last
+  export FILE=$YACT_DIR/$TODO_FILE
 
-test -f $YACT_DIR/.last && . "$YACT_DIR"/.last
-export FILE=$YACT_DIR/$TODO_FILE
+  if [[ "$1" = '-l' ]]; then
+  if [[ "$2" = "new" ]]; then
+    shift 2
+    new_list "$*"
+  fi
+  fi
 
-if [[ "$1" = '-l' ]]; then
- if [[ "$2" = "new" ]]; then
-  shift 2
-  new_list "$*"
- fi
-fi
+  if [[ -z "$TODO_FILE" ]]; then
+    fatal "No todo list has been selected, please select/create one."
+  fi
 
-if [[ -z "$TODO_FILE" ]]; then
-  fatal "No todo list has been selected, please select/create one."
-fi
+  if [[ "$1" = '-l' ]]; then
+  if [[ "$2" = "switch" ]]; then
+    switch_list "$3"
+  elif [[ "$2" = "delete" ]]; then
+    delete_list "$3"
+  else
+    show_list
+  fi
+  fi
 
-if [[ "$1" = '-l' ]]; then
- if [[ "$2" = "switch" ]]; then
-  switch_list "$3"
- elif [[ "$2" = "delete" ]]; then
-  delete_list "$3"
- else
-  show_list
- fi
-fi
+  test $# -eq 0 && show_tasks
 
-test $# -eq 0 && show_tasks
+  test "$1" = 'done' && set_done "$2" 1
+  test "$1" = 'undone' && set_done "$2" 0
+  test "$1" = 'new' && shift && new_task "$*"
+  test "$1" = 'modify' && shift && modify_task "$@"
+  test "$1" = "delete" && delete_task "$2"
+  exit_ 0
+}
 
-test "$1" = 'done' && set_done "$2" 1
-test "$1" = 'undone' && set_done "$2" 0
-test "$1" = 'new' && shift && add_task "$*"
-test "$1" = 'modify' && shift && modify_task "$@"
-test "$1" = "delete" && delete_task "$2"
-exit_ 0
+main "$@"
