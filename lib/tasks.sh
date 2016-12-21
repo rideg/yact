@@ -62,11 +62,21 @@ delete_task() {
 }
 
 modify_task() {
+  local description
+  local id
   test -z "$1" && fatal "Please provide a task id."
-  local id=$1
+  id=$1
   shift
-  test -z "$*" && fatal "Please provide the new description."
-  sed -ie "s/^\($id;\).*\(;.*\)$/\1$*\2/w $RUN/.changed" "$FILE"
+  if [ ! -z "$*" ]; then
+    description="$*"
+  else
+    local tmp_file
+    tmp_file=$(create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)")
+    launch_editor "$tmp_file"
+    description=$(get_tmp_file_content "$tmp_file")
+  fi
+  test -z "$description" && fatal "Please provide the new description."
+  sed -ie "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
   if [ ! -s "$RUN/.changed" ]; then
    fatal "Cannot find task with id $id"
   fi
