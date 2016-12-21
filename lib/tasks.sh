@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # YACT - Yet Another Command line TODO
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
