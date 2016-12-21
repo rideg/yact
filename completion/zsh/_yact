@@ -39,7 +39,7 @@ __show_list_ids() {
   for filename in "$YACT_DIR"/*.txt; do
     list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
   done
-  if [ ${#list} -ne 0 ]; then
+  if [[ ${#list} -ne 0 ]]; then
     _describe -t list-ids 'list ids' list
   else
     _message -r "Cannot find list, have you created one?"
@@ -56,14 +56,14 @@ __yact_list_tasks() {
   file=$YACT_DIR/$TODO_FILE
   IFS=';'
   list=()
-  if [ ! -z "$file" ] && [ -e "$file" ]; then
+  if [[ ! -z "$file" ]] && [[ -e "$file" ]]; then
    while read -r id task task_status; do
      if [[ ($cmd = 'done' &&  "$task_status" -eq '0') \
          || ($cmd = 'undone' && "$task_status" -eq '1' ) ]]; then
         list+=("$id":$task)
      fi
    done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
-    if [ ${#list} -ne 0 ]; then
+    if [[ ${#list} -ne 0 ]]; then
       _describe -t task-ids 'task ids' list
     else
        _message -r "There is no appropriate task on this list."
@@ -98,7 +98,7 @@ __yact_main() {
         (arg)
            case "${${line[@]}[1]}" in
             ('done'|undone|delete|modify)
-              if [ ${#${line[@]}} -eq 1 ]; then
+              if [[ ${#${line[@]}} -eq 1 ]]; then
                 __yact_list_tasks ${${line[@]}[1]}
               fi 
             ;;

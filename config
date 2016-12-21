@@ -3,5 +3,5 @@
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
 
-LINE_LENGTH=70
-HIDE_DONE=0
+export LINE_LENGTH=70
+export HIDE_DONE=0

@@ -4,6 +4,8 @@
 # Copyright(c) 2016 Sandor Rideg
 # MIT Licensed
 
+[[ "$TRACE" ]] && set -x
+
 pushd "$(dirname "$0")" &> /dev/null
 cd ..
 
