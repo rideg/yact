@@ -17,16 +17,16 @@ teardown() {
     # when
     run $YACT
     # then
-    assert_output --partial "Main list for testing - (0/0)"
-    assert_output --partial "There are now tasks defined yet."
+    assert_output -p 'Main list for testing - (0/0)'
+    assert_output -p 'There are now tasks defined yet.'
 }
 
 @test "Should add new item to the list" {
     # when
     run $YACT new "A new task for test"
     # then
-    assert_output --partial "Main list for testing - (0/1)"
-    assert_output --partial "1 [  ] A new task for test"
+    assert_output -p 'Main list for testing - (0/1)'
+    assert_output -p '1 [  ] A new task for test'
 }
 
 @test "Should mark item as done" {
@@ -35,8 +35,8 @@ teardown() {
     # when
     run $YACT done 1
     # then
-    assert_output --partial "Main list for testing - (1/1)"
-    assert_output --partial "1 [ok] A new task for test"
+    assert_output -p 'Main list for testing - (1/1)'
+    assert_output -p '1 [ok] A new task for test'
 }
 
 @test "Should mark done item as not done" {
@@ -46,8 +46,8 @@ teardown() {
     # when
     run $YACT undone 1
     # then
-    assert_output --partial "Main list for testing - (0/1)"
-    assert_output --partial "1 [  ] A new task for test"
+    assert_output -p 'Main list for testing - (0/1)'
+    assert_output -p '1 [  ] A new task for test'
 }
 
 @test "Should delete from list" {
@@ -58,10 +58,10 @@ teardown() {
     # when
     run $YACT delete 2
     # then
-    assert_output --partial "Main list for testing - (0/2)"
-    assert_output --partial "1 [  ] A new task for test"
-    assert_output --partial "2 [  ] A new task for test3"
-    refute_output --partial "A new task for test2"
+    assert_output -p 'Main list for testing - (0/2)'
+    assert_output -p '1 [  ] A new task for test'
+    assert_output -p '2 [  ] A new task for test3'
+    refute_output -p 'A new task for test2'
 }
 
 @test "Should modify item description" {
@@ -70,7 +70,7 @@ teardown() {
     # when
     run $YACT modify 1 "This is a modified item"
     # then
-    assert_output --partial "1 [  ] This is a modified item"
+    assert_output -p '1 [  ] This is a modified item'
 }
 
 @test "Should modify item description (interactive)" {
@@ -82,5 +82,5 @@ teardown() {
      # when
      run $YACT modify 1
      #then
-     assert_output --partial "1 [  ] The new description"
+     assert_output -p '1 [  ] The new description'
 }

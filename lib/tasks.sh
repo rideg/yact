@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ################################################################################
-# Marks a given task as done.
+# Marks a given task as done or not done.
 # -- Globals:
 #  RUN - Directory for runtime temproray files.
 #  FILE - Current todo list's file.
@@ -13,7 +13,7 @@ set_done() {
   if [[ -z "$1" ]]; then
     fatal "Missing task id. Please provide it in order to set it to done."
   fi
-  sed -ie "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
+  sed -i'' -e "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
   if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $1"
   fi
@@ -83,7 +83,7 @@ modify_task() {
     description=$(get_tmp_file_content "$tmp_file")
   fi
   test -z "$description" && fatal "Please provide the new description."
-  sed -ie "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
+  sed -i'' -e "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
   if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $id"
   fi
