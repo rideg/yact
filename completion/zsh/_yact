@@ -27,6 +27,7 @@ __yact_task_commands() {
     undone:'Marks the given task as not yet finished'
     show:'Shows the tasks from the current list'
     modify:'Modifies the a given task'
+    move:'Moves the given task to a given position within the list'
   )
   _describe -t task-commands 'task related commands' list
 }

@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 
 ################################################################################
+# Tests if a given variable is numeric
+# -- Globals: None
+# -- Input:
+#  value - value to be checked.
+# -- Output: true if the value is number
+################################################################################
+is_number() {
+  [[ "$1" =~ ^-?[0-9]+$ ]]
+}
+
+################################################################################
 # Checks if a value is true.
 # -- Globals: None
 # -- Input:
@@ -24,13 +35,13 @@ timestamp() {
 ################################################################################
 # Cleans runtime tmp folder, restore working directory then exits.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  RUN - Directory for runtime temproray files.
 # -- Input:
 #  exit_code - Code to exit with.
 # -- Output: None
 ################################################################################
 exit_() {
-  rm -f "$YACT_DIR"/.run/* &> /dev/null
+  rm -f "$RUN"/* &> /dev/null
   popd &> /dev/null
   exit "$1"
 }

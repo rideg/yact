@@ -1,7 +1,4 @@
 #!/bin/bash
-# YACT - Yet Another Command line TODO
-# Copyright(c) 2016 Sandor Rideg
-# MIT Licensed
 
 export LINE_LENGTH=70
 export HIDE_DONE=0

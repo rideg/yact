@@ -84,3 +84,38 @@ teardown() {
      #then
      assert_output -p '1 [  ] The new description'
 }
+
+@test "Should swap second and third" {
+    # given
+    run $YACT new "First task"
+    run $YACT new "Second task"
+    run $YACT new "Third task"
+    # when
+    run $YACT move 2 3
+    #then
+    assert_line -n 3 -p '3 [  ] Second task'
+    assert_line -n 2 -p '2 [  ] Third task'
+}
+
+@test "Should swap first and second" {
+    # given
+    run $YACT new "First task"
+    run $YACT new "Second task"
+    run $YACT new "Third task"
+    # when
+    run $YACT move 1 2
+    #then
+    assert_line -n 1 -p '1 [  ] Second task'
+    assert_line -n 2 -p '2 [  ] First task'
+}
+
+@test "Should keep the original order if position and id equals" {
+    # given
+    run $YACT new "First task"
+    run $YACT new "Second task"
+    run $YACT new "Third task"
+    # when
+    run $YACT move 1 1
+    #then
+    assert_line -n 1 -p '1 [  ] First task'
+}

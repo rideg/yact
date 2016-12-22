@@ -10,7 +10,7 @@
 # -- Output: The item status after the change.
 ################################################################################
 set_done() {
-  if [[ -z "$1" ]]; then
+  if [[ -z $1 ]]; then
     fatal "Missing task id. Please provide it in order to set it to done."
   fi
   sed -i'' -e "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
@@ -46,7 +46,7 @@ new_task() {
 # -- Output: The item status after the deletion.
 ################################################################################
 delete_task() {
-  local task_id="$1"
+  local task_id=$1
   test -z "${task_id}" && fatal "Please provide a task id."
   grep -v "^$1;.*$" "$FILE" |  \
   awk 'BEGIN{id=1; FS=";"; OFS=";"}; {if (NR > 2) {$1=id++;}; print}' \
@@ -86,6 +86,65 @@ modify_task() {
   sed -i'' -e "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
   if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $id"
+  fi
+  show_tasks
+}
+
+################################################################################
+# Moves a given task to a given position within the current list.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  RUN - Directory for runtime temproray files.
+# -- Input:
+#  id -  Task id to be moved.
+#  position - Target position.
+# -- Output: The item status after the move.
+################################################################################
+move_task() {
+  local id=$1
+  local position=$2
+
+  is_number "$id" || fatal "The provided id is not numberic [${id}]"
+  is_number "$position" \
+    || fatal "The provided position is not numberic [${position}]"
+
+  if [[ $id -ne $position ]]; then
+    local tmp_file
+    local task_line
+
+    tmp_file="${RUN}/tmp_$(timestamp).txt"
+    head -n2 "$FILE" > "$tmp_file"
+    task_line=$(sed '1,2d' "$FILE" | grep -e "^${id};")
+    test -n "$task_line" \
+            || fatal "There is no task with the provided id [${id}]"
+
+    let start=$id
+    let end=$position
+    let shift_value=-1
+    let verify_position=0
+    if [[ $end -lt $start ]]; then
+      let tmp=$end
+      end=$start
+      start=$tmp
+      shift_value=1
+    fi
+    while IFS=';' read -r current_id rest; do
+      if [[ "$current_id" -ge $start && "$current_id" -le $end ]]; then
+        if [[ "$current_id" -eq "$position" ]]; then 
+           printf '%s;%s\n' "$current_id" "${task_line/${id};/}" >> "$tmp_file"
+           printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
+           verify_position=1
+        elif [[ "$current_id" -eq "$id" ]]; then
+            :
+        else
+          printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
+        fi
+      else
+        printf '%s;%s\n' "$current_id" "$rest" >> "$tmp_file"
+      fi
+    done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
+    test $verify_position -eq 1 || fatal "Non existing position [${position}]"
+    mv "$tmp_file" "$FILE"
   fi
   show_tasks
 }
