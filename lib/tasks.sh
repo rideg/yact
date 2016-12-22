@@ -103,10 +103,10 @@ modify_task() {
 move_task() {
   local id=$1
   local position=$2
-
-  is_number "$id" || fatal "The provided id is not numberic [${id}]"
+  is_number "$id" || fatal "The provided id is not numeric [${id}]"
+  position=$(_get_position "$id" "$position")
   is_number "$position" \
-    || fatal "The provided position is not numberic [${position}]"
+    || fatal "The provided position is not numeric [${2}]"
 
   if [[ $id -ne $position ]]; then
     local tmp_file
@@ -147,6 +147,40 @@ move_task() {
     mv "$tmp_file" "$FILE"
   fi
   show_tasks
+}
+
+################################################################################
+# Provides numeric position for textual position.
+# -- Globals:
+#  FILE - Current todo list's file.
+# -- Input:
+#  id -  Task id to be moved.
+#  position - Target position (numeric or "up"/"down"/"bottom"/"top")
+# -- Output: The numeric position.
+################################################################################
+_get_position() {
+  local id=$1
+  local position=$2
+  if ! is_number "$position"; then
+    number_of_items=$(trim "$(sed '1,2d'  "$FILE" | wc -l)")
+    case "$position" in
+          up)
+            position=$id
+            test "$position" -gt 1 && ((position--))
+          ;;
+          top)
+            position=1
+          ;;
+          down)
+            position=$id
+            test "$position" -lt "$number_of_items" && ((position++))
+          ;;
+          bottom)
+            position="$number_of_items"
+          ;;
+      esac
+  fi
+  echo -n "$position"
 }
 
 ################################################################################

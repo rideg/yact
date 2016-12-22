@@ -85,11 +85,15 @@ teardown() {
      assert_output -p '1 [  ] The new description'
 }
 
-@test "Should swap second and third" {
-    # given
+__create_three_tasks() {
     run $YACT new "First task"
     run $YACT new "Second task"
     run $YACT new "Third task"
+}
+
+@test "Should swap second and third" {
+    # given
+    __create_three_tasks
     # when
     run $YACT move 2 3
     #then
@@ -99,9 +103,7 @@ teardown() {
 
 @test "Should swap first and second" {
     # given
-    run $YACT new "First task"
-    run $YACT new "Second task"
-    run $YACT new "Third task"
+    __create_three_tasks
     # when
     run $YACT move 1 2
     #then
@@ -111,11 +113,83 @@ teardown() {
 
 @test "Should keep the original order if position and id equals" {
     # given
-    run $YACT new "First task"
-    run $YACT new "Second task"
-    run $YACT new "Third task"
+    __create_three_tasks
     # when
     run $YACT move 1 1
     #then
     assert_line -n 1 -p '1 [  ] First task'
+}
+
+@test "move - puts item to the top of the list" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 3 top
+    #then
+    assert_line -n 1 -p '1 [  ] Third task'
+}
+
+@test "move - puts item to the bottom of the list" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 1 bottom
+    #then
+    assert_line -n 3 -p '3 [  ] First task'
+}
+
+@test "move - swaps item with item above" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 2 up
+    #then
+    assert_line -n 1 -p '1 [  ] Second task'
+    assert_line -n 2 -p '2 [  ] First task'
+}
+
+@test "move - swaps item with item below" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 2 down
+    #then
+    assert_line -n 2 -p '2 [  ] Third task'
+    assert_line -n 3 -p '3 [  ] Second task'
+}
+
+@test "move - doesn't change list if up first item" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 1 up
+    #then
+    assert_line -n 1 -p '1 [  ] First task'
+}
+
+@test "move - doesn't change list if top first item" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 1 top
+    #then
+    assert_line -n 1 -p '1 [  ] First task'
+}
+
+@test "move - doesn't change list if down last item" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 3 down
+    #then
+    assert_line -n 3 -p '3 [  ] Third task'
+}
+
+@test "move - doesn't change list if bottom last item" {
+    # given
+    __create_three_tasks
+    # when
+    run $YACT move 3 bottom
+    #then
+    assert_line -n 3 -p '3 [  ] Third task'
 }

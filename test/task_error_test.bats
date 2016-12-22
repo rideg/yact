@@ -18,7 +18,7 @@ teardown() {
 	run $YACT move hhklj 1
 	# then
 	assert_failure
-	assert_output -p "The provided id is not numberic [hhklj]"
+	assert_output -p "The provided id is not numeric [hhklj]"
 }
 
 @test "move - shows error if non-numeric position is provided" {
@@ -26,7 +26,7 @@ teardown() {
 	run $YACT move 1 hhklj
 	# then
 	assert_failure
-	assert_output -p "The provided position is not numberic [hhklj]"
+	assert_output -p "The provided position is not numeric [hhklj]"
 }
 
 @test "move - shows error if non-existing id is provided" {
