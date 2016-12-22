@@ -13,7 +13,7 @@ set_done() {
   if [[ -z $1 ]]; then
     fatal "Missing task id. Please provide it in order to set it to done."
   fi
-  sed -i'' -e "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
+  sed -i '' "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
   if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $1"
   fi
@@ -83,7 +83,7 @@ modify_task() {
     description=$(get_tmp_file_content "$tmp_file")
   fi
   test -z "$description" && fatal "Please provide the new description."
-  sed -i'' -e "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
+  sed -i '' "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
   if [[ ! -s "$RUN/.changed" ]]; then
    fatal "Cannot find task with id $id"
   fi

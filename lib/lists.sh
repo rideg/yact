@@ -9,7 +9,7 @@
 # -- Output: The list status after adding the new list
 ################################################################################
 new_list() {
-  if [[ -z "$*" ]]; then
+  if [[ "$#" -eq 0 ]]; then
     fatal "Please provide description for the new list." 
   fi
   id=$(timestamp)
