@@ -118,12 +118,12 @@ move_task() {
     test -n "$task_line" \
             || fatal "There is no task with the provided id [${id}]"
 
-    let start=$id
-    let end=$position
-    let shift_value=-1
-    let verify_position=0
+    local start=$id
+    local end=$position
+    local shift_value=-1
+    local verify_position=0
     if [[ $end -lt $start ]]; then
-      let tmp=$end
+      local tmp=$end
       end=$start
       start=$tmp
       shift_value=1
@@ -162,7 +162,7 @@ _get_position() {
   local id=$1
   local position=$2
   if ! is_number "$position"; then
-    number_of_items=$(trim "$(sed '1,2d'  "$FILE" | wc -l)")
+    number_of_items=$(($(sed '1,2d'  "$FILE" | wc -l)))
     case "$position" in
           up)
             position=$id

@@ -31,7 +31,7 @@ new_list() {
 # -- Output: The list status after changing the current.
 ################################################################################
 switch_list() {
-  let list_id="$1"
+  local list_id="$1"
   if [[ -z "$list_id" ]]; then
     fatal "Missing list id, please provide it."
   fi
