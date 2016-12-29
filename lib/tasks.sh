@@ -1,22 +1,49 @@
 #!/usr/bin/env bash
 
+
+################################################################################
+# Changes a given task.
+# -- Globals:
+#  RUN - Directory for runtime temproray files.
+#  FILE - Current todo list's file.
+# -- Input:
+#  id - Id of task to be changed
+#  text? - The new text for the task - ignored if empty.
+#  status? - The new status for the task - ignored if empty.
+# -- Output: None.
+################################################################################
+_change_task() {
+  test $# -lt 2 &&  fatal 'Not enough number of arguments for _change_task'
+  local id=$1
+  local text='\1'
+  local status='\2'
+
+  [[ -z $1 ]] && fatal 'Missing task id.'
+  [[ $2 != "" ]] && text=$2
+  [[ -n $3 && $3 != "" ]] && status=$3
+
+  head -n2 "$FILE" >  "$RUN/tmp_task.txt"
+  sed '1,2d' "$FILE" | \
+    sed "s/^$1;\(.*\);\([01]\)/${id};${text};${status}/w $RUN/.changed" >> \
+    "$RUN/tmp_task.txt"
+
+  if [[ ! -s "$RUN/.changed" ]]; then
+   fatal "Cannot find task with id $id"
+  fi
+  mv "$RUN/tmp_task.txt" "$FILE"
+}
+
 ################################################################################
 # Marks a given task as done or not done.
 # -- Globals:
 #  RUN - Directory for runtime temproray files.
 #  FILE - Current todo list's file.
 # -- Input:
-#  id - Id of task to be changed.
+#  id - Id of task to be changedj
 # -- Output: The item status after the change.
 ################################################################################
 set_done() {
-  if [[ -z $1 ]]; then
-    fatal "Missing task id. Please provide it in order to set it to done."
-  fi
-  sed -i '' "s/^\($1;.*\)[01]$/\1$2/w $RUN/.changed" "$FILE"
-  if [[ ! -s "$RUN/.changed" ]]; then
-   fatal "Cannot find task with id $1"
-  fi
+  _change_task "$1" "" "$2"
   show_tasks
 }
 
@@ -82,11 +109,7 @@ modify_task() {
     launch_editor "$tmp_file"
     description=$(get_tmp_file_content "$tmp_file")
   fi
-  test -z "$description" && fatal "Please provide the new description."
-  sed -i '' "s/^\($id;\).*\(;.*\)$/\1$description\2/w $RUN/.changed" "$FILE"
-  if [[ ! -s "$RUN/.changed" ]]; then
-   fatal "Cannot find task with id $id"
-  fi
+  _change_task "$id" "$description"
   show_tasks
 }
 
@@ -217,7 +240,7 @@ show_tasks() {
               "$id" "$done_text" "$(wrap_text "$task")")
     list_text="${list_text}${line_text}\n"
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
-  
+
   printf '\n %s - (%d/%d)\n\n' \
          "$(format "$(head -n1 "$FILE")" \
          "$UNDRLINE" "$BOLD")" \
