@@ -46,12 +46,12 @@ delete_task() {
   head -n2 "$FILE" > "$tmp_file"
   while IFS=';' read -r id task is_done; do
     if [[ "$id" -lt $task_id ]]; then
-		printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
-	elif [[ "$id" -gt $task_id ]]; then
-		printf '%d;%s;%d\n' $((id - 1)) "$task" "$is_done" >> "$tmp_file"
-	else
-		task_to_delete="$task"
-	fi
+      printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
+    elif [[ "$id" -gt $task_id ]]; then
+      printf '%d;%s;%d\n' $((id - 1)) "$task" "$is_done" >> "$tmp_file"
+    else
+      task_to_delete="$task"
+    fi
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
 
   [[ -z "$task_to_delete" ]] && fatal "Cannot find line with id: $task_id"
@@ -230,20 +230,37 @@ show_tasks() {
 ################################################################################
 _change_task() {
   test $# -lt 2 &&  fatal 'Not enough number of arguments for _change_task'
-  local id=$1
-  local text='\1'
-  local status='\2'
+  local task_id=$1
+  local text
+  local status
+  local is_changed=0
 
-  [[ -z $1 ]] && fatal 'Missing task id.'
+  [[ -z $task_id ]] && fatal 'Missing task id.'
   [[ $2 != "" ]] && text=$2
   [[ -n $3 && $3 != "" ]] && status=$3
 
-  head -n2 "$FILE" >  "$RUN/tmp_task.txt"
-  sed '1,2d' "$FILE" | \
-    sed "s/^$1;\(.*\);\([01]\)/${id};${text};${status}/w $RUN/.changed" >> \
-    "$RUN/tmp_task.txt"
+  local tmp_file="$RUN/tmp_task.txt"
 
-  if [[ ! -s "$RUN/.changed" ]]; then
+  head -n2 "$FILE" > "$tmp_file"
+  while IFS=';' read -r id task is_done; do
+    if [[ "$id" -ne $task_id ]]; then
+      printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
+    else
+      is_changed=1
+      echo -n "$id;" >> "$tmp_file"
+      if [[ -z "$text" ]]; then
+        echo -n "$task;" >> "$tmp_file"
+      else
+        echo -n "$text;" >> "$tmp_file"
+      fi
+      if [[ -z "$status" ]]; then
+        printf '%d\n' "$is_done" >> "$tmp_file"
+      else
+        printf '%d\n' "$status" >> "$tmp_file"
+      fi
+    fi
+  done <<<"$(sed '1,2d'  "$FILE")"
+  if [[ "$is_changed" -eq 0 ]]; then
    fatal "Cannot find task with id $id"
   fi
   mv "$RUN/tmp_task.txt" "$FILE"

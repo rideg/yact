@@ -92,7 +92,7 @@ teardown() {
     run $YACT add "A new task for test"
     # when
     run $YACT modify 1
-    #then
+    # then
     assert_output -p '1 [  ] The new description'
 }
 
@@ -107,7 +107,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 2 3
-    #then
+    # then
     assert_line -n 3 -p '3 [  ] Second task'
     assert_line -n 2 -p '2 [  ] Third task'
 }
@@ -117,7 +117,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 1 2
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] Second task'
     assert_line -n 2 -p '2 [  ] First task'
 }
@@ -127,7 +127,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 1 1
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] First task'
 }
 
@@ -136,7 +136,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 3 top
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] Third task'
 }
 
@@ -145,7 +145,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 1 bottom
-    #then
+    # then
     assert_line -n 3 -p '3 [  ] First task'
 }
 
@@ -154,7 +154,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 2 up
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] Second task'
     assert_line -n 2 -p '2 [  ] First task'
 }
@@ -164,7 +164,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 2 down
-    #then
+    # then
     assert_line -n 2 -p '2 [  ] Third task'
     assert_line -n 3 -p '3 [  ] Second task'
 }
@@ -174,7 +174,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 1 up
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] First task'
 }
 
@@ -183,7 +183,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 1 top
-    #then
+    # then
     assert_line -n 1 -p '1 [  ] First task'
 }
 
@@ -192,7 +192,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 3 down
-    #then
+    # then
     assert_line -n 3 -p '3 [  ] Third task'
 }
 
@@ -201,7 +201,7 @@ __create_three_tasks() {
     __create_three_tasks
     # when
     run $YACT move 3 bottom
-    #then
+    # then
     assert_line -n 3 -p '3 [  ] Third task'
 }
 
@@ -211,7 +211,16 @@ __create_three_tasks() {
     _spy_tool nano 'echo "The new description" > $1'
     # when
     run $YACT add 
-    #then
+    # then
     assert_output -p '1 [  ] The new description'
+}
+
+@test "modify - using special charactes" {
+    # given
+    run $YACT add "This is task"
+    # when
+    run $YACT modify 1 "The new task description: ( \ / ) { } [ ] &"
+    # then
+    assert_output -p '1 [  ] The new task description: ( \ / ) { } [ ] &'     
 }
 
