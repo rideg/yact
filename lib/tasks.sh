@@ -21,7 +21,7 @@ set_done() {
 #  description -  Description of the new task.
 # -- Output: The item status after the change.
 ################################################################################
-new_task() {
+add_task() {
   get_description "$@"
   maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((maxId++))

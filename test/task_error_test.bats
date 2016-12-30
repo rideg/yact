@@ -39,7 +39,7 @@ teardown() {
 
 @test "move - shows error if non-existing position is provided" {
 	# when
-	run $YACT new "Test task 1"
+	run $YACT add "Test task 1"
 	run $YACT move 1 3
 	# then
 	assert_failure
@@ -51,7 +51,7 @@ teardown() {
   export EDITOR=nano
   _spy_tool nano ':' 
   # when
-  run $YACT new 
+  run $YACT add 
   # then
   assert_output -p $'Please provide description.'
 }

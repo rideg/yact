@@ -91,7 +91,7 @@ _parse_task_opts() {
   shift
   if [[ -n "$cmd" ]]; then
     case $cmd in
-      new) new_task "$@";;
+      add) add_task "$@";;
       delete) delete_task "$1";;
       modify) modify_task "$@";;
       move) move_task "$1" "$2";;

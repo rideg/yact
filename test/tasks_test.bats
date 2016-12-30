@@ -23,7 +23,7 @@ teardown() {
 
 @test "Should add new item to the list" {
     # when
-    run $YACT new "A new task for test"
+    run $YACT add "A new task for test"
     # then
     assert_output -p 'Main list for testing - (0/1)'
     assert_output -p '1 [  ] A new task for test'
@@ -31,7 +31,7 @@ teardown() {
 
 @test "Should mark item as done" {
     # given
-    run $YACT new "A new task for test"
+    run $YACT add "A new task for test"
     # when
     run $YACT done 1
     # then
@@ -41,7 +41,7 @@ teardown() {
 
 @test "Should mark done item as not done" {
     # given
-    run $YACT new "A new task for test"
+    run $YACT add "A new task for test"
     run $YACT done 1
     # when
     run $YACT undone 1
@@ -52,9 +52,9 @@ teardown() {
 
 @test "Should delete from list" {
     # given
-    run $YACT new "A new task for test"
-    run $YACT new "A new task for test2"
-    run $YACT new "A new task for test3"
+    run $YACT add "A new task for test"
+    run $YACT add "A new task for test2"
+    run $YACT add "A new task for test3"
     # when
     run $YACT delete 2
     # then
@@ -66,7 +66,7 @@ teardown() {
 
 @test "Should modify item description" {
     # given
-    run $YACT new "A new task for test"
+    run $YACT add "A new task for test"
     # when
     run $YACT modify 1 "This is a modified item"
     # then
@@ -78,7 +78,7 @@ teardown() {
     export EDITOR=nano
     _spy_tool nano 'echo "The new description" > $1'
 
-    run $YACT new "A new task for test"
+    run $YACT add "A new task for test"
     # when
     run $YACT modify 1
     #then
@@ -86,9 +86,9 @@ teardown() {
 }
 
 __create_three_tasks() {
-    run $YACT new "First task"
-    run $YACT new "Second task"
-    run $YACT new "Third task"
+    run $YACT add "First task"
+    run $YACT add "Second task"
+    run $YACT add "Third task"
 }
 
 @test "Should swap second and third" {
@@ -199,7 +199,7 @@ __create_three_tasks() {
     export EDITOR=nano
     _spy_tool nano 'echo "The new description" > $1'
     # when
-    run $YACT new 
+    run $YACT add 
     #then
     assert_output -p '1 [  ] The new description'
 }

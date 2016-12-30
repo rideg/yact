@@ -21,7 +21,7 @@ __yact_list_commands() {
 __yact_task_commands() {
   local -a list
   list=(
-    new:'Adds a new task to the current list'
+    add:'Adds a new task to the current list'
     delete:'Removes the given task from the current list'
     done:'Marks the given task as completed'
     undone:'Marks the given task as not yet finished'

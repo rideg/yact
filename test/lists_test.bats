@@ -70,8 +70,8 @@ teardown() {
 @test "Update list information based on the task" {
   # given 
   run $YACT -l new This is a list.
-  run $YACT new this is a task
-  run $YACT new this is a task2
+  run $YACT add this is a task
+  run $YACT add this is a task2
   run $YACT done 1
   # when
   run $YACT -l
