@@ -224,3 +224,27 @@ __create_three_tasks() {
     assert_output -p '1 [  ] The new task description: ( \ / ) { } [ ] &'     
 }
 
+@test "add - insert to a specified position" {
+    # given
+    run $YACT add "This is a task1"
+    run $YACT add "This is a task2"
+    # when
+    run $YACT add -p 2 "This is a task3"
+    # then
+    assert_output -p '1 [  ] This is a task1'
+    assert_output -p '2 [  ] This is a task3'
+    assert_output -p '3 [  ] This is a task2'   
+}
+
+@test "add - insert to the top" {
+    # given
+    run $YACT add "This is a task1"
+    run $YACT add "This is a task2"
+    # when
+    run $YACT add -p top "This is a task3"
+    # then
+    assert_output -p '1 [  ] This is a task3'
+    assert_output -p '2 [  ] This is a task1'
+    assert_output -p '3 [  ] This is a task2'   
+}
+

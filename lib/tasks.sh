@@ -22,10 +22,21 @@ set_done() {
 # -- Output: The item status after the change.
 ################################################################################
 add_task() {
+  local position
+  local max_id
+  if [[ "$1" == '-p' ]]; then
+    position="$2"
+    shift 2
+  fi
+
   get_description "$@"
-  maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
-  ((maxId++))
-  printf '%d;%s;0\n' $maxId "$__" >> "$FILE"
+  max_id=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
+  ((max_id++))
+  printf '%d;%s;0\n' $max_id "$__" >> "$FILE"
+
+  if [[ -n "$position" ]]; then
+   move_task "$max_id" "$position"
+  fi
 }
 
 ################################################################################
