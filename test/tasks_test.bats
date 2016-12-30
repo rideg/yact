@@ -78,11 +78,11 @@ teardown() {
     export EDITOR=nano
     _spy_tool nano 'echo "The new description" > $1'
 
-     run $YACT new "A new task for test"
-     # when
-     run $YACT modify 1
-     #then
-     assert_output -p '1 [  ] The new description'
+    run $YACT new "A new task for test"
+    # when
+    run $YACT modify 1
+    #then
+    assert_output -p '1 [  ] The new description'
 }
 
 __create_three_tasks() {
@@ -193,3 +193,14 @@ __create_three_tasks() {
     #then
     assert_line -n 3 -p '3 [  ] Third task'
 }
+
+@test "Use editor if no description if provided for the new task" {
+    # given
+    export EDITOR=nano
+    _spy_tool nano 'echo "The new description" > $1'
+    # when
+    run $YACT new 
+    #then
+    assert_output -p '1 [  ] The new description'
+}
+

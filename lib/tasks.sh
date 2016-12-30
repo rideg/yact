@@ -22,10 +22,19 @@ set_done() {
 # -- Output: The item status after the change.
 ################################################################################
 new_task() {
-  test -z "$*" && fatal "Please provide task description."
+  local description
+  if [[ -n "$*" ]]; then
+    description="$*"
+  else
+    local tmp_file
+    tmp_file=$(create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)")
+    launch_editor "$tmp_file"
+    description=$(get_tmp_file_content "$tmp_file")
+  fi
+  test -z "$description" && fatal "Please provide task description."
   maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((maxId++))
-  printf '%d;%s;0\n' $maxId "$*" >> "$FILE"
+  printf '%d;%s;0\n' $maxId "$description" >> "$FILE"
 }
 
 ################################################################################
