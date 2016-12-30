@@ -54,16 +54,24 @@ switch_list() {
 ################################################################################
 delete_list() {
   local to_delete="$FILE"
+  local consent
+  
   test -n "$1" && to_delete="$YACT_DIR/_${1}.txt"
-  rm -f "$to_delete" &> /dev/null
-  if [[ "$to_delete" = "$FILE" ]]; then
-    local next_file
-    next_file="$(ls -ur "$YACT_DIR"/_*.txt 2> /dev/null | head -n1)"
-    if [[ -z "$next_file" ]]; then
-      rm "$YACT_DIR"/.last
-    else
-      printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
-      _update_actual
+
+  echo "Are you sure to delete? y/[n]"
+  read -r -s -n 1 consent
+
+  if [[ $consent == 'y' ]]; then
+    rm -f "$to_delete" &> /dev/null
+    if [[ "$to_delete" = "$FILE" ]]; then
+      local next_file
+      next_file="$(ls -ur "$YACT_DIR"/_*.txt 2> /dev/null | head -n1)"
+      if [[ -z "$next_file" ]]; then
+        rm "$YACT_DIR"/.last
+      else
+        printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
+        _update_actual
+      fi
     fi
   fi
 }

@@ -56,12 +56,23 @@ teardown() {
     run $YACT add "A new task for test2"
     run $YACT add "A new task for test3"
     # when
-    run $YACT delete 2
+    run $YACT delete 2 < <(echo y)
     # then
     assert_output -p 'Main list for testing - (0/2)'
     assert_output -p '1 [  ] A new task for test'
     assert_output -p '2 [  ] A new task for test3'
     refute_output -p 'A new task for test2'
+}
+
+@test "Should keep task if consent is not given" {
+    # given
+    run $YACT add "A new task for test3"
+    # when
+    run $YACT delete 1 < <(echo n)
+    # then
+    assert_output -p 'Are you sure you want to delete? y/[n]'
+    assert_output -p 'Main list for testing - (0/1)'
+    assert_output -p '1 [  ] A new task for test3'
 }
 
 @test "Should modify item description" {

@@ -39,16 +39,26 @@ add_task() {
 ################################################################################
 delete_task() {
   local task_id=$1
-  test -z "${task_id}" && fatal "Please provide a task id."
-  grep -v "^$1;.*$" "$FILE" |  \
-  awk 'BEGIN{id=1; FS=";"; OFS=";"}; {if (NR > 2) {$1=id++;}; print}' \
-    > "$RUN/.tmp"
-  local ch_lines
-  ch_lines=$(comm -2 -3 "$FILE" "$RUN/.tmp" 2>/dev/null | wc -l | sed 's/ *//')
-  if [[ "$ch_lines" = '0' ]]; then
-   fatal "Cannot find line with id: ${task_id}"
-  fi
-  mv "$RUN/.tmp" "$FILE"
+  local tmp_file="$RUN/.tmp"
+  local task_to_delete
+  test -z "$task_id" && fatal "Please provide a task id."
+
+  head -n2 "$FILE" > "$tmp_file"
+  while IFS=';' read -r id task is_done; do
+    if [[ "$id" -lt $task_id ]]; then
+		printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
+	elif [[ "$id" -gt $task_id ]]; then
+		printf '%d;%s;%d\n' $((id - 1)) "$task" "$is_done" >> "$tmp_file"
+	else
+		task_to_delete="$task"
+	fi
+  done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
+
+  [[ -z "$task_to_delete" ]] && fatal "Cannot find line with id: $task_id"
+
+  echo "Are you sure you want to delete? y/[n]"
+  read -r -s -n 1 consent 
+  [[ "$consent" == "y" ]] && mv "$RUN/.tmp" "$FILE"
 }
 
 ################################################################################

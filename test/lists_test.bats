@@ -42,7 +42,7 @@ teardown() {
   run $YACT -l new This is a list.
   run $YACT -l new This is a list2.
   # when
-  run $YACT -l delete 1234124
+  run $YACT -l delete 1234124 < <(echo y)
   # then
   assert_output -p $' * 1234123\tThis is a list. (0/0)'
 }
@@ -51,9 +51,19 @@ teardown() {
   # given
   run $YACT -l new This is a list.
   # when
-  run $YACT -l delete 1234123
+  run $YACT -l delete 1234123 < <(echo y)
   # then
   assert_success
+}
+
+@test "Do not delete if consent is not given" {
+  # given
+  run $YACT -l new This is a list.
+  run $YACT -l new This is a list2.
+  # when
+  run $YACT -l delete 1234124 < <(echo n)
+  # then
+  assert_output -p $' * 1234124\tThis is a list2. (0/0)'
 }
 
 @test "Switch to other list" {
