@@ -1,38 +1,5 @@
 #!/usr/bin/env bash
 
-
-################################################################################
-# Changes a given task.
-# -- Globals:
-#  RUN - Directory for runtime temproray files.
-#  FILE - Current todo list's file.
-# -- Input:
-#  id - Id of task to be changed
-#  text? - The new text for the task - ignored if empty.
-#  status? - The new status for the task - ignored if empty.
-# -- Output: None.
-################################################################################
-_change_task() {
-  test $# -lt 2 &&  fatal 'Not enough number of arguments for _change_task'
-  local id=$1
-  local text='\1'
-  local status='\2'
-
-  [[ -z $1 ]] && fatal 'Missing task id.'
-  [[ $2 != "" ]] && text=$2
-  [[ -n $3 && $3 != "" ]] && status=$3
-
-  head -n2 "$FILE" >  "$RUN/tmp_task.txt"
-  sed '1,2d' "$FILE" | \
-    sed "s/^$1;\(.*\);\([01]\)/${id};${text};${status}/w $RUN/.changed" >> \
-    "$RUN/tmp_task.txt"
-
-  if [[ ! -s "$RUN/.changed" ]]; then
-   fatal "Cannot find task with id $id"
-  fi
-  mv "$RUN/tmp_task.txt" "$FILE"
-}
-
 ################################################################################
 # Marks a given task as done or not done.
 # -- Globals:
@@ -44,7 +11,6 @@ _change_task() {
 ################################################################################
 set_done() {
   _change_task "$1" "" "$2"
-  show_tasks
 }
 
 ################################################################################
@@ -60,7 +26,6 @@ new_task() {
   maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((maxId++))
   printf '%d;%s;0\n' $maxId "$*" >> "$FILE"
-  show_tasks
 }
 
 ################################################################################
@@ -84,7 +49,6 @@ delete_task() {
    fatal "Cannot find line with id: ${task_id}"
   fi
   mv "$RUN/.tmp" "$FILE"
-  show_tasks
 }
 
 ################################################################################
@@ -110,7 +74,6 @@ modify_task() {
     description=$(get_tmp_file_content "$tmp_file")
   fi
   _change_task "$id" "$description"
-  show_tasks
 }
 
 ################################################################################
@@ -169,7 +132,6 @@ move_task() {
     test $verify_position -eq 1 || fatal "Non existing position [${position}]"
     mv "$tmp_file" "$FILE"
   fi
-  show_tasks
 }
 
 ################################################################################
@@ -252,3 +214,36 @@ show_tasks() {
     echo -e "$list_text"
   fi
 }
+
+################################################################################
+# Changes a given task.
+# -- Globals:
+#  RUN - Directory for runtime temproray files.
+#  FILE - Current todo list's file.
+# -- Input:
+#  id - Id of task to be changed
+#  text? - The new text for the task - ignored if empty.
+#  status? - The new status for the task - ignored if empty.
+# -- Output: None.
+################################################################################
+_change_task() {
+  test $# -lt 2 &&  fatal 'Not enough number of arguments for _change_task'
+  local id=$1
+  local text='\1'
+  local status='\2'
+
+  [[ -z $1 ]] && fatal 'Missing task id.'
+  [[ $2 != "" ]] && text=$2
+  [[ -n $3 && $3 != "" ]] && status=$3
+
+  head -n2 "$FILE" >  "$RUN/tmp_task.txt"
+  sed '1,2d' "$FILE" | \
+    sed "s/^$1;\(.*\);\([01]\)/${id};${text};${status}/w $RUN/.changed" >> \
+    "$RUN/tmp_task.txt"
+
+  if [[ ! -s "$RUN/.changed" ]]; then
+   fatal "Cannot find task with id $id"
+  fi
+  mv "$RUN/tmp_task.txt" "$FILE"
+}
+

@@ -19,7 +19,7 @@ new_list() {
   file_name="_$id.txt"
   printf "%s\n\n" "$*" > "$YACT_DIR/$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
-  _update_file_and_show
+  _update_actual
 }
 
 ################################################################################
@@ -40,7 +40,7 @@ switch_list() {
     fatal "Non-existing list id $list_id"
   fi
   printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
-  _update_file_and_show
+  _update_actual
 }
 
 ################################################################################
@@ -64,7 +64,7 @@ delete_list() {
       rm "$YACT_DIR"/.last
     else
       printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
-      _update_file_and_show
+      _update_actual
     fi
   fi
 }
@@ -94,7 +94,6 @@ modify_list() {
   fi
   sed -i'' -e "1s/.*/$description/" "$file" \
       || fatal "Could not update file: $file"
-  _update_file_and_show
 }
 
 ################################################################################
@@ -108,7 +107,7 @@ modify_list() {
 # -- Input: None
 # -- Output: The list status.
 ################################################################################
-show_list() {
+show_lists() {
   local indicator
   printf \
     "\n %s:\n\n" "$(format 'You have the following lists' "$BOLD" "$UNDERLINE")"
@@ -153,9 +152,9 @@ _file_header_with_info() {
 # -- Input: None
 # -- Output: The list status.
 ################################################################################
-_update_file_and_show() {
+_update_actual() {
   # shellcheck source=/dev/null
   . "$YACT_DIR/.last"
   FILE="$YACT_DIR/$TODO_FILE"
-  show_list
 }
+

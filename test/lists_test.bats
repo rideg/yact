@@ -14,7 +14,7 @@ teardown() {
   _clean_test_dir
 }
 
-@test "Show message if there is not list defined" {
+@test "Show message if there is no list defined" {
   # when
   run $YACT -l
   # then

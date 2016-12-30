@@ -33,39 +33,76 @@ main() {
   test -f $YACT_DIR/.last && . "$YACT_DIR"/.last
   export FILE=$YACT_DIR/$TODO_FILE
 
-  if [[ "$1" = '-l' ]]; then
-  if [[ "$2" = "new" ]]; then
-    shift 2
-    new_list "$@"
-  fi
-  fi
-
-  if [[ -z "$TODO_FILE" ]]; then
-    fatal "No todo list has been selected, please select/create one."
-  fi
-
-  if [[ "$1" = '-l' ]]; then
-  if [[ "$2" = "switch" ]]; then
-    switch_list "$3"
-  elif [[ "$2" = "delete" ]]; then
-    delete_list "$3"
-  elif [[ "$2" = "modify" ]]; then
-    shift 2
-    modify_list "$@"
-  else
-    show_list
-  fi
-  fi
-
-  test $# -eq 0 && show_tasks
-
-  test "$1" = 'done' && set_done "$2" 1
-  test "$1" = 'undone' && set_done "$2" 0
-  test "$1" = 'new' && shift && new_task "$@"
-  test "$1" = 'modify' && shift && modify_task "$@"
-  test "$1" = 'delete' && delete_task "$2"
-  test "$1" = 'move' && move_task "$2" "$3"
+  case "$1" in
+    -v) _show_version;;
+    -h) _show_help;;
+    -l) shift; _parse_list_opts "$@";;
+     *) _parse_task_opts "$@";;
+  esac
   exit_ 0
 }
 
+################################################################################
+# Checks if the the actual list exists. 
+# -- Globals:
+#  FILE - Current todo list's file.
+# -- Input: Arguments for list operations.
+# -- Output: None.
+################################################################################
+_require_actual() {
+   [[ -f "$FILE" ]] || \
+      fatal 'No todo list has been selected, please select/create one.'
+}
+
+################################################################################
+# Parses the options for lists.
+# -- Globals: None.
+# -- Input: Arguments for list operations.
+# -- Output: None.
+################################################################################
+_parse_list_opts() {
+  local cmd=$1
+  shift
+  if [[ "$cmd" != 'new' ]]; then
+    _require_actual
+  fi
+  if [[ -n "$cmd" ]]; then
+    case $cmd in
+       switch) switch_list "$1";;
+       new) new_list "$@";;
+       delete) delete_list "$1";;
+       modify) modify_list "$@";;
+       show) ;;
+       *) fatal "Cannot recognize command: $cmd"
+    esac
+  fi
+  show_lists
+}
+
+################################################################################
+# Parses the options for tasks.
+# -- Globals: None.
+# -- Input: Arguments for task operations.
+# -- Output: None.
+################################################################################
+_parse_task_opts() {
+  _require_actual
+  local cmd=$1
+  shift
+  if [[ -n "$cmd" ]]; then
+    case $cmd in
+      new) new_task "$@";;
+      delete) delete_task "$1";;
+      modify) modify_task "$@";;
+      move) move_task "$1" "$2";;
+      'done') set_done "$1" 1;;
+      undone) set_done "$1" 0;;
+      show) ;;
+      *) fatal "Cannot recognize command: $cmd";;
+   esac
+  fi
+  show_tasks
+}
+
 main "$@"
+
