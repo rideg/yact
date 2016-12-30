@@ -10,7 +10,6 @@ setup() {
 }
 
 teardown() {
-
   _clean_test_dir
 }
 
@@ -99,3 +98,14 @@ teardown() {
   # then
   assert_output -p $' * 1234123\tThe new description. (0/0)'
 }
+
+@test "Create new list interactive" {
+  # given
+  export EDITOR=nano
+  _spy_tool nano 'echo "The new description." > $1' 
+  # when
+  run $YACT -l new 
+  # then
+  assert_output -p $' * 1234123\tThe new description. (0/0)'
+}
+

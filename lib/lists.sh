@@ -9,15 +9,14 @@
 # -- Output: The list status after adding the new list
 ################################################################################
 new_list() {
-  if [[ "$#" -eq 0 ]]; then
-    fatal "Please provide description for the new list." 
-  fi
+  get_description "$@"
+  local description=$__
   id=$(timestamp)
   while [[ -e "$YACT_DIR/_${id}.txt" ]]; do
     ((id++))
   done
   file_name="_$id.txt"
-  printf "%s\n\n" "$*" > "$YACT_DIR/$file_name"
+  printf "%s\n\n" "$description" > "$YACT_DIR/$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
   _update_actual
 }

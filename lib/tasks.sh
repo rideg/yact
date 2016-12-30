@@ -22,19 +22,10 @@ set_done() {
 # -- Output: The item status after the change.
 ################################################################################
 new_task() {
-  local description
-  if [[ -n "$*" ]]; then
-    description="$*"
-  else
-    local tmp_file
-    tmp_file=$(create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)")
-    launch_editor "$tmp_file"
-    description=$(get_tmp_file_content "$tmp_file")
-  fi
-  test -z "$description" && fatal "Please provide task description."
+  get_description "$@"
   maxId=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((maxId++))
-  printf '%d;%s;0\n' $maxId "$description" >> "$FILE"
+  printf '%d;%s;0\n' $maxId "$__" >> "$FILE"
 }
 
 ################################################################################
@@ -70,19 +61,11 @@ delete_task() {
 # -- Output: The item status after the change.
 ################################################################################
 modify_task() {
-  local description
   local id=$1
   test -z "$id" && fatal "Please provide a task id."
   shift
-  if [[ -n "$*" ]]; then
-    description="$*"
-  else
-    local tmp_file
-    tmp_file=$(create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)")
-    launch_editor "$tmp_file"
-    description=$(get_tmp_file_content "$tmp_file")
-  fi
-  _change_task "$id" "$description"
+  get_description "$@"
+  _change_task "$id" "$__"
 }
 
 ################################################################################

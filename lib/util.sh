@@ -60,14 +60,16 @@ fatal() {
 
 ################################################################################
 # Creates a YACT template file for providing more complext descriptions.
-# -- Globals: None
+# -- Globals: 
+#  RUN - Directory for runtime temproray files.
 # -- Input:
 #  file_name - The name of the file.
-# -- Output: The path of the file.
+# -- Output: None 
+# -- Return: The path to the file.
 ################################################################################
 create_tmp_file() {
   local file_name
-  file_name="/tmp/yact_tmp$(timestamp).txt"
+  file_name="$RUN/_tmp.file.txt"
   cat > "$file_name" <<- EOF
 	# This is a YACT description template file.
 	# Empty, and all lines starting with # will be ignored.
@@ -76,7 +78,7 @@ create_tmp_file() {
   test $? -eq 1 && fatal "Cannot create tmp file: $file_name"
   # Appends the given line to the file.
   test -n "$*" && echo "$*" >> "$file_name"
-  printf '%s' "$file_name"
+  __=$file_name
 }
 
 ################################################################################
@@ -103,7 +105,8 @@ launch_editor() {
 # -- Globals: None
 # -- Input:
 #  file - The file to be read.
-# -- Output: The content of the file.
+# -- Output: None 
+# -- Return: The content of the file.
 ################################################################################
 get_tmp_file_content() {
   local file="$1"
@@ -155,11 +158,32 @@ wrap_text() {
 # -- Globals: None
 # -- Input:
 #  string - the string to be trimmed.
-# -- Output: trimmed string.
+# -- Output: None
+# -- Return: Trimmed string
 ################################################################################
 trim() {
   local string="$1"
   string=${string#"${string%%[![:space:]]*}"}
   string=${string%"${string##*[![:space:]]}"}
-  echo -n "$string"
+  __="$string"
 }
+
+################################################################################
+# Gets a description either from the arguments or from a tmp file. 
+# -- Globals: None
+# -- Input:
+#  description? - Description. 
+# -- Output: None
+# -- Return: Description.
+################################################################################
+get_description() {
+  if [[ -n "$*" ]]; then
+    __="$*"
+  else
+    create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)"
+    launch_editor "$__"
+    get_tmp_file_content "$__"
+  fi
+  test -z "$__" && fatal "Please provide description."
+}
+
