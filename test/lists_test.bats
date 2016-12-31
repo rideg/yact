@@ -3,10 +3,13 @@
 load 'load'
 load 'helper'
 
+TIME=1234123
+
 setup() {
   _setup_yact
   _set_no_color
-  _spy_tool date "printf '1234123'"
+  _spy_tool date "printf '$TIME'"
+  ((TIME++))
 }
 
 teardown() {
@@ -127,6 +130,7 @@ teardown() {
 
 @test "Should show tasks from list after switchig to a different list" {
   # given 
+  run $YACT -l new "Initial list"
   run $YACT add "Task 1"
   run $YACT -l new "Other list"
   # when
