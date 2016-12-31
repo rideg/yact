@@ -207,9 +207,9 @@ show_tasks() {
     ((nr_of_tasks++))
     done_text=''
     if [[ "$is_done" = '1' ]]; then
+      ((nr_of_done++))
       is_true "$HIDE_DONE" && continue
       done_text=$(format ok "$GREEN")
-      ((nr_of_done++))
     fi
     line_text=$(printf ' %3d [%-2s] %s\n' \
               "$id" "$done_text" "$(wrap_text "$task")")

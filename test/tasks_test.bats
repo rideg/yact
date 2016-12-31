@@ -246,3 +246,18 @@ __create_three_tasks() {
     assert_output -p '3 [  ] This is a task2'   
 }
 
+@test "show - hide done tasks if HIDE_DONE is set" {
+    # given
+    run $YACT add "This is a task1"
+    run $YACT add "This is a task2"
+    run $YACT add "This is a task3"
+    run $YACT done 2
+    echo 'HIDE_DONE=1' >> "$YACT_DIR/config"
+    # when
+    run $YACT
+    # then
+    assert_output -p 'Main list for testing - (1/3)'
+    assert_output -p '1 [  ] This is a task1'
+    refute_output -p '2 [  ] This is a task2'
+    assert_output -p '3 [  ] This is a task3'
+} 
