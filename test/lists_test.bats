@@ -100,7 +100,6 @@ teardown() {
 
 @test "Modify list description (interactive)" {
   # given
-  export EDITOR=nano
   _spy_tool nano 'echo "The new description" > $1' 
   run $YACT -l new "This is a list."
   # when
@@ -111,7 +110,6 @@ teardown() {
 
 @test "Create new list interactive" {
   # given
-  export EDITOR=nano
   _spy_tool nano 'echo "The new description." > $1' 
   # when
   run $YACT -l new 

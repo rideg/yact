@@ -86,7 +86,6 @@ teardown() {
 
 @test "Should modify item description (interactive)" {
     # given
-    export EDITOR=nano
     _spy_tool nano 'echo "The new description" > $1'
 
     run $YACT add "A new task for test"
@@ -207,7 +206,6 @@ __create_three_tasks() {
 
 @test "Use editor if no description if provided for the new task" {
     # given
-    export EDITOR=nano
     _spy_tool nano 'echo "The new description" > $1'
     # when
     run $YACT add 

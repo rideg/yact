@@ -24,6 +24,7 @@ _setup_yact() {
    mkdir -p "${YACT_DIR}"
    mkdir -p "${EXECUTABLE_DIR}"
    export PATH="${EXECUTABLE_DIR}:${PATH}"
+   export EDITOR=nano
 }
 
 ################################################################################

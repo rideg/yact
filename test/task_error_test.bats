@@ -48,7 +48,6 @@ teardown() {
 
 @test "new - interactive mode with empty tmp file show error" {
   # given
-  export EDITOR=nano
   _spy_tool nano ':' 
   # when
   run $YACT add 
