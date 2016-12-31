@@ -29,7 +29,7 @@ add_task() {
     shift 2
   fi
 
-  get_description "$@"
+  get_description "$*" " "
   max_id=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
   ((max_id++))
   printf '%d;%s;0\n' $max_id "$__" >> "$FILE"
@@ -85,7 +85,7 @@ modify_task() {
   local id=$1
   test -z "$id" && fatal "Please provide a task id."
   shift
-  get_description "$@"
+  get_description "$*" "$(grep "^$id;" "$FILE" | cut -d';' -f2)"
   _change_task "$id" "$__"
 }
 

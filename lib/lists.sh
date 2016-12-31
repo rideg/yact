@@ -9,7 +9,7 @@
 # -- Output: The list status after adding the new list
 ################################################################################
 new_list() {
-  get_description "$@"
+  get_description "$*" " "
   local description=$__
   id=$(timestamp)
   while [[ -e "$YACT_DIR/_${id}.txt" ]]; do
@@ -90,17 +90,11 @@ modify_list() {
   local id=$1
   test -n "$id" || fatal 'Please provide an id.'
   local file="${YACT_DIR}/_${id}.txt"
-  test -f "$file" || fatal "Non existing file. ${file}"
+  test -f "$file" || fatal "Non-existing file. ${file}"
   shift
-  description="$*"
-  if [[ -z "$description" ]]; then
-    local tmp_file
-    tmp_file="$(create_tmp_file "$(head -n1 "$file")")"
-    launch_editor "$tmp_file"
-    description=$(get_tmp_file_content "$tmp_file")
-  fi
-  sed -i'' -e "1s/.*/$description/" "$file" \
-      || fatal "Could not update file: $file"
+  get_description "$*" "$(head -n1 "$file")"
+  sed -i'' -e "1s/.*/$__/" "$file" 2>/dev/null \
+		  || fatal "Could not update file: $file"
 }
 
 ################################################################################

@@ -173,17 +173,26 @@ trim() {
 # -- Globals: None
 # -- Input:
 #  description? - Description. 
+#  original - Original description.
 # -- Output: None
 # -- Return: Description.
 ################################################################################
 get_description() {
-  if [[ -n "$*" ]]; then
-    __="$*"
+  local new
+  local old
+  if [[ $# -eq 2 ]]; then
+	new=$1
+	old=$2
   else
-    create_tmp_file "$(grep "^$id;" "$FILE" | cut -d';' -f2)"
+	old=$1
+  fi
+  if [[ -n "$new" ]]; then
+    __="$new"
+  else
+    create_tmp_file "$old" 
     launch_editor "$__"
     get_tmp_file_content "$__"
   fi
-  test -z "$__" && fatal "Please provide description."
+  [[ -z "$__" ]] && fatal "Please provide description."
 }
 
