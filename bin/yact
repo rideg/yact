@@ -72,11 +72,13 @@ _parse_list_opts() {
        new) new_list "$@";;
        delete) delete_list "$1";;
        modify) modify_list "$@";;
-       show) ;;
+       show) show_list; return 0;;
        *) fatal "Cannot recognize command: $cmd"
     esac
+    show_tasks
+  else 
+    show_lists
   fi
-  show_lists
 }
 
 ################################################################################

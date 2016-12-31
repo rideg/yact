@@ -24,6 +24,7 @@ teardown() {
   # when
   run $YACT -l new This is a list.
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThis is a list. (0/0)'
 }
 
@@ -33,6 +34,7 @@ teardown() {
   # when
   run $YACT -l new This is a list2.
   # then
+  run $YACT -l
   assert_output -p $' 1234123\tThis is a list. (0/0)'
   assert_output -p $' * 1234124\tThis is a list2. (0/0)'
 }
@@ -44,6 +46,7 @@ teardown() {
   # when
   run $YACT -l delete 1234124 < <(echo y)
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThis is a list. (0/0)'
 }
 
@@ -63,6 +66,7 @@ teardown() {
   # when
   run $YACT -l delete 1234124 < <(echo n)
   # then
+  run $YACT -l
   assert_output -p $' * 1234124\tThis is a list2. (0/0)'
 }
 
@@ -73,6 +77,7 @@ teardown() {
   #when
   run $YACT -l switch 1234123
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThis is a list. (0/0)'
   assert_output -p $' 1234124\tThis is a list2. (0/0)'
 }
@@ -95,6 +100,7 @@ teardown() {
   # when
   run $YACT -l modify 1234123 "The new description."
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThe new description. (0/0)'
 }
 
@@ -105,6 +111,7 @@ teardown() {
   # when
   run $YACT -l modify 1234123 "The new description."
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThe new description. (0/0)'
 }
 
@@ -114,6 +121,17 @@ teardown() {
   # when
   run $YACT -l new 
   # then
+  run $YACT -l
   assert_output -p $' * 1234123\tThe new description. (0/0)'
+}
+
+@test "Should show tasks from list after switchig to a different list" {
+  # given 
+  run $YACT add "Task 1"
+  run $YACT -l new "Other list"
+  # when
+  run $YACT -l switch 1234123
+  # then
+  assert_output -p '1 [  ] Task 1'
 }
 
