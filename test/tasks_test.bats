@@ -291,3 +291,16 @@ __create_three_tasks() {
    refute_output -p "3 [  ] task3"
    assert_output -p "2 [  ] task4"
 }
+
+@test "delete - should not ask for consent if -f is given" {
+  # given
+  run $YACT add "task1"
+  run $YACT add "task2"
+  # when
+  run $YACT delete -f 2
+  # then
+  refute_output -p 'Are you sure you want to delete? y/[n]'
+  assert_output -p '1 [  ] task1'
+  refute_output -p '2 [  ] task2'
+}
+

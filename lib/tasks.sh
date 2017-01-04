@@ -49,10 +49,17 @@ add_task() {
 # -- Output: The item status after the deletion.
 ################################################################################
 delete_task() {
+  local force=0
+  if [[ "$1" == "-f" ]]; then
+    force=1
+    shift
+  fi
   [[ $# -eq 0 ]] && fatal "Please provide a task id."
-  echo "Are you sure you want to delete? y/[n]"
-  read -r -s -n 1 consent 
-  if [[ "$consent" == "y" ]]; then
+  if [[ $force -eq 0 ]]; then
+    echo "Are you sure you want to delete? y/[n]"
+    read -r -s -n 1 consent 
+  fi
+  if [[ $force -eq 1 || "$consent" == "y" ]]; then
     while IFS=$'\n' read -r task_id; do
       local tmp_file="$RUN/.tmp"
       local task_to_delete
