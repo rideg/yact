@@ -55,3 +55,15 @@ teardown() {
   assert_output -p $'Please provide description.'
 }
 
+@test "delete - should show error message if one id is incorrect" {
+  # given
+  run $YACT add "task1"
+  run $YACT add "task2"
+  run $YACT add "task3"
+  run $YACT add "task4"
+  # when
+  run $YACT delete 2 bela < <(echo y)
+  # then
+  assert_output -p "Cannot find line with id: bela"
+}
+

@@ -76,7 +76,7 @@ _parse_list_opts() {
        *) fatal "Cannot recognize command: $cmd"
     esac
     show_tasks
-  else 
+  else
     show_lists
   fi
 }
@@ -94,7 +94,7 @@ _parse_task_opts() {
   if [[ -n "$cmd" ]]; then
     case $cmd in
       add) add_task "$@";;
-      delete) delete_task "$1";;
+      delete) delete_task "$@";;
       modify) modify_task "$@";;
       move) move_task "$1" "$2";;
       'done') set_done "$1" 1;;

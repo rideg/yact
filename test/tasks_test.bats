@@ -261,3 +261,33 @@ __create_three_tasks() {
     refute_output -p '2 [  ] This is a task2'
     assert_output -p '3 [  ] This is a task3'
 } 
+
+@test "delete - should delete multiple tasks" {
+   # given
+   run $YACT add "task1"
+   run $YACT add "task2"
+   run $YACT add "task3"
+   run $YACT add "task4"
+   # when
+   run $YACT delete 2 3 < <(echo y)
+   # then
+   assert_output -p "1 [  ] task1"
+   refute_output -p "2 [  ] task2"
+   refute_output -p "3 [  ] task3"
+   assert_output -p "2 [  ] task4"
+}
+
+@test "delete - should delete multiple tasks (reverse order)" {
+   # given
+   run $YACT add "task1"
+   run $YACT add "task2"
+   run $YACT add "task3"
+   run $YACT add "task4"
+   # when
+   run $YACT delete 3 2 < <(echo y)
+   # then
+   assert_output -p "1 [  ] task1"
+   refute_output -p "2 [  ] task2"
+   refute_output -p "3 [  ] task3"
+   assert_output -p "2 [  ] task4"
+}
