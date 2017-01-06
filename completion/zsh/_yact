@@ -28,6 +28,7 @@ __yact_task_commands() {
     show:'Shows the tasks from the current list'
     modify:'Modifies the a given task'
     move:'Moves the given task to a given position within the list'
+	config:'Configure global variables'
   )
   _describe -t task-commands 'task related commands' list
 }
