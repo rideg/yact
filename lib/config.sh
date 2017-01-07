@@ -19,7 +19,8 @@ set_config() {
   local config_file="$YACT_DIR/config"
   [[ ! -f "$config_file" ]] && touch "$config_file"
   declare -a split
-  IFS='=' read -ra split <<< "$1"
+  # this eval is for the sake of vim syntax highligting.
+  eval "IFS='=' read -ra split <<< \"$1"\"
   [[ ${#split[@]} -ne 2 ]] && fatal "Invalid config. $1"
   local variable=${__YACT_CONFIG["${split[0]}"]}
   [[ -n "$variable" ]] || fatal "Unknown config parameter: ${split[0]}"
