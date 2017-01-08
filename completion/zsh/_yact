@@ -47,23 +47,28 @@ __show_list_ids() {
 }
 
 __yact_list_tasks() {
-  local -a file list
+  local file
   local cmd;
   cmd=$1
   # shellcheck source=/dev/null
   test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
   file=$YACT_DIR/$TODO_FILE
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
+    declare -a list description
+    local max_width 
+	max_width="$(echo "$(wc -l < "$file")-2" | bc)"
+	max_width="${#max_width}"
     while IFS=';' read -r id task task_status; do
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
             || ($cmd == 'undone' && "$task_status" -eq 1 ) \
             || $cmd == 'delete' || $cmd == 'modify' ) \
             && -n "$task" ]]; then
-        list+=("$id":"$task")
+        list+=("$id")
+		description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
       fi
-    done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
+    done <<<"$(sed '1,2d'  "$file")"
     if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
-      _describe -t task-ids 'task ids' list
+	  compadd -V "task-ids" -Q -l -d description -a list 
     else
       _message -r "There is no appropriate task on this list."
     fi
