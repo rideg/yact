@@ -4,28 +4,28 @@
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 
 __yact_list_commands() {
-   local -a list
-   list=(
-     new:'Creates a new list.'
-     delete:'Deletes and existing list'
-     modify:'Modifies the description of a current a list'
-     switch:'Switches to the given list'
-     show:'Shows all the extisting lists'
-   )
-   _describe -t list-commands 'list related commands' list
+  local -a list
+  list=(
+  new:'Creates a new list.'
+  delete:'Deletes and existing list'
+  modify:'Modifies the description of a current a list'
+  switch:'Switches to the given list'
+  show:'Shows all the extisting lists'
+  )
+  _describe -t list-commands 'list related commands' list
 }
 
 __yact_task_commands() {
   local -a list
   list=(
-    add:'Adds a new task to the current list'
-    delete:'Removes the given task from the current list'
-    done:'Marks the given task as completed'
-    undone:'Marks the given task as not yet finished'
-    show:'Shows the tasks from the current list'
-    modify:'Modifies the a given task'
-    move:'Moves the given task to a given position within the list'
-	config:'Configure global variables'
+  add:'Adds a new task to the current list'
+  delete:'Removes the given task from the current list'
+  'done':'Marks the given task as completed'
+  undone:'Marks the given task as not yet finished'
+  show:'Shows the tasks from the current list'
+  modify:'Modifies the a given task'
+  move:'Moves the given task to a given position within the list'
+  config:'Configure global variables'
   )
   _describe -t task-commands 'task related commands' list
 }
@@ -57,26 +57,25 @@ __yact_list_tasks() {
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
     declare -a list description
     local max_width 
-	max_width="$(echo "$(wc -l < "$file")-2" | bc)"
-	max_width="${#max_width}"
+    max_width="$(echo "$(wc -l < "$file")-2" | bc)"
+    max_width="${#max_width}"
     while IFS=';' read -r id task task_status; do
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
-            || ($cmd == 'undone' && "$task_status" -eq 1 ) \
-            || $cmd == 'delete' || $cmd == 'modify' \
-			|| $cmd == 'move' ) \
-            && -n "$task" ]]; then
-        list+=("$id")
-		description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
-      fi
-    done <<<"$(sed '1,2d'  "$file")"
-    if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
-	  compadd -V "task-ids" -Q -l -d description -a list 
-    else
-      _message -r "There is no appropriate task on this list."
+        || ($cmd == 'undone' && "$task_status" -eq 1 ) \
+        || $cmd == 'delete' || $cmd == 'modify' \
+        || $cmd == 'move' ) && -n "$task" ]]; then
+      list+=("$id")
+      description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
     fi
+  done <<<"$(sed '1,2d'  "$file")"
+  if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
+    compadd -V "task-ids" -Q -l -d description -a list 
   else
-    _message -r "You don't have any list, please create on first"
+    _message -r "There is no appropriate task on this list."
   fi
+else
+  _message -r "You don't have any list, please create on first"
+fi
 }
 
 __extended_task_id_list() {
@@ -89,67 +88,67 @@ __extended_task_id_list() {
   max_id="$(echo "$(wc -l < "$file")-2" | bc)"
   while [[ $current -le $max_id ]]; do
     list+=("$current")
-	((current++))
+    ((current++))
   done
   compadd -V "extended-ids" -Q -d list -a list
 }
 
 __yact_main() {
   local curcontext="$curcontext" state line
-	typeset -A opt_args
+  typeset -A opt_args
 
   _arguments -C \
-		'-l[Work with lists]: :->lists' \
-		'-v[version]: :->end' \
-		'-h[help]: :->end' \
-		': :->tasks' \
-		'(-)*:: :->arg' && return
+    '-l[Work with lists]: :->lists' \
+    '-v[version]: :->end' \
+    '-h[help]: :->end' \
+    ': :->tasks' \
+    '(-)*:: :->arg' && return
 
-   case "$state" in
-       (tasks)
-          case "$words[1]" in
-           (delete|switch|modify) __show_list_ids;;
-           (new|show) ;;
-           *) __yact_task_commands;;
-          esac;
+  case "$state" in
+    (tasks)
+      case "$words[1]" in
+        (delete|switch|modify) __show_list_ids;;
+        (new|show) ;;
+        *) __yact_task_commands;;
+      esac;
+      ;;
+    (lists)
+      __yact_list_commands
+      ;;
+    (arg)
+      case "$words[1]" in
+        delete)
+          if [[ ${#words[@]} -eq 2 \
+            || ( ${#words[@]} -eq 3 \
+            && $words[2] == '-f' ) ]]; then
+          _arguments \
+            '-f[Force delete]' \
+            '*: :__yact_list_tasks_for_delete'
+        fi
         ;;
-        (lists)
-            __yact_list_commands
+      ('done'|undone|modify)
+        if [[ ${#words[@]} -eq 2 ]]; then
+          __yact_list_tasks "$words[1]"
+        fi
         ;;
-        (arg)
-           case "$words[1]" in
-		    delete)
-			   if [[ ${#words[@]} -eq 2 \
-					 || ( ${#words[@]} -eq 3 \
-					 && $words[2] == '-f' ) ]]; then
-			     _arguments \
-			         '-f[Force delete]' \
-			         '*: :__yact_list_tasks_for_delete'
-	           fi
-			   ;;
-            ('done'|undone|modify)
-				if [[ ${#words[@]} -eq 2 ]]; then
-                  __yact_list_tasks "$words[1]"
-		        fi
-            ;;
-	        move)
-				if [[ ${#words[@]} -eq 2 ]]; then
-				  __yact_list_tasks move
-                elif [[ ${#words[@]} -eq 3 ]]; then
-                  __extended_task_id_list top bottom up down
-				fi
-				;;
-			add)
-				if [[ ${#words[@]} -eq 2 ]]; then
-				_arguments '-p[Insert into a given position]' \
-						'*:: :->arg'
-				elif [[ ${#words[@]} -eq 3 && ${words[2]} == '-p' ]]; then
-                  __extended_task_id_list top bottom
-				fi
-				;;
-           esac
+      move)
+        if [[ ${#words[@]} -eq 2 ]]; then
+          __yact_list_tasks move
+        elif [[ ${#words[@]} -eq 3 ]]; then
+          __extended_task_id_list top bottom up down
+        fi
+        ;;
+      add)
+        if [[ ${#words[@]} -eq 2 ]]; then
+          _arguments '-p[Insert into a given position]' \
+            '*:: :->arg'
+        elif [[ ${#words[@]} -eq 3 && ${words[2]} == '-p' ]]; then
+          __extended_task_id_list top bottom
+        fi
         ;;
     esac
+    ;;
+esac
 }
 
 __yact_main

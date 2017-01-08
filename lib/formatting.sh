@@ -46,10 +46,10 @@ _init_formatting() {
 # -- Output: The formatted string.
 ################################################################################
 format() {
- local text=$1
- shift
- local IFS=''
- printf "%s%s%s" "$*" "$text" "$NORMAL"
+  local text=$1
+  shift
+  local IFS=''
+  printf "%s%s%s" "$*" "$text" "$NORMAL"
 }
 
 _init_formatting

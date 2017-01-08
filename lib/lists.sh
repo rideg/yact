@@ -55,7 +55,7 @@ switch_list() {
 delete_list() {
   local to_delete="$FILE"
   local consent
-  
+
   test -n "$1" && to_delete="$YACT_DIR/_${1}.txt"
 
   echo "Are you sure to delete? y/[n]"
@@ -94,7 +94,7 @@ modify_list() {
   shift
   get_description "$*" "$(head -n1 "$file")"
   sed -i'' -e "1s/.*/$__/" "$file" 2>/dev/null \
-		  || fatal "Could not update file: $file"
+    || fatal "Could not update file: $file"
 }
 
 ################################################################################
@@ -114,11 +114,11 @@ show_lists() {
     "\n %s:\n\n" "$(format 'You have the following lists' "$BOLD" "$UNDERLINE")"
   for actual_file in $(ls -ur "$YACT_DIR"/_*.txt); do
     if [[ "$actual_file" = "$FILE" ]]; then
-     indicator='*'
+      indicator='*'
     fi
     printf ' %-1s %s\t%s\n' "$indicator" \
-            "$(_TMP=${actual_file/*_/}; printf '%s' "${_TMP/\.txt/}")" \
-            "$(_file_header_with_info "$actual_file")"
+      "$(_TMP=${actual_file/*_/}; printf '%s' "${_TMP/\.txt/}")" \
+      "$(_file_header_with_info "$actual_file")"
     indicator=''
   done
   printf '\n'

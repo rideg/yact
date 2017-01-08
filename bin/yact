@@ -37,7 +37,7 @@ main() {
     -v) _show_version;;
     -h) _show_help;;
     -l) shift; _parse_list_opts "$@";;
-     *) _parse_task_opts "$@";;
+    *) _parse_task_opts "$@";;
   esac
   exit_ 0
 }
@@ -50,8 +50,8 @@ main() {
 # -- Output: None.
 ################################################################################
 _require_actual() {
-   [[ -f "$FILE" ]] || \
-      fatal 'No todo list has been selected, please select/create one.'
+  [[ -f "$FILE" ]] || \
+    fatal 'No todo list has been selected, please select/create one.'
 }
 
 ################################################################################
@@ -68,12 +68,12 @@ _parse_list_opts() {
   fi
   if [[ -n "$cmd" ]]; then
     case $cmd in
-       switch) switch_list "$1";;
-       new) new_list "$@";;
-       delete) delete_list "$1";;
-       modify) modify_list "$@";;
-       show) show_list; return 0;;
-       *) fatal "Cannot recognize command: $cmd"
+      switch) switch_list "$1";;
+      new) new_list "$@";;
+      delete) delete_list "$1";;
+      modify) modify_list "$@";;
+      show) show_list; return 0;;
+      *) fatal "Cannot recognize command: $cmd"
     esac
     show_tasks
   else
@@ -102,7 +102,7 @@ _parse_task_opts() {
       config) set_config "$1";;
       show) ;;
       *) fatal "Cannot recognize command: $cmd";;
-   esac
+    esac
   fi
   show_tasks
 }

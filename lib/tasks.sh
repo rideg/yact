@@ -35,7 +35,7 @@ add_task() {
   printf '%d;%s;0\n' $max_id "$__" >> "$FILE"
 
   if [[ -n "$position" ]]; then
-   move_task "$max_id" "$position"
+    move_task "$max_id" "$position"
   fi
 }
 
@@ -73,12 +73,12 @@ delete_task() {
         else
           task_to_delete="$task"
         fi
-       done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
+      done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
 
       [[ -z "$task_to_delete" ]] && fatal "Cannot find line with id: $task_id"
       mv "$RUN/.tmp" "$FILE"
-	  unset task_to_delete
-	done <<<"$(printf '%s\n' "$@" | sort -gr)"
+      unset task_to_delete
+    done <<<"$(printf '%s\n' "$@" | sort -gr)"
   fi
 }
 
@@ -125,7 +125,7 @@ move_task() {
     head -n2 "$FILE" > "$tmp_file"
     task_line=$(sed '1,2d' "$FILE" | grep -e "^${id};")
     test -n "$task_line" \
-            || fatal "There is no task with the provided id [${id}]"
+      || fatal "There is no task with the provided id [${id}]"
 
     local start=$id
     local end=$position
@@ -133,28 +133,28 @@ move_task() {
     local verify_position=0
     if [[ $end -lt $start ]]; then
       local tmp=$end
-      end=$start
-      start=$tmp
-      shift_value=1
-    fi
-    while IFS=';' read -r current_id rest; do
-      if [[ "$current_id" -ge $start && "$current_id" -le $end ]]; then
-        if [[ "$current_id" -eq "$position" ]]; then 
-           printf '%s;%s\n' "$current_id" "${task_line/${id};/}" >> "$tmp_file"
-           printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
-           verify_position=1
-        elif [[ "$current_id" -eq "$id" ]]; then
-            :
-        else
-          printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
-        fi
-      else
-        printf '%s;%s\n' "$current_id" "$rest" >> "$tmp_file"
-      fi
-    done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
-    test $verify_position -eq 1 || fatal "Non existing position [${position}]"
-    mv "$tmp_file" "$FILE"
+    end=$start
+    start=$tmp
+    shift_value=1
   fi
+  while IFS=';' read -r current_id rest; do
+    if [[ "$current_id" -ge $start && "$current_id" -le $end ]]; then
+      if [[ "$current_id" -eq "$position" ]]; then 
+        printf '%s;%s\n' "$current_id" "${task_line/${id};/}" >> "$tmp_file"
+        printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
+        verify_position=1
+      elif [[ "$current_id" -eq "$id" ]]; then
+        :
+      else
+        printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
+      fi
+    else
+      printf '%s;%s\n' "$current_id" "$rest" >> "$tmp_file"
+    fi
+  done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
+  test $verify_position -eq 1 || fatal "Non existing position [${position}]"
+  mv "$tmp_file" "$FILE"
+fi
 }
 
 ################################################################################
@@ -172,21 +172,21 @@ _get_position() {
   if ! is_number "$position"; then
     number_of_items=$(($(sed '1,2d'  "$FILE" | wc -l)))
     case "$position" in
-          up)
-            position=$id
-            test "$position" -gt 1 && ((position--))
-          ;;
-          top)
-            position=1
-          ;;
-          down)
-            position=$id
-            test "$position" -lt "$number_of_items" && ((position++))
-          ;;
-          bottom)
-            position="$number_of_items"
-          ;;
-      esac
+      up)
+        position=$id
+        test "$position" -gt 1 && ((position--))
+        ;;
+      top)
+        position=1
+        ;;
+      down)
+        position=$id
+        test "$position" -lt "$number_of_items" && ((position++))
+        ;;
+      bottom)
+        position="$number_of_items"
+        ;;
+    esac
   fi
   echo -n "$position"
 }
@@ -222,14 +222,14 @@ show_tasks() {
       done_text=$(format ok "$GREEN")
     fi
     line_text=$(printf ' %3d [%-2s] %s\n' \
-              "$id" "$done_text" "$(wrap_text "$task")")
+      "$id" "$done_text" "$(wrap_text "$task")")
     list_text="${list_text}${line_text}\n"
   done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
 
   printf '\n %s - (%d/%d)\n\n' \
-         "$(format "$(head -n1 "$FILE")" \
-         "$UNDRLINE" "$BOLD")" \
-         $nr_of_done $nr_of_tasks
+    "$(format "$(head -n1 "$FILE")" \
+    "$UNDRLINE" "$BOLD")" \
+    $nr_of_done $nr_of_tasks
 
   if [[ $nr_of_tasks -eq 0 ]]; then
     echo -e " There are now tasks defined yet.\n"
@@ -282,7 +282,7 @@ _change_task() {
     fi
   done <<<"$(sed '1,2d'  "$FILE")"
   if [[ "$is_changed" -eq 0 ]]; then
-   fatal "Cannot find task with id $id"
+    fatal "Cannot find task with id $id"
   fi
   mv "$RUN/tmp_task.txt" "$FILE"
 }

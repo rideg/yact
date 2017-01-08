@@ -2,8 +2,8 @@
 
 # Mapping between human-readable and internal config
 # variable naming.
-declare -A __YACT_CONFIG=(\
-  [hide_done]=HIDE_DONE \
+declare -A __YACT_CONFIG=(
+  [hide_done]=HIDE_DONE 
 )
 
 ################################################################################
@@ -26,7 +26,7 @@ set_config() {
   [[ -n "$variable" ]] || fatal "Unknown config parameter: ${split[0]}"
   if grep -Fxq "export $variable=.*" "$config_file"; then
     sed -i '' "s/export $variable=.*/export $variable=${split[1]}/" \
-    "$config_file" 2> /dev/null
+      "$config_file" 2> /dev/null
   else
     echo "export $variable=${split[1]}" >> "$config_file"
   fi

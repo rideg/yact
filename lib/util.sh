@@ -54,8 +54,8 @@ exit_() {
 # -- Output: The error message.
 ################################################################################
 fatal() {
- printf '%s\n' "$1" >&2
- exit_ 1
+  printf '%s\n' "$1" >&2
+  exit_ 1
 }
 
 ################################################################################
@@ -74,7 +74,7 @@ create_tmp_file() {
 	# This is a YACT description template file.
 	# Empty, and all lines starting with # will be ignored.
 	
-	EOF
+EOF
   test $? -eq 1 && fatal "Cannot create tmp file: $file_name"
   # Appends the given line to the file.
   test -n "$*" && echo "$*" >> "$file_name"
@@ -141,9 +141,9 @@ wrap_text() {
         line=''
       fi
       if [[ ${#line} -gt 0 ]]; then
-       line=$t
+        line=$t
       else
-       line=$word
+        line=$word
       fi
     done
   else
@@ -181,10 +181,10 @@ get_description() {
   local new
   local old
   if [[ $# -eq 2 ]]; then
-	new=$1
-	old=$2
+    new=$1
+    old=$2
   else
-	old=$1
+    old=$1
   fi
   if [[ -n "$new" ]]; then
     __="$new"
