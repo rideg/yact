@@ -46,6 +46,10 @@ __show_list_ids() {
   fi
 }
 
+__yact_list_tasks_for_delete() {
+  __yact_list_tasks delete
+}
+
 __yact_list_tasks() {
   local file
   local cmd;
@@ -61,7 +65,8 @@ __yact_list_tasks() {
     while IFS=';' read -r id task task_status; do
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
             || ($cmd == 'undone' && "$task_status" -eq 1 ) \
-            || $cmd == 'delete' || $cmd == 'modify' ) \
+            || $cmd == 'delete' || $cmd == 'modify' \
+			|| $cmd == 'move' ) \
             && -n "$task" ]]; then
         list+=("$id")
 		description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
@@ -77,6 +82,21 @@ __yact_list_tasks() {
   fi
 }
 
+__extended_task_id_list() {
+  local max_id
+  local current=1
+  declare -a list
+  list+=($@)
+  test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
+  file=$YACT_DIR/$TODO_FILE
+  max_id="$(echo "$(wc -l < "$file")-2" | bc)"
+  while [[ $current -le $max_id ]]; do
+    list+=("$current")
+	((current++))
+  done
+  compadd -V "extended-ids" -Q -d list -a list
+}
+
 __yact_main() {
   local curcontext="$curcontext" state line
 	typeset -A opt_args
@@ -90,7 +110,7 @@ __yact_main() {
 
    case "$state" in
        (tasks)
-          case "$opt_args" in
+          case "$words[1]" in
            (delete|switch|modify) __show_list_ids;;
            (new|show) ;;
            *) __yact_task_commands;;
@@ -100,12 +120,28 @@ __yact_main() {
             __yact_list_commands
         ;;
         (arg)
-           case "${${line[@]}[1]}" in
-            ('done'|undone|delete|modify)
-              if [[ ${#${line[@]}} -eq 1 ]]; then
-                __yact_list_tasks ${${line[@]}[1]}
-              fi 
+           case "$words[1]" in
+		    delete)
+			   if [[ ${#words[@]} -eq 2 \
+					 || ( ${#words[@]} -eq 3 \
+					 && $words[2] == '-f' ) ]]; then
+			     _arguments \
+			         '-f[Force delete]' \
+			         '*: :__yact_list_tasks_for_delete'
+	           fi
+			   ;;
+            ('done'|undone|modify)
+				if [[ ${#words[@]} -eq 2 ]]; then
+                  __yact_list_tasks "$words[1]"
+		        fi
             ;;
+	        move)
+				if [[ ${#words[@]} -eq 2 ]]; then
+				  __yact_list_tasks move
+                elif [[ ${#words[@]} -eq 3 ]]; then
+                  __extended_task_id_list top bottom up down
+				fi
+				;;
            esac;
         ;;
     esac;
