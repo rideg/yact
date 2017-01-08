@@ -1,9 +1,6 @@
 #compdef yact
 #autoload
 
-zstyle -T ':completion:*:*:yact:*' tag-order \
-      && zstyle ':completion:*:*:yact:*' tag-order 'task-commands'
-
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 
 __yact_list_commands() {
@@ -150,9 +147,9 @@ __yact_main() {
                   __extended_task_id_list top bottom
 				fi
 				;;
-           esac;
+           esac
         ;;
-    esac;
+    esac
 }
 
 __yact_main
