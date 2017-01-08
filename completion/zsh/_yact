@@ -106,7 +106,7 @@ __yact_main() {
 
   case "$state" in
     (tasks)
-      case "$words[1]" in
+      case "$words[3]" in
         (delete|switch|modify) __show_list_ids;;
         (new|show) ;;
         *) __yact_task_commands;;
