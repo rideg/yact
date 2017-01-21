@@ -3,15 +3,15 @@
 # Mapping between human-readable and internal config
 # variable naming.
 declare -A __YACT_CONFIG=(
-  [hide_done]=HIDE_DONE 
+  [hide_done]=HIDE_DONE
 )
 
 ################################################################################
-# Updates a given config param with a given value. 
+# Updates a given config param with a given value.
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.
 # -- Input:
-#  config - Configuration description (must be a in a format of name=value) 
+#  config - Configuration description (must be a in a format of name=value)
 # -- Output: None
 # -- Return: None
 ################################################################################

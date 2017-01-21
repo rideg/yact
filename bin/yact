@@ -43,7 +43,7 @@ main() {
 }
 
 ################################################################################
-# Checks if the the actual list exists. 
+# Checks if the the actual list exists.
 # -- Globals:
 #  FILE - Current todo list's file.
 # -- Input: Arguments for list operations.

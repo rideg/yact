@@ -57,13 +57,13 @@ delete_task() {
   [[ $# -eq 0 ]] && fatal "Please provide a task id."
   if [[ $force -eq 0 ]]; then
     echo "Are you sure you want to delete? y/[n]"
-    read -r -s -n 1 consent 
+    read -r -s -n 1 consent
   fi
   if [[ $force -eq 1 || "$consent" == "y" ]]; then
     while IFS=$'\n' read -r task_id; do
       local tmp_file="$RUN/.tmp"
       local task_to_delete
-      test -z "$task_id" 
+      test -z "$task_id"
       head -n2 "$FILE" > "$tmp_file"
       while IFS=';' read -r id task is_done; do
         if [[ "$id" -lt $task_id ]]; then
@@ -139,7 +139,7 @@ move_task() {
   fi
   while IFS=';' read -r current_id rest; do
     if [[ "$current_id" -ge $start && "$current_id" -le $end ]]; then
-      if [[ "$current_id" -eq "$position" ]]; then 
+      if [[ "$current_id" -eq "$position" ]]; then
         printf '%s;%s\n' "$current_id" "${task_line/${id};/}" >> "$tmp_file"
         printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
         verify_position=1

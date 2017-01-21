@@ -43,7 +43,7 @@ switch_list() {
 }
 
 ################################################################################
-# Deletes the given list and marks the last recently used as current. Or if no 
+# Deletes the given list and marks the last recently used as current. Or if no
 # id is provided it deletes the current list.
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.
@@ -98,7 +98,7 @@ modify_list() {
 }
 
 ################################################################################
-# List the currently available todo lists and indicates the current with a * 
+# List the currently available todo lists and indicates the current with a *
 # mark.
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.

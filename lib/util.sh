@@ -60,11 +60,11 @@ fatal() {
 
 ################################################################################
 # Creates a YACT template file for providing more complext descriptions.
-# -- Globals: 
+# -- Globals:
 #  RUN - Directory for runtime temproray files.
 # -- Input:
 #  file_name - The name of the file.
-# -- Output: None 
+# -- Output: None
 # -- Return: The path to the file.
 ################################################################################
 create_tmp_file() {
@@ -105,7 +105,7 @@ launch_editor() {
 # -- Globals: None
 # -- Input:
 #  file - The file to be read.
-# -- Output: None 
+# -- Output: None
 # -- Return: The content of the file.
 ################################################################################
 get_tmp_file_content() {
@@ -169,10 +169,10 @@ trim() {
 }
 
 ################################################################################
-# Gets a description either from the arguments or from a tmp file. 
+# Gets a description either from the arguments or from a tmp file.
 # -- Globals: None
 # -- Input:
-#  description? - Description. 
+#  description? - Description.
 #  original - Original description.
 # -- Output: None
 # -- Return: Description.
@@ -189,7 +189,7 @@ get_description() {
   if [[ -n "$new" ]]; then
     __="$new"
   else
-    create_tmp_file "$old" 
+    create_tmp_file "$old"
     launch_editor "$__"
     get_tmp_file_content "$__"
   fi

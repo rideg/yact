@@ -56,7 +56,7 @@ __yact_list_tasks() {
   file=$YACT_DIR/$TODO_FILE
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
     declare -a list description
-    local max_width 
+    local max_width
     max_width="$(echo "$(wc -l < "$file")-2" | bc)"
     max_width="${#max_width}"
     while IFS=';' read -r id task task_status; do
@@ -69,7 +69,7 @@ __yact_list_tasks() {
     fi
   done <<<"$(sed '1,2d'  "$file")"
   if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
-    compadd -V "task-ids" -Q -l -d description -a list 
+    compadd -V "task-ids" -Q -l -d description -a list
   else
     _message -r "There is no appropriate task on this list."
   fi
@@ -152,3 +152,4 @@ esac
 }
 
 __yact_main
+

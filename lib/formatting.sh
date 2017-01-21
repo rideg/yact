@@ -53,3 +53,4 @@ format() {
 }
 
 _init_formatting
+
