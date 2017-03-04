@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 
 ################################################################################
+# Shows help.
+# -- Globals: none
+# -- Input: none
+# -- Output: Help message.
+################################################################################
+_show_help() {
+  echo "Yact - Yet Another Commandline Todo" 
+  echo "Usage: yact [-lhv] [command] ..."
+}
+
+################################################################################
+# Prints version string.
+# -- Globals: none
+# -- Input: none
+# -- Output: Version string.
+################################################################################
+_show_version() {
+  cat .version
+}
+
+################################################################################
 # Main entry point for YACT.
 # -- Globals:
 #  TRACE - enables tracing if set.
