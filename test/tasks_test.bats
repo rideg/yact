@@ -6,7 +6,7 @@ load 'helper'
 setup() {
   _setup_yact
   _set_no_color
-  run $YACT -l new "Main list for testing" 
+  run $YACT -l new "Main list for testing"
 }
 
 teardown() {
@@ -208,7 +208,7 @@ __create_three_tasks() {
     # given
     _spy_tool nano 'echo "The new description" > $1'
     # when
-    run $YACT add 
+    run $YACT add
     # then
     assert_output -p '1 [  ] The new description'
 }
@@ -219,7 +219,7 @@ __create_three_tasks() {
     # when
     run $YACT modify 1 "The new task description: ( \ / ) { } [ ] &"
     # then
-    assert_output -p '1 [  ] The new task description: ( \ / ) { } [ ] &'     
+    assert_output -p '1 [  ] The new task description: ( \ / ) { } [ ] &'
 }
 
 @test "add - insert to a specified position" {
@@ -231,7 +231,7 @@ __create_three_tasks() {
     # then
     assert_output -p '1 [  ] This is a task1'
     assert_output -p '2 [  ] This is a task3'
-    assert_output -p '3 [  ] This is a task2'   
+    assert_output -p '3 [  ] This is a task2'
 }
 
 @test "add - insert to the top" {
@@ -243,7 +243,14 @@ __create_three_tasks() {
     # then
     assert_output -p '1 [  ] This is a task3'
     assert_output -p '2 [  ] This is a task1'
-    assert_output -p '3 [  ] This is a task2'   
+    assert_output -p '3 [  ] This is a task2'
+}
+
+@test "add - should replace new lines with spaces" {
+  # when
+  run $YACT add $'task1\nand something'
+  # then
+  assert_output -p '1 [  ] task1 and something'
 }
 
 @test "show - hide done tasks if HIDE_DONE is set" {
@@ -260,7 +267,7 @@ __create_three_tasks() {
     assert_output -p '1 [  ] This is a task1'
     refute_output -p '2 [  ] This is a task2'
     assert_output -p '3 [  ] This is a task3'
-} 
+}
 
 @test "delete - should delete multiple tasks" {
    # given
@@ -303,4 +310,3 @@ __create_three_tasks() {
   assert_output -p '1 [  ] task1'
   refute_output -p '2 [  ] task2'
 }
-

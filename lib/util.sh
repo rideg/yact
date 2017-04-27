@@ -194,5 +194,7 @@ get_description() {
     get_tmp_file_content "$__"
   fi
   [[ -z "$__" ]] && fatal "Please provide description."
+  # replace any new line character with spaces
+  __=${__//$'\n'/ }
 }
 
