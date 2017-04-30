@@ -110,51 +110,31 @@ modify_task() {
 # -- Output: The item status after the move.
 ################################################################################
 move_task() {
+  read_file
   local id=$1
   local position=$2
   is_number "$id" || fatal "The provided id is not numeric [${id}]"
-  position=$(_get_position "$id" "$position")
-  is_number "$position" \
-    || fatal "The provided position is not numeric [${2}]"
-
+  _get_position "$id" "$position"
+  position=$__  
+  is_number "$position" || fatal "The provided position is not numeric [${2}]"
+  [[ $id -gt ${#TASKS[@]} ]] || [[ $id -lt 0 ]] \
+    && fatal "There is no task with the provided id [$id]"
+  [[ $position -gt ${#TASKS[@]} ]] || [[ $position -lt 0 ]] \
+    && fatal "Non existing position [$position]"
+  ((id--))
+  ((position--))
   if [[ $id -ne $position ]]; then
-    local tmp_file
-    local task_line
-
-    tmp_file="${RUN}/tmp_$(timestamp).txt"
-    head -n2 "$FILE" > "$tmp_file"
-    task_line=$(sed '1,2d' "$FILE" | grep -e "^${id};")
-    test -n "$task_line" \
-      || fatal "There is no task with the provided id [${id}]"
-
-    local start=$id
-    local end=$position
-    local shift_value=-1
-    local verify_position=0
-    if [[ $end -lt $start ]]; then
-      local tmp=$end
-    end=$start
-    start=$tmp
-    shift_value=1
+    local tmp="${TASKS[$id]}"
+    unset "TASKS[$id]"
+    # some sort of bug in Bash
+    TASKS=("${TASKS[@]}")
+    TASKS=(
+      "${TASKS[@]:0:$position}"
+      "$tmp"
+      "${TASKS[@]:$position}"
+    )
+    flush_file
   fi
-  while IFS=';' read -r current_id rest; do
-    if [[ "$current_id" -ge $start && "$current_id" -le $end ]]; then
-      if [[ "$current_id" -eq "$position" ]]; then
-        printf '%s;%s\n' "$current_id" "${task_line/${id};/}" >> "$tmp_file"
-        printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
-        verify_position=1
-      elif [[ "$current_id" -eq "$id" ]]; then
-        :
-      else
-        printf '%d;%s\n' $((current_id + shift_value)) "$rest" >> "$tmp_file"
-      fi
-    else
-      printf '%s;%s\n' "$current_id" "$rest" >> "$tmp_file"
-    fi
-  done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
-  test $verify_position -eq 1 || fatal "Non existing position [${position}]"
-  mv "$tmp_file" "$FILE"
-fi
 }
 
 ################################################################################
@@ -170,32 +150,42 @@ _get_position() {
   local id=$1
   local position=$2
   if ! is_number "$position"; then
-    number_of_items=$(($(sed '1,2d'  "$FILE" | wc -l)))
     case "$position" in
       up)
         position=$id
-        test "$position" -gt 1 && ((position--))
+        [[ "$position" -gt 1 ]] && ((position--))
         ;;
       top)
         position=1
         ;;
       down)
         position=$id
-        test "$position" -lt "$number_of_items" && ((position++))
+        [[ "$position" -lt ${#TASKS[@]} ]] && ((position++))
         ;;
       bottom)
-        position="$number_of_items"
+        position=${#TASKS[@]}
         ;;
     esac
   fi
-  echo -n "$position"
+  __="$position"
+}
+
+################################################################################
+# Parses a given todo item into an array
+# -- Globals: None
+# -- Input: Task line
+# -- Output: Array of task line elements (id, description, status)
+################################################################################
+parse_item() {
+  IFS=';' read -r -a __ <<< "$1"
 }
 
 ################################################################################
 # Shows a summary of the current list, which includes the list's' name and
 # and a list of tasks.
 # -- Globals:
-#  FILE - Current todo list's file.
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks.
 #  HIDE_DONE - Global indicating whether the done task should be shown or not.
 #  GREEN - Green color.
 #  UNDRLINE - Underline formatting.
@@ -204,34 +194,33 @@ _get_position() {
 # -- Output: The summary of the current list.
 ################################################################################
 show_tasks() {
-  local line_text
-  local done_text=''
+  read_file
   local list_text=''
   local nr_of_done=0
-  local nr_of_tasks=0
-
-  while IFS=';' read -r id task is_done; do
-    if [[ -z "$id" ]]; then
-      break
-    fi
-    ((nr_of_tasks++))
-    done_text=''
-    if [[ "$is_done" = '1' ]]; then
+  local line_text
+  local i=0
+  
+  while [[ $i -lt ${#TASKS[@]} ]]; do
+    parse_item "${TASKS[$i]}"
+    ((i++))
+    local task="${__[1]}"
+    local is_done="${__[2]}"
+    local done_text=''
+    if [[ "$is_done" == '1' ]]; then
       ((nr_of_done++))
       is_true "$HIDE_DONE" && continue
       done_text=$(format ok "$GREEN")
     fi
     line_text=$(printf ' %3d [%-2s] %s\n' \
-      "$id" "$done_text" "$(wrap_text "$task")")
+      "$i" "$done_text" "$(wrap_text "$task")")
     list_text="${list_text}${line_text}\n"
-  done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
+  done
 
   printf '\n %s - (%d/%d)\n\n' \
-    "$(format "$(head -n1 "$FILE")" \
+    "$(format "$HEADER" \
     "$UNDRLINE" "$BOLD")" \
-    $nr_of_done $nr_of_tasks
-
-  if [[ $nr_of_tasks -eq 0 ]]; then
+    $nr_of_done ${#TASKS[@]} 
+  if [[ ${#TASKS[@]} -eq 0 ]]; then
     echo -e " There are now tasks defined yet.\n"
   else
     echo -e "$list_text"

@@ -48,9 +48,6 @@ main() {
 
   . lib/util.sh
   . lib/formatting.sh
-  . lib/lists.sh
-  . lib/tasks.sh
-  . lib/config.sh
   test -f $YACT_DIR/.last && . "$YACT_DIR"/.last
   export FILE=$YACT_DIR/$TODO_FILE
 
@@ -64,9 +61,40 @@ main() {
 }
 
 ################################################################################
-# Checks if the the actual list exists.
+# Reads the current todo file from the disk.
 # -- Globals:
 #  FILE - Current todo list's file.
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+# -- Inputs: none
+# -- Output: none
+################################################################################
+read_file() {
+  readarray -t __ < "$FILE"
+  export TASKS=("${__[@]:2}")
+  export HEADER="${__[0]}"
+}
+
+################################################################################
+# Flushes the current todo file to the disk.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+# -- Inputs: none
+# -- Output: none
+################################################################################
+flush_file() {
+  printf '%s\n\n' "$HEADER" > "$FILE"
+  printf '%s\n' "${TASKS[@]}" >> "$FILE"
+}
+
+################################################################################
+# Checks if the the actual list exists and if so then reads it to a global
+# array.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  FILE_CONTENT - lines of the file as an array.
 # -- Input: Arguments for list operations.
 # -- Output: None.
 ################################################################################
@@ -87,6 +115,7 @@ _parse_list_opts() {
   if [[ "$cmd" != 'new' ]]; then
     _require_actual
   fi
+  . lib/lists.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
       switch) switch_list "$1";;
@@ -96,6 +125,7 @@ _parse_list_opts() {
       show) show_list; return 0;;
       *) fatal "Cannot recognize command: $cmd"
     esac
+    . lib/tasks.sh
     show_tasks
   else
     show_lists
@@ -112,6 +142,8 @@ _parse_task_opts() {
   _require_actual
   local cmd=$1
   shift
+  . lib/tasks.sh
+  . lib/config.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
       add) add_task "$@";;
