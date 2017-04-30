@@ -21,7 +21,7 @@ set_done() {
 ################################################################################
 # Adds a new task to the current list.
 # -- Globals:
-#  FILE - Current todo list's file.
+#  TASKS - Current todo list's tasks array.
 # -- Input:
 #  description -  Description of the new task.
 # -- Output: The item status after the change.
@@ -33,12 +33,10 @@ add_task() {
     position="$2"
     shift 2
   fi
-
+  local max_id=$((${#TASKS[@]} + 1))
   get_description "$*" " "
-  max_id=$(sed '1,2d' "$FILE" | sort -t';' -rn -k1 | head -n1 | cut -d';' -f 1)
-  ((max_id++))
-  printf '%d;%s;0\n' $max_id "$__" >> "$FILE"
-
+  TASKS=("${TASKS[@]}" "$max_id;$__;0")
+  flush_file
   if [[ -n "$position" ]]; then
     move_task "$max_id" "$position"
   fi
