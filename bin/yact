@@ -88,8 +88,20 @@ read_file() {
 # -- Output: none
 ################################################################################
 flush_file() {
+  local changed=false
+  [[ ${#TASKS[@]} -ne ${#__ORIGINAL_TASKS[@]} ]] && changed=true
+  if ! $changed; then
+    for (( i=0; i< ${#TASKS[@]}; i++ )); do
+      if [[ "${TASKS[$i]}" != "${__ORIGINAL_TASKS[$i]}" ]]; then
+        changed=true
+        break
+      fi
+    done  
+  fi
+  if $changed; then 
     printf '%s\n\n' "$HEADER" > "$FILE"
     printf '%s\n' "${TASKS[@]}" >> "$FILE"
+  fi
 }
 
 ################################################################################
