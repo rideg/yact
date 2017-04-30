@@ -149,8 +149,7 @@ wrap_text() {
   else
     line=$text
   fi
-  wrapped="$wrapped$line"
-  printf '%s' "$wrapped"
+  __="$wrapped$line"
 }
 
 ################################################################################

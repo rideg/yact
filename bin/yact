@@ -35,20 +35,20 @@ _show_version() {
 main() {
   [[ "$TRACE" ]] && set -x
 
-  pushd "$(dirname "$0")" &> /dev/null
+  pushd ${0%/*} &> /dev/null
   cd ..
 
-  test ! -d "${YACT_DIR}" && YACT_DIR=~/.yact
+  [[ -d "${YACT_DIR}" ]] || YACT_DIR=~/.yact
   RUN=$YACT_DIR/.run
 
-  test ! -d $RUN && mkdir -p $RUN
+  [[ -d $RUN ]] || mkdir -p $RUN
   . ./config
 
-  test -f $YACT_DIR/config && . "$YACT_DIR"/config
+  [[ -f $YACT_DIR/config ]] && . "$YACT_DIR"/config
 
   . lib/util.sh
   . lib/formatting.sh
-  test -f $YACT_DIR/.last && . "$YACT_DIR"/.last
+  [[ -f $YACT_DIR/.last ]] && . "$YACT_DIR"/.last
   export FILE=$YACT_DIR/$TODO_FILE
 
   case "$1" in
@@ -73,7 +73,7 @@ main() {
 read_file() {
   readarray -t __ < "$FILE"
   export TASKS=("${__[@]:2}")
-  export __ORIGINAL_TASKS=("${TASKS[@]}")
+  export __ORIGINAL_TASKS=("${__[@]:2}")
   export HEADER="${__[0]}"
 }
 

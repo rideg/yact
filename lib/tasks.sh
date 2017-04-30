@@ -176,33 +176,32 @@ parse_item() {
 # -- Output: The summary of the current list.
 ################################################################################
 show_tasks() {
-  local list_text=''
   local nr_of_done=0
-  local line_text
-  
-  for (( i = 0; i < ${#TASKS[@]}; i++ )); do
-    parse_item "${TASKS[$i]}"
-    local task="${__[0]}"
-    local is_done="${__[1]}"
-    local done_text=''
-    if [[ "$is_done" == '1' ]]; then
+  declare -a buffer
+  local i=0
+  for item in "${TASKS[@]}"; do
+    local task="${item:0:$((${#item}-2))}"
+    local is_done="${item: -1}"
+    local done_text='  '
+    ((i++))
+    if [[ $is_done -eq 1 ]]; then
       ((nr_of_done++))
       is_true "$HIDE_DONE" && continue
-      done_text=$(format ok "$GREEN")
+      format ok "$GREEN"
+      done_text="$__"
     fi
-    line_text=$(printf ' %3d [%-2s] %s\n' \
-      "$((i+1))" "$done_text" "$(wrap_text "$task")")
-    list_text="${list_text}${line_text}\n"
+    wrap_text "$task"
+    buffer[${#buffer[@]}]=$i
+    buffer[${#buffer[@]}]="$done_text"
+    buffer[${#buffer[@]}]="$__"
   done
-
-  printf '\n %s - (%d/%d)\n\n' \
-    "$(format "$HEADER" \
-    "$UNDRLINE" "$BOLD")" \
-    $nr_of_done ${#TASKS[@]} 
+  format "$HEADER" "$UNDRLINE" "$BOLD"
+  printf '\n %s - (%d/%d)\n\n' "$__" $nr_of_done ${#TASKS[@]} 
   if [[ ${#TASKS[@]} -eq 0 ]]; then
-    echo -e " There are now tasks defined yet.\n"
+    echo " There are now tasks defined yet."
   else
-    echo -e "$list_text"
+    printf ' %3d [%s] %s\n' "${buffer[@]}"
   fi
+  echo ""
 }
 

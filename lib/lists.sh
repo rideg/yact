@@ -110,8 +110,8 @@ modify_list() {
 ################################################################################
 show_lists() {
   local indicator
-  printf \
-    "\n %s:\n\n" "$(format 'You have the following lists' "$BOLD" "$UNDERLINE")"
+  format 'You have the following lists' "$BOLD" "$UNDERLINE"
+  printf \ "\n %s:\n\n" "$__"
   for actual_file in $(ls -ur "$YACT_DIR"/_*.txt); do
     if [[ "$actual_file" = "$FILE" ]]; then
       indicator='*'

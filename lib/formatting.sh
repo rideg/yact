@@ -8,31 +8,31 @@
 # -- Output: None
 ################################################################################
 _init_formatting() {
-  if [[ "$(tput colors)" -gt 2 && $USE_FORMATTING -eq 1 ]] 2> /dev/null; then
+  if [[ $USE_FORMATTING -eq 1 ]]; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE \
       UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN \
       BG_WHITE NORMAL
-    BLACK=$(tput setaf 0)
-    RED=$(tput setaf 1)
-    GREEN=$(tput setaf 2)
-    YELLOW=$(tput setaf 3)
-    BLUE=$(tput setaf 4)
-    MAGENTA=$(tput setaf 5)
-    CYAN=$(tput setaf 6)
-    WHITE=$(tput setaf 7)
-    BOLD=$(tput bold)
-    REVERSE=$(tput smso)
-    UNDERLINE=$(tput smul)
+    BLACK=$'\e[30m'
+    RED=$'\e[31m'
+    GREEN=$'\e[32m'
+    YELLOW=$'\e[33m'
+    BLUE=$'\e[34m'
+    MAGENTA=$'\e[35m'
+    CYAN=$'\e[36m'
+    WHITE=$'\e[97m'
+    BOLD=$'\e[1m'
+    REVERSE=$'\e[7m'
+    UNDERLINE=$'\e[4m'
 
-    BG_BLACK=$(tput setab 0)
-    BG_RED=$(tput setab 1)
-    BG_GREEN=$(tput setab 2)
-    BG_YELLOW=$(tput setab 3)
-    BG_BLUE=$(tput setab 4)
-    BG_MAGENTA=$(tput setab 5)
-    BG_CYAN=$(tput setab 6)
-    BG_WHITE=$(tput setab 7)
-    NORMAL=$(tput sgr0)
+    BG_BLACK=$'\e[40m'
+    BG_RED=$'\e[41m'
+    BG_GREEN=$'\e[42m'
+    BG_YELLOW=$'\e[43m'
+    BG_BLUE=$'\e[44m'
+    BG_MAGENTA=$'\e[45m'
+    BG_CYAN=$'\e[46m'
+    BG_WHITE=$'\e[107m'
+    NORMAL=$'\e[0m'
   fi
 }
 
@@ -48,8 +48,7 @@ _init_formatting() {
 format() {
   local text=$1
   shift
-  local IFS=''
-  printf "%s%s%s" "$*" "$text" "$NORMAL"
+  __="$*$text$NORMAL"
 }
 
 _init_formatting
