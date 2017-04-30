@@ -208,7 +208,9 @@ get_description() {
 check_task_id() {
   [[ -z "$1" ]] && fatal "Please provide a position"
   is_number "$1" || fatal "The given position is not numeric [$1]"
-  [[ $1 -lt 1 ]] || [[ $1 -gt ${#TASKS[@]} ]] \
-    && fatal "Out of range task position [$1]"
+  if [[ $1 -lt 1 ]] || [[ $1 -gt ${#TASKS[@]} ]]; then
+    echo "number of tasks: ${#TASKS[@]}"
+    fatal "Out of range task position [$1]"
+  fi
 }
 

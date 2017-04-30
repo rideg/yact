@@ -177,10 +177,9 @@ parse_item() {
 ################################################################################
 show_tasks() {
   local nr_of_done=0
-  declare -a buffer
+  local buffer=()
   local i=0
   for item in "${TASKS[@]}"; do
-    local task="${item:0:$((${#item}-2))}"
     local is_done="${item: -1}"
     local done_text='  '
     ((i++))
@@ -190,7 +189,7 @@ show_tasks() {
       format ok "$GREEN"
       done_text="$__"
     fi
-    wrap_text "$task"
+    wrap_text "${item:0:$((${#item}-2))}"
     buffer[${#buffer[@]}]=$i
     buffer[${#buffer[@]}]="$done_text"
     buffer[${#buffer[@]}]="$__"
