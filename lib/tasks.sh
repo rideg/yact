@@ -80,10 +80,14 @@ delete_task() {
 ################################################################################
 modify_task() {
   local id=$1
-  test -z "$id" && fatal "Please provide a task id."
+  check_task_id "$id"
   shift
-  get_description "$*" "$(grep "^$id;" "$FILE" | cut -d';' -f2)"
-  _change_task "$id" "$__"
+  ((id--))
+  parse_item "${TASKS[$id]}" 
+  local status="${__[2]}"  
+  get_description "$*" "$__"
+  TASKS[$id]="$((id+1));${__};${status}"
+  flush_file
 }
 
 ################################################################################
