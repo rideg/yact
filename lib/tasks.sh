@@ -42,10 +42,9 @@ add_task() {
 ################################################################################
 # Removes task from the current list.
 # -- Globals:
-#  FILE - Current todo list's file.
-#  RUN - Directory for runtime temproray files.
+#  TASKS - Current todo list's tasks array.
 # -- Input:
-#  id -  Task id to be deleted.
+#  id -  Task ids to be deleted.
 # -- Output: The item status after the deletion.
 ################################################################################
 delete_task() {
@@ -58,28 +57,16 @@ delete_task() {
   if [[ $force -eq 0 ]]; then
     echo "Are you sure you want to delete? y/[n]"
     read -r -s -n 1 consent
+    [[ "$consent" != "y" ]] && return
   fi
-  if [[ $force -eq 1 || "$consent" == "y" ]]; then
-    while IFS=$'\n' read -r task_id; do
-      local tmp_file="$RUN/.tmp"
-      local task_to_delete
-      test -z "$task_id"
-      head -n2 "$FILE" > "$tmp_file"
-      while IFS=';' read -r id task is_done; do
-        if [[ "$id" -lt $task_id ]]; then
-          printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
-        elif [[ "$id" -gt $task_id ]]; then
-          printf '%d;%s;%d\n' $((id - 1)) "$task" "$is_done" >> "$tmp_file"
-        else
-          task_to_delete="$task"
-        fi
-      done <<<"$(sed '1,2d'  "$FILE" | sort -t';' -n -k1)"
-
-      [[ -z "$task_to_delete" ]] && fatal "Cannot find line with id: $task_id"
-      mv "$RUN/.tmp" "$FILE"
-      unset task_to_delete
-    done <<<"$(printf '%s\n' "$@" | sort -gr)"
-  fi
+  declare -a tasks=("${TASKS[@]}")
+  for id in "$@"; do
+    check_task_id "$id"
+    local task_id=$((id - 1))
+    unset "tasks[$task_id]"
+  done
+  TASKS=("${tasks[@]}")
+  flush_file
 }
 
 ################################################################################

@@ -64,6 +64,6 @@ teardown() {
   # when
   run $YACT delete 2 bela < <(echo y)
   # then
-  assert_output -p "Cannot find line with id: bela"
+  assert_output -p "The given id is not a number [bela]"
 }
 

@@ -101,6 +101,7 @@ flush_file() {
 _require_actual() {
   [[ -f "$FILE" ]] || \
     fatal 'No todo list has been selected, please select/create one.'
+  read_file
 }
 
 ################################################################################

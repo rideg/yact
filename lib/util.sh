@@ -198,3 +198,18 @@ get_description() {
   __=${__//$'\n'/ }
 }
 
+################################################################################
+# Checks if a given value is a valid task id.
+# -- Globals:
+#  TASKS - Current todo's tasks array.
+# -- Input:
+#  id - The given id to be checked.
+# -- Output: none
+################################################################################
+check_task_id() {
+  [[ -z "$1" ]] && fatal "Please provide an id"
+  is_number "$1" || fatal "The given id is not a number [$1]"
+  [[ $1 -lt 1 ]] || [[ $1 -gt ${#TASKS[@]} ]] \
+    && fatal "Out of range task id [$1]"
+}
+
