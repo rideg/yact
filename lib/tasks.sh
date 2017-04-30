@@ -3,14 +3,19 @@
 ################################################################################
 # Marks a given task as done or not done.
 # -- Globals:
-#  RUN - Directory for runtime temproray files.
-#  FILE - Current todo list's file.
+#  TASKS - Current todo list's tasks array.
 # -- Input:
-#  id - Id of task to be changedj
-# -- Output: The item status after the change.
+#  id -  Task id to be deleted.
+# -- Output: None 
 ################################################################################
 set_done() {
-  _change_task "$1" "" "$2"
+  local id=$1
+  check_task_id "$id"
+  shift
+  ((id--))
+  parse_item "${TASKS[$id]}" 
+  TASKS[$id]="$((id+1));${__[1]};$1"
+  flush_file
 }
 
 ################################################################################
@@ -72,8 +77,7 @@ delete_task() {
 ################################################################################
 # Updates the given task's description.
 # -- Globals:
-#  FILE - Current todo list's file.
-#  RUN - Directory for runtime temproray files.
+#  TASKS - Current todo list's tasks array.
 # -- Input:
 #  id -  Task id to be deleted.
 # -- Output: The item status after the change.
@@ -216,54 +220,5 @@ show_tasks() {
   else
     echo -e "$list_text"
   fi
-}
-
-################################################################################
-# Changes a given task.
-# -- Globals:
-#  RUN - Directory for runtime temproray files.
-#  FILE - Current todo list's file.
-# -- Input:
-#  id - Id of task to be changed
-#  text? - The new text for the task - ignored if empty.
-#  status? - The new status for the task - ignored if empty.
-# -- Output: None.
-################################################################################
-_change_task() {
-  test $# -lt 2 &&  fatal 'Not enough number of arguments for _change_task'
-  local task_id=$1
-  local text
-  local status
-  local is_changed=0
-
-  [[ -z $task_id ]] && fatal 'Missing task id.'
-  [[ $2 != "" ]] && text=$2
-  [[ -n $3 && $3 != "" ]] && status=$3
-
-  local tmp_file="$RUN/tmp_task.txt"
-
-  head -n2 "$FILE" > "$tmp_file"
-  while IFS=';' read -r id task is_done; do
-    if [[ "$id" -ne $task_id ]]; then
-      printf '%d;%s;%d\n' "$id" "$task" "$is_done" >> "$tmp_file"
-    else
-      is_changed=1
-      echo -n "$id;" >> "$tmp_file"
-      if [[ -z "$text" ]]; then
-        echo -n "$task;" >> "$tmp_file"
-      else
-        echo -n "$text;" >> "$tmp_file"
-      fi
-      if [[ -z "$status" ]]; then
-        printf '%d\n' "$is_done" >> "$tmp_file"
-      else
-        printf '%d\n' "$status" >> "$tmp_file"
-      fi
-    fi
-  done <<<"$(sed '1,2d'  "$FILE")"
-  if [[ "$is_changed" -eq 0 ]]; then
-    fatal "Cannot find task with id $id"
-  fi
-  mv "$RUN/tmp_task.txt" "$FILE"
 }
 
