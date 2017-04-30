@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get install -qq bats
 script:
    bats --tap test
+dist: trusty
 notifications:
   email:
       on_success: never
