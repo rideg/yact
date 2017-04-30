@@ -66,27 +66,42 @@ main() {
 #  FILE - Current todo list's file.
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks array.
+#  __ORIGINAL_TASKS - Current todo's tasks array (original).
 # -- Inputs: none
 # -- Output: none
 ################################################################################
 read_file() {
   readarray -t __ < "$FILE"
   export TASKS=("${__[@]:2}")
+  export __ORIGINAL_TASKS=("${TASKS[@]}")
   export HEADER="${__[0]}"
 }
 
 ################################################################################
-# Flushes the current todo file to the disk.
+# Flushes the current todo file to the disk if changed.
 # -- Globals:
 #  FILE - Current todo list's file.
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks array.
+#  __ORIGINAL_TASKS - Current todo's tasks array (original).
 # -- Inputs: none
 # -- Output: none
 ################################################################################
 flush_file() {
-  printf '%s\n\n' "$HEADER" > "$FILE"
-  printf '%s\n' "${TASKS[@]}" >> "$FILE"
+  local changed=false
+  [[ ${#TASKS[@]} -ne ${#__ORIGINAL_TASKS[@]} ]] && changed=true
+  if ! $changed; then
+    for (( i=0; i< ${#TASKS[@]}; i++ )); do
+      if [[ "${TASKS[$i]}" != "${__ORIGINAL_TASKS[$i]}" ]]; then
+        changed=true
+        break
+      fi
+    done  
+  fi
+  if $changed; then 
+    printf '%s\n\n' "$HEADER" > "$FILE"
+    printf '%s\n' "${TASKS[@]}" >> "$FILE"
+  fi
 }
 
 ################################################################################
@@ -159,6 +174,7 @@ _parse_task_opts() {
     esac
   fi
   show_tasks
+  flush_file
 }
 
 main "$@"

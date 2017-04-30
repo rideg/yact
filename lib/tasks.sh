@@ -14,8 +14,7 @@ set_done() {
   shift
   ((id--))
   parse_item "${TASKS[$id]}" 
-  TASKS[$id]="$((id+1));${__[1]};$1"
-  flush_file
+  TASKS[$id]="${__[0]};$1"
 }
 
 ################################################################################
@@ -28,17 +27,14 @@ set_done() {
 ################################################################################
 add_task() {
   local position
-  local max_id
   if [[ "$1" == '-p' ]]; then
     position="$2"
     shift 2
   fi
-  local max_id=$((${#TASKS[@]} + 1))
   get_description "$*" " "
-  TASKS=("${TASKS[@]}" "$max_id;$__;0")
-  flush_file
+  TASKS=("${TASKS[@]}" "$__;0")
   if [[ -n "$position" ]]; then
-    move_task "$max_id" "$position"
+    move_task "${#TASKS[@]}" "$position"
   fi
 }
 
@@ -69,7 +65,6 @@ delete_task() {
     unset "tasks[$task_id]"
   done
   TASKS=("${tasks[@]}")
-  flush_file
 }
 
 ################################################################################
@@ -86,10 +81,9 @@ modify_task() {
   shift
   ((id--))
   parse_item "${TASKS[$id]}" 
-  local status="${__[2]}"  
+  local status="${__[1]}"  
   get_description "$*" "$__"
-  TASKS[$id]="$((id+1));${__};${status}"
-  flush_file
+  TASKS[$id]="${__};${status}"
 }
 
 ################################################################################
@@ -103,17 +97,13 @@ modify_task() {
 # -- Output: The item status after the move.
 ################################################################################
 move_task() {
-  read_file
   local id=$1
   local position=$2
   is_number "$id" || fatal "The provided id is not numeric [${id}]"
   _get_position "$id" "$position"
   position=$__  
-  is_number "$position" || fatal "The provided position is not numeric [${2}]"
-  [[ $id -gt ${#TASKS[@]} ]] || [[ $id -lt 0 ]] \
-    && fatal "There is no task with the provided id [$id]"
-  [[ $position -gt ${#TASKS[@]} ]] || [[ $position -lt 0 ]] \
-    && fatal "Non existing position [$position]"
+  check_task_id "$id"
+  check_task_id "$position"
   ((id--))
   ((position--))
   if [[ $id -ne $position ]]; then
@@ -126,7 +116,6 @@ move_task() {
       "$tmp"
       "${TASKS[@]:$position}"
     )
-    flush_file
   fi
 }
 
@@ -187,17 +176,14 @@ parse_item() {
 # -- Output: The summary of the current list.
 ################################################################################
 show_tasks() {
-  read_file
   local list_text=''
   local nr_of_done=0
   local line_text
-  local i=0
   
-  while [[ $i -lt ${#TASKS[@]} ]]; do
+  for (( i = 0; i < ${#TASKS[@]}; i++ )); do
     parse_item "${TASKS[$i]}"
-    ((i++))
-    local task="${__[1]}"
-    local is_done="${__[2]}"
+    local task="${__[0]}"
+    local is_done="${__[1]}"
     local done_text=''
     if [[ "$is_done" == '1' ]]; then
       ((nr_of_done++))
@@ -205,7 +191,7 @@ show_tasks() {
       done_text=$(format ok "$GREEN")
     fi
     line_text=$(printf ' %3d [%-2s] %s\n' \
-      "$i" "$done_text" "$(wrap_text "$task")")
+      "$((i+1))" "$done_text" "$(wrap_text "$task")")
     list_text="${list_text}${line_text}\n"
   done
 

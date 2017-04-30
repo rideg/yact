@@ -207,9 +207,9 @@ get_description() {
 # -- Output: none
 ################################################################################
 check_task_id() {
-  [[ -z "$1" ]] && fatal "Please provide an id"
-  is_number "$1" || fatal "The given id is not a number [$1]"
+  [[ -z "$1" ]] && fatal "Please provide a position"
+  is_number "$1" || fatal "The given position is not numeric [$1]"
   [[ $1 -lt 1 ]] || [[ $1 -gt ${#TASKS[@]} ]] \
-    && fatal "Out of range task id [$1]"
+    && fatal "Out of range task position [$1]"
 }
 

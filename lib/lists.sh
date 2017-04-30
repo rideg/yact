@@ -134,7 +134,7 @@ _file_header_with_info() {
   local file="$1"
   local number_of_done=0
   local number_of_tasks=0
-  while IFS=';' read -r -s id description status; do
+  while IFS=';' read -r -s description status; do
     if [[ -n $description ]]; then
       ((number_of_tasks++))
       if [[ $status -eq 1 ]]; then
@@ -157,5 +157,6 @@ _update_actual() {
   # shellcheck source=/dev/null
   . "$YACT_DIR/.last"
   FILE="$YACT_DIR/$TODO_FILE"
+  _require_actual
 }
 

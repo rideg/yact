@@ -23,10 +23,11 @@ teardown() {
 
 @test "move - shows error if non-numeric position is provided" {
 	# when
+	run $YACT add "First task"
 	run $YACT move 1 hhklj
 	# then
 	assert_failure
-	assert_output -p "The provided position is not numeric [hhklj]"
+	assert_output -p "The given position is not numeric [hhklj]"
 }
 
 @test "move - shows error if non-existing id is provided" {
@@ -34,7 +35,7 @@ teardown() {
 	run $YACT move 1 3
 	# then
 	assert_failure
-	assert_output -p "There is no task with the provided id [1]"
+	assert_output -p "Out of range task position [1]"
 }
 
 @test "move - shows error if non-existing position is provided" {
@@ -43,7 +44,7 @@ teardown() {
 	run $YACT move 1 3
 	# then
 	assert_failure
-	assert_output -p "Non existing position [3]"
+	assert_output -p "Out of range task position [3]"
 }
 
 @test "new - interactive mode with empty tmp file show error" {
@@ -64,6 +65,6 @@ teardown() {
   # when
   run $YACT delete 2 bela < <(echo y)
   # then
-  assert_output -p "The given id is not a number [bela]"
+  assert_output -p "The given position is not numeric [bela]"
 }
 
