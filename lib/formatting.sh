@@ -48,7 +48,7 @@ _init_formatting() {
 format() {
   local text=$1
   shift
-  __="$*$text$NORMAL"
+  export __="$*$text$NORMAL"
 }
 
 _init_formatting

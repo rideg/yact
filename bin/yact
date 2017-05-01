@@ -35,7 +35,7 @@ _show_version() {
 main() {
   [[ "$TRACE" ]] && set -x
 
-  pushd ${0%/*} &> /dev/null
+  pushd "${0%/*}" &> /dev/null
   cd ..
 
   [[ -d "${YACT_DIR}" ]] || YACT_DIR=~/.yact
