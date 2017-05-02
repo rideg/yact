@@ -96,6 +96,9 @@ launch_editor() {
   which $cmd &> /dev/null
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
+  if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
+    cmd="${cmd} +4"
+  fi
   $cmd "$file"
 }
 
