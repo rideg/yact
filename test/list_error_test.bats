@@ -42,13 +42,3 @@ teardown() {
  assert_output "Non-existing file. $YACT_DIR/_dsfsadv.txt"
 }
 
-@test "modify - error if cannot update file" {
-  # given
-  local list_file="$YACT_DIR/_1234123.txt"
-  _spy_tool nano "rm -f $list_file; echo \"The new description\" > \$1" 
-  # when
-  run $YACT -l modify 1234123
-  # then
-  assert_output "Could not update file: $list_file"
-}
-

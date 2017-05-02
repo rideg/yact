@@ -88,13 +88,16 @@ delete_list() {
 modify_list() {
   local description
   local id=$1
-  test -n "$id" || fatal 'Please provide an id.'
+  [[ -n "$id" ]] || fatal 'Please provide an id.'
   local file="${YACT_DIR}/_${id}.txt"
-  test -f "$file" || fatal "Non-existing file. ${file}"
+  [[ -f "$file" ]] || fatal "Non-existing file. ${file}"
   shift
-  get_description "$*" "$(head -n1 "$file")"
-  sed -i'' -e "1s/.*/$__/" "$file" 2>/dev/null \
-    || fatal "Could not update file: $file"
+  store_current
+  read_task_file "$file"  
+  get_description "$*" "$HEADER"
+  HEADER="$__"
+  flush_task_file "$file"
+  restore_current
 }
 
 ################################################################################

@@ -42,6 +42,8 @@ timestamp() {
 ################################################################################
 exit_() {
   popd &> /dev/null
+  #set +x
+  #exec 2>&3 3>&-
   exit "$1"
 }
 
@@ -96,9 +98,6 @@ launch_editor() {
   which $cmd &> /dev/null
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
-  if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
-    cmd="${cmd} +4"
-  fi
   $cmd "$file"
 }
 
@@ -213,5 +212,72 @@ check_task_id() {
   is_number "$1" || fatal "The given position is not numeric [$1]"
   [[ $1 -lt 1 || $1 -gt ${#TASKS[@]} ]] && \
     fatal "Out of range task position [$1]"
+}
+
+################################################################################
+# Reads a given or the current todo file from the disk.
+# -- Globals:
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+# -- Inputs:
+#  file_name? - a file name to be read.
+# -- Output: none
+################################################################################
+read_task_file() {
+  readarray -t __ < "${1-$FILE}"
+  TASKS=("${__[@]:2}")
+  HEADER="${__[0]}"
+  export TASKS HEADER
+}
+
+################################################################################
+# Stores tasks and headers. 
+# -- Globals:
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+#  __STORED_HEADER - Stored header.
+#  __STORED_TASKS - Stored tasks.
+# -- Inputs: none
+# -- Output: none
+################################################################################
+store_current() {
+ __STORED_TASKS=("${TASKS[@]}")
+ __STORED_HEADER="$HEADER"
+}
+
+################################################################################
+# Restores tasks and headers. 
+# -- Globals:
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+#  __STORED_HEADER - Stored header.
+#  __STORED_TASKS - Stored tasks.
+# -- Inputs: none
+# -- Output: none
+################################################################################
+restore_current() {
+ TASKS=("${__STORED_TASKS[@]}")
+ HEADER="$__STORED_HEADER"
+}
+
+################################################################################
+# Flushes the current todo file to the disk if changed.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  HEADER - Current todo's header.
+#  TASKS - Current todo's tasks array.
+#  __ORIGINAL_TASKS - Current todo's tasks array (original).
+#  __ORIGINAL_HEADER - Current todo's header (original).
+# -- Inputs: 
+#  file - File to flush tasks. Defaults to FILE.   
+# -- Output: none
+################################################################################
+flush_task_file() {
+  local file=${1-$FILE} 
+  if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || \
+        "$HEADER" != "$__STORED_HEADER" ]]; then
+    printf '%s\n\n' "$HEADER" > "$file"
+    printf '%s\n' "${TASKS[@]}" >> "$file"
+  fi
 }
 
