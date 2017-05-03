@@ -94,8 +94,7 @@ modify_list() {
   shift
   store_current
   read_task_file "$file"  
-  get_description "$*" "$HEADER"
-  HEADER="$__"
+  let: HEADER = get_description "$@" "$HEADER"
   flush_task_file "$file"
   restore_current
 }

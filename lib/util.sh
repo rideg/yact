@@ -277,7 +277,33 @@ flush_task_file() {
   if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || \
         "$HEADER" != "$__STORED_HEADER" ]]; then
     printf '%s\n\n' "$HEADER" > "$file"
-    printf '%s\n' "${TASKS[@]}" >> "$file"
+    if [[ ${#TASKS[@]} -gt 0 ]]; then
+      printf '%s\n' "${TASKS[@]}" >> "$file"
+    fi
   fi
+}
+
+################################################################################
+# Syntactic sugar to simplifie return value assignment. Usage:
+#    let: my_var = command "$arg1" "$arg2"
+# -- Globals: none
+# -- Input:
+#  variable - The name of the variable into which the result sould be saved.
+#  =        - Equal sign to support sugar.
+#  command  - The command to be executed.
+#  args...? - Command arguments.
+# -- Output: none
+################################################################################
+let:() {
+  [[ $# -lt 3 ]] && fatal "Not enought arguments."
+  [[ "$2" != '=' ]] && fatal "Usage: let: <variable name> = command [args...]"
+  local variable=$1
+  local command=$3
+  shift 3
+  local args=("$@")
+  for ((i=0; i < $#; i++)); do
+    args[$i]="\"${args[$i]}\""
+  done
+  eval "$command ${args[*]} ;$variable=\"\$__\""
 }
 
