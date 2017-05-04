@@ -308,9 +308,9 @@ let:() {
   local command=$3
   shift 3
   local args=("$@")
-  for ((i=0; i < $#; i++)); do
-    args[$i]="\"${args[$i]}\""
+  for elem in "${args[@]}"; do
+    args[${#args[@]}]="\"$elem\""
   done
-  eval "$command ${args[*]} ;$variable=$ret"
+  eval "$command ${args[*]:$#} ;$variable=$ret"
 }
 
