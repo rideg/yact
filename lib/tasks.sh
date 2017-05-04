@@ -77,13 +77,14 @@ delete_task() {
 ################################################################################
 modify_task() {
   local id=$1
+  declare -a task_array
+  local description
   check_task_id "$id"
   shift
   ((id--))
-  parse_item "${TASKS[$id]}" 
-  local status="${__[1]}"  
-  get_description "$*" "$__"
-  TASKS[$id]="${__};${status}"
+  let: -a task_array = parse_item "${TASKS[$id]}" 
+  let: description = get_description "$*" "${task_array[0]}"
+  TASKS[$id]="$description;${task_array[1]}"
 }
 
 ################################################################################

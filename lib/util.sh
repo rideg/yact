@@ -295,6 +295,13 @@ flush_task_file() {
 # -- Output: none
 ################################################################################
 let:() {
+  local ret
+  if [[ "$1" == '-a' ]]; then
+    ret='("${__[@]}")'
+    shift
+  else
+    ret='"$__"'
+  fi
   [[ $# -lt 3 ]] && fatal "Not enought arguments."
   [[ "$2" != '=' ]] && fatal "Usage: let: <variable name> = command [args...]"
   local variable=$1
@@ -304,6 +311,6 @@ let:() {
   for ((i=0; i < $#; i++)); do
     args[$i]="\"${args[$i]}\""
   done
-  eval "$command ${args[*]} ;$variable=\"\$__\""
+  eval "$command ${args[*]} ;$variable=$ret"
 }
 
