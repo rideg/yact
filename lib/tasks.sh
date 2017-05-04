@@ -99,10 +99,9 @@ modify_task() {
 ################################################################################
 move_task() {
   local id=$1
-  local position=$2
+  local position
   is_number "$id" || fatal "The provided id is not numeric [${id}]"
-  _get_position "$id" "$position"
-  position=$__  
+  let: position = _get_position "$id" "$2"
   check_task_id "$id"
   check_task_id "$position"
   ((id--))
@@ -112,11 +111,7 @@ move_task() {
     unset "TASKS[$id]"
     # some sort of bug in Bash
     TASKS=("${TASKS[@]}")
-    TASKS=(
-      "${TASKS[@]:0:$position}"
-      "$tmp"
-      "${TASKS[@]:$position}"
-    )
+    TASKS=("${TASKS[@]:0:$position}" "$tmp" "${TASKS[@]:$position}")
   fi
 }
 
@@ -177,31 +172,36 @@ parse_item() {
 # -- Output: The summary of the current list.
 ################################################################################
 show_tasks() {
-  local nr_of_done=0
-  local buffer=()
-  local i=0
+  local -i d
+  local -a buffer
+  local -i i
   for item in "${TASKS[@]}"; do
-    local is_done="${item: -1}"
-    local done_text='  '
     ((i++))
-    if [[ $is_done -eq 1 ]]; then
-      ((nr_of_done++))
-      is_true "$HIDE_DONE" && continue
-      format ok "$GREEN"
-      done_text="$__"
+    if [[ ${item: -1} -eq 1 ]]; then
+      ((d=d+1))
+      if [[ $HIDE_DONE -eq 1 ]]; then
+        continue
+      fi
+      buffer[${#buffer[@]}]=$i
+      buffer[${#buffer[@]}]=${GREEN}ok${NORMAL}
+    else
+      buffer[${#buffer[@]}]=$i
+      buffer[${#buffer[@]}]='  '
     fi
-    wrap_text "${item:0:$((${#item}-2))}"
-    buffer[${#buffer[@]}]=$i
-    buffer[${#buffer[@]}]="$done_text"
-    buffer[${#buffer[@]}]="$__"
+    if [[ ${#item} -ge $LINE_LENGTH ]]; then
+      wrap_text ${item::-2}
+      buffer[${#buffer[@]}]=$__
+    else
+      buffer[${#buffer[@]}]=${item::-2}
+    fi
   done
-  format "$HEADER" "$UNDRLINE" "$BOLD"
-  printf '\n %s - (%d/%d)\n\n' "$__" $nr_of_done ${#TASKS[@]} 
+  printf '\n %s - (%d/%d)\n\n' \
+    "$BOLD$UNDERLINE$HEADER$NORMAL" "$d" "${#TASKS[@]}"
   if [[ ${#TASKS[@]} -eq 0 ]]; then
-    echo " There are now tasks defined yet."
+    echo ' There are now tasks defined yet.'
   else
-    printf ' %3d [%s] %s\n' "${buffer[@]}"
+    printf " %${#i}d [%s] %s\n" "${buffer[@]}"
   fi
-  echo ""
+  echo
 }
 

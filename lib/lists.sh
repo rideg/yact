@@ -111,40 +111,27 @@ modify_list() {
 # -- Output: The list status.
 ################################################################################
 show_lists() {
+  local -i d
   local indicator
   format 'You have the following lists' "$BOLD" "$UNDERLINE"
   printf \ "\n %s:\n\n" "$__"
-  for actual_file in $(ls -ur "$YACT_DIR"/_*.txt); do
+  for actual_file in "$YACT_DIR"/_*.txt; do
     if [[ "$actual_file" = "$FILE" ]]; then
       indicator='*'
     fi
-    printf ' %-1s %s\t%s\n' "$indicator" \
-      "$(_TMP=${actual_file/*_/}; printf '%s' "${_TMP/\.txt/}")" \
-      "$(_file_header_with_info "$actual_file")"
+    d=0
+    readarray -t __ < "$actual_file"
+    for item in "${__[@]:2}"; do
+      [[ ${item: -1} -eq 1 ]] && ((d++)) 
+    done
+    actual_file=${actual_file#*_}
+    actual_file=${actual_file%.txt*}
+    printf ' %-1s %s\t%s (%d/%d)\n' "$indicator" \
+      "$actual_file" \
+      "${__[0]}" "$d" "$((${#__[@]}-2))"
     indicator=''
   done
   printf '\n'
-}
-
-################################################################################
-# Prints the current list status to the stdout.
-# -- Globals: None
-# -- Input: None
-# -- Output: The list status.
-################################################################################
-_file_header_with_info() {
-  local file="$1"
-  local number_of_done=0
-  local number_of_tasks=0
-  while IFS=';' read -r -s description status; do
-    if [[ -n $description ]]; then
-      ((number_of_tasks++))
-      if [[ $status -eq 1 ]]; then
-        ((number_of_done++))
-      fi
-    fi
-  done <<<"$(sed '1,2d'  "$file" | sort -t';' -n -k1)"
-  printf '%s (%d/%d)' "$(head -n1 "$file")" $number_of_done $number_of_tasks
 }
 
 ################################################################################
