@@ -26,6 +26,7 @@ __yact_task_commands() {
   modify:'Modifies the a given task'
   move:'Moves the given task to a given position within the list'
   config:'Configure global variables'
+  swap:'Swaps two tasks on the current list'
   )
   _describe -t task-commands 'task related commands' list
 }
@@ -64,7 +65,7 @@ __yact_list_tasks() {
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
         || ($cmd == 'undone' && "$task_status" -eq 1 ) \
         || $cmd == 'delete' || $cmd == 'modify' \
-        || $cmd == 'move' ) && -n "$task" ]]; then
+        || $cmd == 'move' || $cmd == 'swap' ) && -n "$task" ]]; then
       list+=("$id")
       description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
       ((id++))
@@ -138,6 +139,13 @@ __yact_main() {
           __yact_list_tasks move
         elif [[ ${#words[@]} -eq 3 ]]; then
           __extended_task_id_list top bottom up down
+        fi
+        ;;
+      swap)
+        if [[ ${#words[@]} -eq 2 ]]; then
+          __yact_list_tasks swap
+        elif [[ ${#words[@]} -eq 3 ]]; then
+          __yact_list_tasks swap
         fi
         ;;
       add)
