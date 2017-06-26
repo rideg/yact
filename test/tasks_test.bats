@@ -58,10 +58,12 @@ teardown() {
     # when
     run $YACT delete 2 < <(echo y)
     # then
+    assert_output -p 'Task: "A new task for test2"'
+    assert_output -p 'Are you sure you want to delete? y/[n]'
     assert_output -p 'Main list for testing - (0/2)'
     assert_output -p '1 [  ] A new task for test'
     assert_output -p '2 [  ] A new task for test3'
-    refute_output -p 'A new task for test2'
+    refute_output -p '[  ] A new task for test2'
 }
 
 @test "Should keep task if consent is not given" {
@@ -276,22 +278,7 @@ __create_three_tasks() {
    run $YACT add "task3"
    run $YACT add "task4"
    # when
-   run $YACT delete 2 3 < <(echo y)
-   # then
-   assert_output -p "1 [  ] task1"
-   refute_output -p "2 [  ] task2"
-   refute_output -p "3 [  ] task3"
-   assert_output -p "2 [  ] task4"
-}
-
-@test "delete - should delete multiple tasks (reverse order)" {
-   # given
-   run $YACT add "task1"
-   run $YACT add "task2"
-   run $YACT add "task3"
-   run $YACT add "task4"
-   # when
-   run $YACT delete 3 2 < <(echo y)
+   run $YACT delete 2 3 < <(echo "yy")
    # then
    assert_output -p "1 [  ] task1"
    refute_output -p "2 [  ] task2"
@@ -310,3 +297,4 @@ __create_three_tasks() {
   assert_output -p '1 [  ] task1'
   refute_output -p '2 [  ] task2'
 }
+

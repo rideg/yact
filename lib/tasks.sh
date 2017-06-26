@@ -5,7 +5,7 @@
 # -- Globals:
 #  TASKS - Current todo list's tasks array.
 # -- Input:
-#  id -  Task id to be deleted.
+#  id -  Task id. 
 # -- Output: None 
 ################################################################################
 set_done() {
@@ -52,17 +52,20 @@ delete_task() {
     force=1
     shift
   fi
-  [[ $# -eq 0 ]] && fatal "Please provide a task id."
-  if [[ $force -eq 0 ]]; then
-    echo "Are you sure you want to delete? y/[n]"
-    read -r -s -n 1 consent
-    [[ "$consent" != "y" ]] && return
-  fi
   declare -a tasks=("${TASKS[@]}")
   for id in "$@"; do
     check_task_id "$id"
     local task_id=$((id - 1))
-    unset "tasks[$task_id]"
+    local should_delete=1
+    if [[ $force -eq 0 ]]; then
+      printf 'Task: "%s"\n' "${tasks[$task_id]::-2}"
+      printf 'Are you sure you want to delete? y/[n]\n'
+      read -r -s -n 1 consent
+      [[ "$consent" != 'y' ]] && should_delete=0
+    fi
+    if [[ $should_delete -eq 1 ]]; then
+      unset "tasks[$task_id]"
+    fi
   done
   TASKS=("${tasks[@]}")
 }
