@@ -98,6 +98,9 @@ launch_editor() {
   which $cmd &> /dev/null
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
+  if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
+     cmd="${cmd} +4"
+  fi
   $cmd "$file"
 }
 
@@ -231,7 +234,7 @@ read_task_file() {
 }
 
 ################################################################################
-# Stores tasks and headers. 
+# Stores tasks and headers.
 # -- Globals:
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks array.
@@ -246,7 +249,7 @@ store_current() {
 }
 
 ################################################################################
-# Restores tasks and headers. 
+# Restores tasks and headers.
 # -- Globals:
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks array.
@@ -268,12 +271,12 @@ restore_current() {
 #  TASKS - Current todo's tasks array.
 #  __ORIGINAL_TASKS - Current todo's tasks array (original).
 #  __ORIGINAL_HEADER - Current todo's header (original).
-# -- Inputs: 
-#  file - File to flush tasks. Defaults to FILE.   
+# -- Inputs:
+#  file - File to flush tasks. Defaults to FILE.
 # -- Output: none
 ################################################################################
 flush_task_file() {
-  local file=${1-$FILE} 
+  local file=${1-$FILE}
   if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || \
         "$HEADER" != "$__STORED_HEADER" ]]; then
     printf '%s\n\n' "$HEADER" > "$file"

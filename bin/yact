@@ -7,7 +7,7 @@
 # -- Output: Help message.
 ################################################################################
 _show_help() {
-  echo "Yact - Yet Another Commandline Todo" 
+  echo "Yact - Yet Another Commandline Todo"
   echo "Usage: yact [-lhv] [command] ..."
 }
 
@@ -127,6 +127,7 @@ _parse_task_opts() {
       'done') set_done "$1" 1;;
       undone) set_done "$1" 0;;
       config) set_config "$1";;
+      swap) swap_tasks "$1" "$2";;
       show) ;;
       *) fatal "Cannot recognize command: $cmd";;
     esac

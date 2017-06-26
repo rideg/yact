@@ -208,3 +208,22 @@ show_tasks() {
   echo
 }
 
+################################################################################
+# Swaps two tasks in the tasklist
+# -- Globals:
+#   TASKS - Currenct todos's tasks.
+# -- Input:
+#   id1 -- First task id
+#   id2 -- Second task id
+# -- Output: none
+################################################################################
+swap_tasks() {
+  check_task_id "$1"
+  check_task_id "$2"
+  local -i id1=$(($1 - 1))
+  local -i id2=$(($2 - 1))
+  local tmp="${TASKS[$id1]}"
+  TASKS[$id1]="${TASKS[$id2]}"
+  TASKS[$id2]="$tmp"
+}
+

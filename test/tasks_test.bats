@@ -249,10 +249,10 @@ __create_three_tasks() {
 }
 
 @test "add - should replace new lines with spaces" {
-  # when
-  run $YACT add $'task1\nand something'
-  # then
-  assert_output -p '1 [  ] task1 and something'
+    # when
+    run $YACT add $'task1\nand something'
+    # then
+    assert_output -p '1 [  ] task1 and something'
 }
 
 @test "show - hide done tasks if HIDE_DONE is set" {
@@ -296,5 +296,21 @@ __create_three_tasks() {
   refute_output -p 'Are you sure you want to delete? y/[n]'
   assert_output -p '1 [  ] task1'
   refute_output -p '2 [  ] task2'
+}
+
+@test "swap - should swap two tasks" {
+  # given
+  run $YACT add "task1"
+  run $YACT add "task2"
+  run $YACT add "task3"
+
+  # when
+  run $YACT swap 1 3
+
+  # then
+  run $YACT
+  assert_output -p "1 [  ] task3"
+  assert_output -p "2 [  ] task2"
+  assert_output -p "3 [  ] task1"
 }
 
