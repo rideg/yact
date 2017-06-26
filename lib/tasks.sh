@@ -179,9 +179,9 @@ show_tasks() {
   local -a buffer
   local -i i
   for item in "${TASKS[@]}"; do
-    ((i++))
+    let i=i+1
     if [[ ${item: -1} -eq 1 ]]; then
-      ((d=d+1))
+      let d=d+1
       if [[ $HIDE_DONE -eq 1 ]]; then
         continue
       fi

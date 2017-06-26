@@ -317,3 +317,41 @@ let:() {
   eval "$command ${args[*]:$#} ;$variable=$ret"
 }
 
+################################################################################
+# Calculaes the Levenshtein distance between two strings. 
+# -- Globals: none
+# -- Input:
+#   str1: first string
+#   str2: second string
+# -- Output: 
+#   __: the Levenshtein distance
+################################################################################
+lev_dist() {
+ [[ $# -ne 2 ]] && fatal "Two arguments are required." 
+ local str1=$1
+ local str2=$2
+ declare -a v1
+ declare -a v2 
+ declare -a tmp
+ for (( i=0; i<=${#str2}; i++ )); do
+   v1[$i]=$i
+ done
+ for (( i=0; i<${#str1}; i++ )); do
+   let v2[0]=i+1
+   for (( j=0; j<${#str2}; j++ )); do
+     local cost=0
+     if [[ "${str1:$j:1}" != "${str2:$i:1}" ]]; then
+       cost=1
+     fi 
+     let a=v2[j]+1
+     let b=v1[j+1]+1 
+     let c=v1[j]+cost
+     let "v2[j+1]=a<b?(a<c?a:(b<c?b:c)):(b<c?b:(c<a?c:a))"
+   done 
+   tmp=(${v1[@]})
+   v1=(${v2[@]})
+   v2=(${tmp[@]})
+ done
+ __=${v1[${#str2}]}
+}
+
