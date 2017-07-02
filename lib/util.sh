@@ -130,30 +130,30 @@ get_tmp_file_content() {
 #  LINE_LENGTH - Line length to be taken into consideration when wrapping text.
 # -- Input:
 #  Text - the text to be wrapped.
+#  Max Id - the greatest id used in the task array.
+#  Max length - the maximal line length
 # -- Output: Wrapped text.
 ################################################################################
 wrap_text() {
-  local text=$*
-  local length=${#text}
-  if [[ "$length" -gt "$LINE_LENGTH" ]]; then
-    local IFS=' '
-    local line=''
-    local wrapped=''
-    for word in $text; do
-      local t="$line $word"
-      if [[ ${#t} -gt "$LINE_LENGTH" ]]; then
-        wrapped="$wrapped$line\n          "
-        line=''
-      fi
-      if [[ ${#line} -gt 0 ]]; then
-        line=$t
-      else
-        line=$word
-      fi
-    done
-  else
-    line=$text
-  fi
+  local text=$1
+  local max_length=$3
+  let s_padding=${#2}+7
+  local IFS=' '
+  local line=''
+  local wrapped=''
+  printf -v padding '%*s' "$s_padding"
+  for word in $text; do
+    local t="$line $word"
+    if [[ ${#t} -gt "$max_length" ]]; then
+      wrapped=$wrapped$line$'\n'$padding
+      line=''
+    fi
+    if [[ ${#line} -gt 0 ]]; then
+      line=$t
+    else
+      line=$word
+    fi
+  done
   __="$wrapped$line"
 }
 
@@ -300,10 +300,10 @@ flush_task_file() {
 let:() {
   local ret
   if [[ "$1" == '-a' ]]; then
-    ret='("${__[@]}")'
+    ret=$'("${__[@]}")'
     shift
   else
-    ret='"$__"'
+    ret=$'"$__"'
   fi
   [[ $# -lt 3 ]] && fatal "Not enought arguments."
   [[ "$2" != '=' ]] && fatal "Usage: let: <variable name> = command [args...]"
@@ -352,6 +352,6 @@ lev_dist() {
    v1=(${v2[@]})
    v2=(${tmp[@]})
  done
- __=${v1[${#str2}]}
+ __=(${v1[${#str2}]})
 }
 

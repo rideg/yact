@@ -178,6 +178,11 @@ show_tasks() {
   local -i d
   local -a buffer
   local -i i
+  let length=${#TASKS[@]}
+  let max_available=$COLUMNS-9-${#length}
+  let max_length="LINE_LENGTH < $max_available ||
+                  $max_available < 0 ? 
+                    LINE_LENGTH : $max_available"
   for item in "${TASKS[@]}"; do
     let i=i+1
     if [[ ${item: -1} -eq 1 ]]; then
@@ -191,8 +196,8 @@ show_tasks() {
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]='  '
     fi
-    if [[ ${#item} -ge $LINE_LENGTH ]]; then
-      wrap_text ${item::-2}
+    if [[ ${#item} -ge $max_length ]]; then
+      wrap_text "${item::-2}" "$length" "$max_length"
       buffer[${#buffer[@]}]=$__
     else
       buffer[${#buffer[@]}]=${item::-2}

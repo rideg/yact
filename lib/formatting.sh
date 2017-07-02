@@ -33,6 +33,7 @@ _init_formatting() {
     BG_CYAN=$'\e[46m'
     BG_WHITE=$'\e[107m'
     NORMAL=$'\e[0m'
+    COLUMNS=$(tput cols)
   fi
 }
 
