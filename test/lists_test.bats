@@ -59,6 +59,7 @@ teardown() {
   # when
   run $YACT -l delete 1234123 < <(echo y)
   # then
+  assert_output -p 'List name: This is a list.'
   assert_success
 }
 

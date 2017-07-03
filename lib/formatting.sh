@@ -11,7 +11,7 @@ _init_formatting() {
   if [[ $USE_FORMATTING -eq 1 ]]; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE \
            UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA \
-           BG_CYAN BG_WHITE NORMAL COLUMNS
+           BG_CYAN BG_WHITE NORMAL
     BLACK=$'\e[30m'
     RED=$'\e[31m'
     GREEN=$'\e[32m'

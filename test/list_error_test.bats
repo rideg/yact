@@ -42,3 +42,10 @@ teardown() {
  assert_output "Non-existing file. $YACT_DIR/_dsfsadv.txt"
 }
 
+@test "delete - error if non existing list id is given" {
+  # when
+  run $YACT -l delete non-existing
+  # then
+  assert_output "Non-existing list id: non-existing"
+} 
+

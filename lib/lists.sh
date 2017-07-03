@@ -56,8 +56,11 @@ delete_list() {
   local to_delete="$FILE"
   local consent
 
-  test -n "$1" && to_delete="$YACT_DIR/_${1}.txt"
-
+  [[ -n "$1" ]] && to_delete="$YACT_DIR/_${1}.txt"
+  [[ -f "$to_delete" ]] || fatal "Non-existing list id: $1"
+  
+  read_to -v header head -n 1 "$to_delete"
+  echo "List name: $header"
   echo "Are you sure to delete? y/[n]"
   read -r -s -n 1 consent
 
