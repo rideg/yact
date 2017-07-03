@@ -318,7 +318,7 @@ let:() {
 }
 
 ################################################################################
-# Calculaes the Levenshtein distance between two strings. 
+# Calculates the Levenshtein distance between two strings. 
 # -- Globals: none
 # -- Input:
 #   str1: first string
@@ -353,5 +353,21 @@ lev_dist() {
    v2=(${tmp[@]})
  done
  __=(${v1[${#str2}]})
+}
+
+################################################################################
+# Executest the given command and read the output into a variable
+# -- Globals: none
+# -- Input:
+#   variable_name: The name of the variable to save output.
+#   args...: The command to be executed.
+# -- Output: none 
+################################################################################
+read_to() {
+  [[ "$1" = '-v' ]] || fatal "Variable name is mandatory."
+  local var="$2"
+  shift 2
+  eval "$* 1>&9"
+  read -r -u 9 -s "$var"
 }
 

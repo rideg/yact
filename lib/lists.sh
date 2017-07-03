@@ -11,7 +11,7 @@
 new_list() {
   get_description "$*" " "
   local description=$__
-  id=$(timestamp)
+  read_to -v id timestamp
   while [[ -e "$YACT_DIR/_${id}.txt" ]]; do
     ((id++))
   done

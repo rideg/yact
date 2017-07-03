@@ -10,8 +10,8 @@
 _init_formatting() {
   if [[ $USE_FORMATTING -eq 1 ]]; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE \
-      UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA BG_CYAN \
-      BG_WHITE NORMAL
+           UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA \
+           BG_CYAN BG_WHITE NORMAL COLUMNS
     BLACK=$'\e[30m'
     RED=$'\e[31m'
     GREEN=$'\e[32m'
@@ -33,7 +33,7 @@ _init_formatting() {
     BG_CYAN=$'\e[46m'
     BG_WHITE=$'\e[107m'
     NORMAL=$'\e[0m'
-    COLUMNS=$(tput cols)
+    read_to -v COLUMNS tput cols
   fi
 }
 
@@ -51,6 +51,4 @@ format() {
   shift
   export __="$*$text$NORMAL"
 }
-
-_init_formatting
 
