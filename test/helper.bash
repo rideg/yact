@@ -38,7 +38,6 @@ _set_no_color() {
     echo "USE_FORMATTING=0" >> "${YACT_DIR}"/config
 }
 
-
 ################################################################################
 # Cleans the test temp direcotry.
 # -- Globals:
@@ -65,3 +64,4 @@ _spy_tool() {
     echo -e "#!/usr/bin/env bash\n${answer}" > "${EXECUTABLE_DIR}/${tool_name}"
     chmod +x "${EXECUTABLE_DIR}/${tool_name}"
 }
+
