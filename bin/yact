@@ -41,6 +41,7 @@ _init_pipe() {
 #  YACT_DIR - Working directory for YACT.
 #  TODO_FILE - The file name of the current list.
 #  RUN - Directory for runtime temproray files.
+#  YACT_PATCH_DIR - Directory for storage patches.
 # -- Input: Command.
 # -- Output: The result of the command.
 ################################################################################
@@ -58,6 +59,8 @@ main() {
   . ./config
 
   [[ -f $YACT_DIR/config ]] && . "$YACT_DIR"/config
+
+  export YACT_PATCH_DIR=${YACT_PATCH_DIR:-patches}
 
   . lib/util.sh
   . lib/formatting.sh

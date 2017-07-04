@@ -15,15 +15,17 @@ read_version() {
 
 ################################################################################
 # Reads patch serial numbers.
-# -- Globals: None
+# -- Globals:
+#  YACT_PATCH_DIR - Directory for storage patches.
 # -- Input: None
 # -- Output: 
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
  export PATCHES
- for file in patches/*.patch; do
-   let version="10#${file:9:4}"
+ let prefix=${#YACT_PACTH_DIR}+2
+ for file in "$YACT_PATCH_DIR"/*.patch; do
+   let version=10#${file:$prefix:4}
    PATCHES[$version]="$file"
  done
 }
