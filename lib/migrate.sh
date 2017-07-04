@@ -18,7 +18,7 @@ read_version() {
 # -- Globals: None
 # -- Input: None
 # -- Output: 
-#   PATCHES - The map of serial number to patch file.
+#  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
  export PATCHES
@@ -42,6 +42,8 @@ migrate_storage() {
   let next_version=__+1
   if [[ $next_version -le ${#PATCHES[@]} ]]; then
     execute_migration "$__"
+  else
+    echo "Storage is up to date."
   fi
 }
 
@@ -81,7 +83,7 @@ execute_migration() {
   done
 
   if [[ -n "$error_message" ]]; then
-    echo "Could not migrage storage: $error_message"
+    echo "Could not migrate storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
     mv -f "${YACT_DIR}.bak" "$YACT_DIR" || 
       fatal "Could not roll-back. However you can find your original files \
