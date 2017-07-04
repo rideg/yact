@@ -31,7 +31,7 @@ read_patches() {
 ################################################################################
 # Checks the current storage version against the desired version and if needed
 # executes the actual sotrage migration.
-# -- Globals: 
+# -- Globals:
 #  PATCHES - the list of the available patches.
 # -- Input: None
 # -- Output: None
@@ -41,20 +41,20 @@ migrate_storage() {
   read_patches
   let next_version=__+1
   if [[ $next_version -le ${#PATCHES[@]} ]]; then
-    execute_migration "$__" 
-  fi 
+    execute_migration "$__"
+  fi
 }
 
 ################################################################################
 # Executes the storage migation: applies patches one by one. If something goes
 # wrong it tries to roll back.
-# -- Globals: 
+# -- Globals:
 #  PATCHES - The list of the available patches.
 #  RED - Color red for formatting.
 #  GREEN - Color green for formatting.
 #  NORMAL - Reset console text formatting.
 #  YACT_DIR - Working directory for YACT.
-# -- Input: 
+# -- Input:
 #  current_version - Current storage version.
 # -- Output: None
 ################################################################################
@@ -65,7 +65,7 @@ execute_migration() {
 
   cp -ar "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
     fatal "Cannot create a backup copy of '$YACT_DIR'."
-  
+
   let next_version=$1+1
   export error_message
   for ((i=next_version; i<=${#PATCHES[@]}; i++)); do
@@ -84,11 +84,11 @@ execute_migration() {
     echo "Could not migrage storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
     mv -f "${YACT_DIR}.bak" "$YACT_DIR" || 
-      fatal "Could not roll-back. However you can find your original files \ 
+      fatal "Could not roll-back. However you can find your original files \
              in '${YACT_DIR}.bak' folder."
   else 
    echo "${#PATCHES[@]}" > "$YACT_DIR/version"
-   rm -rf "${YACT_DIR}.bak" 
+   rm -rf "${YACT_DIR}.bak"
 
    echo "Storage migration is done."
   fi
