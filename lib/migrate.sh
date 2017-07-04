@@ -10,7 +10,7 @@
 read_version() {
   __='0000'
   [[ -f "$YACT_DIR/version" ]] && read -r __ <"$YACT_DIR/version"
-  let __=10#$__
+  let __="10#$__"
 }
 
 ################################################################################
@@ -22,10 +22,10 @@ read_version() {
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
- export PATCHES
- let prefix=${#YACT_PACTH_DIR}+2
+ declare -a -x PATCHES
+ let prefix=${#YACT_PATCH_DIR}+2
  for file in "$YACT_PATCH_DIR"/*.patch; do
-   let version=10#${file:$prefix:4}
+   let version="10#${file:$prefix:4}"
    PATCHES[$version]="$file"
  done
 }
@@ -47,6 +47,7 @@ migrate_storage() {
   else
     echo "Storage is up to date."
   fi
+  exit_ 0
 }
 
 ################################################################################
@@ -66,8 +67,8 @@ execute_migration() {
   echo "Storage migration is needed."
   echo "Current storage version is: $1."
   echo "Desired version is: ${#PATCHES[@]}."
-
-  cp -ar "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
+ 
+  cp -a -r "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
     fatal "Cannot create a backup copy of '$YACT_DIR'."
 
   let next_version=$1+1
@@ -92,8 +93,6 @@ execute_migration() {
              in '${YACT_DIR}.bak' folder."
   else 
    echo "${#PATCHES[@]}" > "$YACT_DIR/version"
-   rm -rf "${YACT_DIR}.bak"
-
    echo "Storage migration is done."
   fi
 }

@@ -74,6 +74,7 @@ main() {
     -v) _show_version;;
     -h) _show_help;;
     -l) shift; _parse_list_opts "$@";;
+    migrate) . lib/migrate.sh; migrate_storage;;
     *) _parse_task_opts "$@";;
   esac
   exit_ 0

@@ -13,4 +13,9 @@ teardown() {
   _clean_patch_dir
 }
 
-# TODO: add tests
+@test "migration - no need for it" {
+  run $YACT migrate 
+
+  assert_output -p  "Storage is up to date."
+}
+
