@@ -368,7 +368,7 @@ read_to() {
   local var="$2"
   shift 2
   eval "$* 1>&9"
-  printf $'\1' 1>&9
+  printf '%s' $'\1' 1>&9
   read -r -u 9 -s -d $'\1' "$var"
 }
 

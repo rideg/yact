@@ -60,6 +60,7 @@ delete_list() {
   [[ -f "$to_delete" ]] || fatal "Non-existing list id: $1"
   
   read_to -v header head -n 1 "$to_delete"
+  # shellcheck disable=SC2154
   echo "List name: $header"
   echo "Are you sure to delete? y/[n]"
   read -r -s -n 1 consent
@@ -68,6 +69,7 @@ delete_list() {
     rm -f "$to_delete" &> /dev/null
     if [[ "$to_delete" = "$FILE" ]]; then
       local next_file
+      # shellcheck disable=SC2012
       next_file="$(ls -ur "$YACT_DIR"/_*.txt 2> /dev/null | head -n1)"
       if [[ -z "$next_file" ]]; then
         rm "$YACT_DIR"/.last
