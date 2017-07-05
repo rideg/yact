@@ -22,9 +22,11 @@ read_version() {
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
- declare -a -x PATCHES
+ export PATCHES
  let prefix=${#YACT_PATCH_DIR}+2
- for file in "$YACT_PATCH_DIR"/*.patch; do
+ for file in $YACT_PATCH_DIR/*.patch.bash; do
+   # If directory does not contain such files
+   [[ "$file" = "$YACT_PATCH_DIR/*.patch.bash" ]] && break
    let version="10#${file:$prefix:4}"
    PATCHES[$version]="$file"
  done
@@ -68,7 +70,7 @@ execute_migration() {
   echo "Current storage version is: $1."
   echo "Desired version is: ${#PATCHES[@]}."
  
-  cp -a -r "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
+  cp -a -R "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
     fatal "Cannot create a backup copy of '$YACT_DIR'."
 
   let next_version=$1+1

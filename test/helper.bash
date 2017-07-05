@@ -22,7 +22,7 @@ _setup_yact() {
    export YACT_TEST_DIR="${BATS_TMPDIR}"/yact-test
    export YACT_DIR="${YACT_TEST_DIR}"/run
    export EXECUTABLE_DIR="${YACT_TEST_DIR}"/bin
-   export YACT_PATCH_DIR="${BATS_TEST_DIRNAME}"/patches
+   export YACT_PATCH_DIR="${BATS_TMPDIR}"/patches
    mkdir -p "${YACT_DIR}"
    mkdir -p "${EXECUTABLE_DIR}"
    mkdir -p "${YACT_PATCH_DIR}"
@@ -60,7 +60,7 @@ _clean_test_dir() {
 # -- Output: None
 ################################################################################
 _clean_patch_dir() {
-  rm -rf "${YACT_PATCHES_DIR}"
+  rm -rf "${YACT_PATCH_DIR}"
 }
 
 ################################################################################
@@ -100,7 +100,7 @@ _set_storage_version() {
 # -- Output: None
 ################################################################################
 _create_patch() {
-  printf -v file_name "%s/_%04d_test.patch" "${YACT_PATCH_DIR}" "$1"
-  printf "#!/usr/bin/env bash\n\n%s\n" "$2" > "$file_name"
+  printf -v file_name "%s/_%04d_test.patch.bash" "${YACT_PATCH_DIR}" "$1"
+  printf "#!/usr/bin/env bash\n\n__do_migrate() {\n%s\n}\n" "$2" > "$file_name"
 }
 
