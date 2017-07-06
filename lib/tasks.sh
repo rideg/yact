@@ -14,7 +14,7 @@ set_done() {
   shift
   ((id--))
   parse_item "${TASKS[$id]}" 
-  TASKS[$id]="${__[0]};$1"
+  TASKS[$id]="0;${__[1]};$1"
 }
 
 ################################################################################
@@ -32,7 +32,7 @@ add_task() {
     shift 2
   fi
   get_description "$*" " "
-  TASKS=("${TASKS[@]}" "$__;0")
+  TASKS=("${TASKS[@]}" "0;$__;0")
   if [[ -n "$position" ]]; then
     move_task "${#TASKS[@]}" "$position"
   fi
@@ -58,7 +58,7 @@ delete_task() {
     local task_id=$((id - 1))
     local should_delete=1
     if [[ $force -eq 0 ]]; then
-      printf 'Task: "%s"\n' "${tasks[$task_id]::-2}"
+      printf 'Task: "%s"\n' "${tasks[$task_id]:2:-2}"
       printf 'Are you sure you want to delete? y/[n]\n'
       read -r -s -n 1 consent
       [[ "$consent" != 'y' ]] && should_delete=0
@@ -87,7 +87,7 @@ modify_task() {
   ((id--))
   let: -a task_array = parse_item "${TASKS[$id]}" 
   let: description = get_description "$*" "${task_array[0]}"
-  TASKS[$id]="$description;${task_array[1]}"
+  TASKS[$id]="0;$description;${task_array[1]}"
 }
 
 ################################################################################
@@ -197,10 +197,10 @@ show_tasks() {
       buffer[${#buffer[@]}]='  '
     fi
     if [[ ${#item} -ge $max_length ]]; then
-      wrap_text "${item::-2}" "$length" "$max_length"
+      wrap_text "${item:2:-2}" "$length" "$max_length"
       buffer[${#buffer[@]}]=$__
     else
-      buffer[${#buffer[@]}]=${item::-2}
+      buffer[${#buffer[@]}]=${item:2:-2}
     fi
   done
   printf '\n %s - (%d/%d)\n\n' \
