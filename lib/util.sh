@@ -34,8 +34,7 @@ timestamp() {
 
 ################################################################################
 # Cleans runtime tmp folder, restore working directory then exits.
-# -- Globals:
-#  RUN - Directory for runtime temproray files.
+# -- Globals: None
 # -- Input:
 #  exit_code - Code to exit with.
 # -- Output: None
@@ -60,7 +59,7 @@ fatal() {
 }
 
 ################################################################################
-# Creates a YACT template file for providing more complext descriptions.
+# Creates a YACT template file for providing more complex descriptions.
 # -- Globals:
 #  RUN - Directory for runtime temproray files.
 # -- Input:

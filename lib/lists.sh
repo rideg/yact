@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-################################################################################
+
 # Creates a new list with the given description and marks it as current.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
+#  RUN - Directory for runtime temproray files.
 # -- Input:
 #  Description - The description of the new list.
 # -- Output: The list status after adding the new list
@@ -12,19 +13,20 @@ new_list() {
   get_description "$*" " "
   local description=$__
   read_to -v id timestamp
-  while [[ -e "$YACT_DIR/_${id}.txt" ]]; do
+  while [[ -e "$STORAGE_DIR/_${id}.txt" ]]; do
     ((id++))
   done
   file_name="_$id.txt"
-  printf "%s\n\n" "$description" > "$YACT_DIR/$file_name"
-  printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
+  printf "%s\n\n" "$description" > "$STORAGE_DIR/$file_name"
+  printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   _update_actual
 }
 
 ################################################################################
 # Marks the given list as current.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
+#  RUN - Directory for runtime temproray files.
 # -- Input:
 #  id - The id of the list to be marked.
 # -- Output: The list status after changing the current.
@@ -35,10 +37,10 @@ switch_list() {
     fatal "Missing list id, please provide it."
   fi
   file_name="_${list_id}.txt"
-  if [[ ! -f "$YACT_DIR/$file_name" ]]; then
+  if [[ ! -f "$STORAGE_DIR/$file_name" ]]; then
     fatal "Non-existing list id $list_id"
   fi
-  printf 'TODO_FILE=%s\n' "$file_name" > "$YACT_DIR/.last"
+  printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   _update_actual
 }
 
@@ -46,7 +48,8 @@ switch_list() {
 # Deletes the given list and marks the last recently used as current. Or if no
 # id is provided it deletes the current list.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
+#  RUN - Directory for runtime temproray files.
 #  FILE - current todo list
 # -- Input:
 #  id? -  Id of the list to be deleted.
@@ -56,7 +59,7 @@ delete_list() {
   local to_delete="$FILE"
   local consent
 
-  [[ -n "$1" ]] && to_delete="$YACT_DIR/_${1}.txt"
+  [[ -n "$1" ]] && to_delete="$STORAGE_DIR/_${1}.txt"
   [[ -f "$to_delete" ]] || fatal "Non-existing list id: $1"
   
   read_to -v header head -n 1 "$to_delete"
@@ -70,11 +73,11 @@ delete_list() {
     if [[ "$to_delete" = "$FILE" ]]; then
       local next_file
       # shellcheck disable=SC2012
-      next_file="$(ls -ur "$YACT_DIR"/_*.txt 2> /dev/null | head -n1)"
+      next_file="$(ls -ur "$STORAGE_DIR"/_*.txt 2> /dev/null | head -n1)"
       if [[ -z "$next_file" ]]; then
-        rm "$YACT_DIR"/.last
+        rm "$RUN"/.last
       else
-        printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$YACT_DIR"/.last
+        printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$RUN"/.last
         _update_actual
       fi
     fi
@@ -84,7 +87,8 @@ delete_list() {
 ################################################################################
 # Updates the description of a given list.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
+#  RUN - Directory for runtime temproray files.
 # -- Input:
 #  id -  Id of the list to be changed.
 #  description - The new description.
@@ -94,7 +98,7 @@ modify_list() {
   local description
   local id=$1
   [[ -n "$id" ]] || fatal 'Please provide an id.'
-  local file="${YACT_DIR}/_${id}.txt"
+  local file="${STORAGE_DIR}/_${id}.txt"
   [[ -f "$file" ]] || fatal "Non-existing file. ${file}"
   shift
   store_current
@@ -108,9 +112,9 @@ modify_list() {
 # List the currently available todo lists and indicates the current with a *
 # mark.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
-#  FILE - current todo list
+#  STORAGE_DIR - storage
 #  BOLD - bold formatting
+#  FILE - current todo list
 #  UNDERLINE - underline formatting
 # -- Input: None
 # -- Output: The list status.
@@ -120,7 +124,7 @@ show_lists() {
   local indicator
   format 'You have the following lists' "$BOLD" "$UNDERLINE"
   printf \ "\n %s:\n\n" "$__"
-  for actual_file in "$YACT_DIR"/_*.txt; do
+  for actual_file in "$STORAGE_DIR"/_*.txt; do
     if [[ "$actual_file" = "$FILE" ]]; then
       indicator='*'
     fi
@@ -142,15 +146,17 @@ show_lists() {
 ################################################################################
 # Updates FILE global.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
+#  RUN - Directory for runtime temproray files.
 #  TODO_FILE - The file name of the current list.
+#  FILE - current todo list
 # -- Input: None
 # -- Output: The list status.
 ################################################################################
 _update_actual() {
   # shellcheck source=/dev/null
-  . "$YACT_DIR/.last"
-  FILE="$YACT_DIR/$TODO_FILE"
+  . "$RUN/.last"
+  FILE="$STORAGE_DIR/$TODO_FILE"
   _require_actual
 }
 

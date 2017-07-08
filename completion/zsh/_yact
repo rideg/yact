@@ -2,6 +2,8 @@
 #autoload
 
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
+STORAGE_DIR=$YACT_DIR/storage
+
 
 __yact_list_commands() {
   local -a list
@@ -34,7 +36,7 @@ __yact_task_commands() {
 __show_list_ids() {
   local -a list
   list=()
-  for filename in "$YACT_DIR"/*.txt; do
+  for filename in "$STORAGE_DIR"/*.txt; do
     list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
   done
   if [[ ${#list} -ne 0 ]]; then
@@ -53,15 +55,15 @@ __yact_list_tasks() {
   local cmd;
   cmd=$1
   # shellcheck source=/dev/null
-  test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
-  file=$YACT_DIR/$TODO_FILE
+  test -e $YACT_DIR/.run/.last && . "$YACT_DIR"/.run/.last
+  file=$STORAGE_DIR/$TODO_FILE
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
     declare -a list description
     local max_width
     max_width="$(echo "$(wc -l < "$file")-2" | bc)"
     max_width="${#max_width}"
     local id=1
-    while IFS=';' read -r task task_status; do
+    while IFS=';' read -r type task task_status; do
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
         || ($cmd == 'undone' && "$task_status" -eq 1 ) \
         || $cmd == 'delete' || $cmd == 'modify' \
@@ -86,8 +88,8 @@ __extended_task_id_list() {
   local current=1
   declare -a list
   list+=($@)
-  test -e $YACT_DIR/.last && . "$YACT_DIR"/.last
-  file=$YACT_DIR/$TODO_FILE
+  test -e $YACT_DIR/run/.last && . "$YACT_DIR"/run/.last
+  file=$STORAGE_DIR/$TODO_FILE
   max_id="$(echo "$(wc -l < "$file")-2" | bc)"
   while [[ $current -le $max_id ]]; do
     list+=("$current")

@@ -25,13 +25,13 @@ _show_version() {
 # Initialisez the pipe which can be used to avoid subshell creation when we
 # need to store the output of some arbitary command.
 # -- Globals: 
-#  YACT_DIR - Working directory for YACT.
+#  RUN - Directory for runtime temproray files.
 # -- Input: none
 # -- Output: Version string.
 ################################################################################
 _init_pipe() {
-  [[ -p "${YACT_DIR}/.pipe" ]] || mkfifo "${YACT_DIR}/.pipe"
-  exec 9<> "${YACT_DIR}/.pipe"
+  [[ -p "${RUN}/.pipe" ]] || mkfifo "${RUN}/.pipe"
+  exec 9<> "${RUN}/.pipe"
 }
 
 ################################################################################
@@ -42,6 +42,7 @@ _init_pipe() {
 #  TODO_FILE - The file name of the current list.
 #  RUN - Directory for runtime temproray files.
 #  YACT_PATCH_DIR - Directory for storage patches.
+#  STORAGE_DIR - storage
 # -- Input: Command.
 # -- Output: The result of the command.
 ################################################################################
@@ -55,17 +56,21 @@ main() {
   [[ -d "${YACT_DIR}" ]] || YACT_DIR=~/.yact
   RUN=$YACT_DIR/.run
 
-  [[ -d $RUN ]] || mkdir -p $RUN
+  [[ -d $RUN ]] || mkdir -p "$RUN"
   . ./config
 
   [[ -f $YACT_DIR/config ]] && . "$YACT_DIR"/config
+
+
+  export STORAGE_DIR=$YACT_DIR/storage
+  [[ -d $STORAGE_DIR ]] || mkdir -p "$STORAGE_DIR"
 
   export YACT_PATCH_DIR=${YACT_PATCH_DIR:-patches}
 
   . lib/util.sh
   . lib/formatting.sh
-  [[ -f $YACT_DIR/.last ]] && . "$YACT_DIR"/.last
-  export FILE=$YACT_DIR/$TODO_FILE
+  [[ -f $RUN/.last ]] && . "$RUN"/.last
+  export FILE=$STORAGE_DIR/$TODO_FILE
 
   _init_pipe
   _init_formatting 

@@ -93,8 +93,7 @@ modify_task() {
 ################################################################################
 # Moves a given task to a given position within the current list.
 # -- Globals:
-#  FILE - Current todo list's file.
-#  RUN - Directory for runtime temproray files.
+#  TASKS - Current todo list's tasks array.
 # -- Input:
 #  id -  Task id to be moved.
 #  position - Target position.

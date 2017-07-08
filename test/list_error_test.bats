@@ -39,7 +39,7 @@ teardown() {
  # when
  run $YACT -l modify dsfsadv
  # then
- assert_output "Non-existing file. $YACT_DIR/_dsfsadv.txt"
+ assert_output "Non-existing file. $YACT_STORAGE_DIR/_dsfsadv.txt"
 }
 
 @test "delete - error if non existing list id is given" {

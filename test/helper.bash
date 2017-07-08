@@ -21,6 +21,7 @@ _setup_yact() {
    export YACT="${BATS_TEST_DIRNAME}"/../bin/yact 
    export YACT_TEST_DIR="${BATS_TMPDIR}"/yact-test
    export YACT_DIR="${YACT_TEST_DIR}"/run
+   export YACT_STORAGE_DIR="$YACT_DIR"/storage
    export EXECUTABLE_DIR="${YACT_TEST_DIR}"/bin
    export YACT_PATCH_DIR="${BATS_TMPDIR}"/patches
    mkdir -p "${YACT_DIR}"
@@ -87,7 +88,7 @@ _spy_tool() {
 # -- Output: None
 ################################################################################
 _set_storage_version() {
-  echo "$1" > "${YACT_DIR}"/version
+  echo "$1" > "$YACT_STORAGE_DIR"/version
 }
 
 ################################################################################
