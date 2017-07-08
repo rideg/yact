@@ -27,17 +27,23 @@ teardown() {
  _create_patch 1 "printf 'patch 0001\n'"
  _create_patch 2 "printf 'patch 0002\n'"
  _create_patch 3 "printf 'patch 0003\n'"
+ # and
+ local dt='2017-03-17_120530'
+ _spy_tool date "printf '${dt}'"
 
  # when
  run $YACT migrate
 
- # then
+ # then notifies migration is required 
  assert_output -p 'Storage migration is needed.'
  assert_output -p 'Current storage version is: 0.'
  assert_output -p 'Desired version is: 3'
+ # and executes patches
  assert_output -p 'patch 0001'
  assert_output -p 'patch 0002'
  assert_output -p 'patch 0003'
+ # and creates backup 
+ assert [ -f $YACT_DIR/backup/backup-${dt}.tar.gz ]
 }
 
 @test "migration - adds file type patch" {
