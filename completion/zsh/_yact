@@ -27,10 +27,18 @@ __yact_task_commands() {
   show:'Shows the tasks from the current list'
   modify:'Modifies the a given task'
   move:'Moves the given task to a given position within the list'
-  config:'Configure global variables'
   swap:'Swaps two tasks on the current list'
   )
   _describe -t task-commands 'task related commands' list
+}
+
+__yact_admin_commands() {
+  local -a list
+  list=(
+    migrate:'Migrate file storage'
+    config:'Configure global variables'
+  )
+  _describe -t admin-commands 'admin related commands' list
 }
 
 __show_list_ids() {
@@ -83,6 +91,7 @@ else
 fi
 }
 
+
 __extended_task_id_list() {
   local max_id
   local current=1
@@ -106,6 +115,7 @@ __yact_main() {
     '-l[Work with lists]: :->lists' \
     '-v[version]: :->end' \
     '-h[help]: :->end' \
+    '-a[admin]: :->admin' \
     ': :->tasks' \
     '(-)*:: :->arg' && return
 
@@ -119,6 +129,9 @@ __yact_main() {
       ;;
     (lists)
       __yact_list_commands
+      ;;
+    (admin)
+      __yact_admin_commands
       ;;
     (arg)
       case "$words[1]" in

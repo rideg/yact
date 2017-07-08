@@ -79,7 +79,7 @@ main() {
     -v) _show_version;;
     -h) _show_help;;
     -l) shift; _parse_list_opts "$@";;
-    migrate) . lib/migrate.sh; migrate_storage;;
+    -a) shift; _parse_admin_opts "$@";;
     *) _parse_task_opts "$@";;
   esac
   exit_ 0
@@ -142,7 +142,6 @@ _parse_task_opts() {
   local cmd=$1
   shift
   . lib/tasks.sh
-  . lib/config.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
       add) add_task "$@";;
@@ -151,7 +150,6 @@ _parse_task_opts() {
       move) move_task "$1" "$2";;
       'done') set_done "$1" 1;;
       undone) set_done "$1" 0;;
-      config) set_config "$1";;
       swap) swap_tasks "$1" "$2";;
       show) ;;
       *) fatal "Cannot recognize command: $cmd";;
@@ -159,6 +157,23 @@ _parse_task_opts() {
   fi
   show_tasks
   flush_task_file
+}
+
+################################################################################
+# Parses the options for admin related tasks.
+# -- Globals: None.
+# -- Input: Arguments for task operations.
+# -- Output: None.
+################################################################################
+_parse_admin_opts() {
+  local cmd=$1  
+  shift
+  [[ -z $cmd ]] && fatal "Please provde an admin command"
+  case $cmd in
+    config) . lib/config.sh; set_config "$1";;
+    migrate) . lib/migrate.sh; migrate_storage;;
+    *) fatal "Unknown command: $cmd"
+  esac
 }
 
 main "$@"

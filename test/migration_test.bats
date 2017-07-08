@@ -16,7 +16,7 @@ teardown() {
 
 @test "migration - no need for it" {
   # when
-  run $YACT migrate 
+  run $YACT -a migrate 
  
   # then
   assert_output -p  "Storage is up to date."
@@ -32,7 +32,7 @@ teardown() {
  _spy_tool date "printf '${dt}'"
 
  # when
- run $YACT migrate
+ run $YACT -a migrate
 
  # then notifies migration is required 
  assert_output -p 'Storage migration is needed.'
@@ -62,7 +62,7 @@ teardown() {
   ) > "$file"
   
   # when
-  run $YACT migrate
+  run $YACT -a migrate
 
   # then
   readarray -t __ < "$file"
