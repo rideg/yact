@@ -3,13 +3,13 @@
 ################################################################################
 # Reads the current file format version.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
 # -- Input: None
 # -- Output: The version (or 0 if version is not specified)
 ################################################################################
 read_version() {
   __='0000'
-  [[ -f "$YACT_DIR/version" ]] && read -r __ <"$YACT_DIR/version"
+  [[ -f "$STORAGE_DIR/version" ]] && read -r __ <"$STORAGE_DIR/version"
   let __="10#$__"
 }
 
@@ -61,6 +61,7 @@ migrate_storage() {
 #  GREEN - Color green for formatting.
 #  NORMAL - Reset console text formatting.
 #  YACT_DIR - Working directory for YACT.
+#  STORAGE_DIR - storage
 # -- Input:
 #  current_version - Current storage version.
 # -- Output: None
@@ -69,9 +70,15 @@ execute_migration() {
   echo "Storage migration is needed."
   echo "Current storage version is: $1."
   echo "Desired version is: ${#PATCHES[@]}."
+
+  read_to -v dt date_time
+  read_to -v tmpdir mktemp -d
  
-  cp -a -R "$YACT_DIR" "${YACT_DIR}.bak" >/dev/null || \
-    fatal "Cannot create a backup copy of '$YACT_DIR'."
+  # shellcheck disable=SC2154 
+  local archive=$tmpdir/backup-${dt}.tar.gz
+  echo "tar -czf $archive -C ${YACT_DIR%/*} ${YACT_DIR##*/}"
+  tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" >/dev/null || \
+    fatal "Could not create backup."
 
   let next_version=$1+1
   export error_message
@@ -90,11 +97,14 @@ execute_migration() {
   if [[ -n "$error_message" ]]; then
     echo "Could not migrate storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
-    mv -f "${YACT_DIR}.bak" "$YACT_DIR" || 
+    tar -xzf "$archive" -C "${YACT_DIR%/*}" || \
       fatal "Could not roll-back. However you can find your original files \
-             in '${YACT_DIR}.bak' folder."
+             in '$archive'."
   else 
-   echo "${#PATCHES[@]}" > "$YACT_DIR/version"
+   echo "${#PATCHES[@]}" > "$STORAGE_DIR/version"
+   [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
+   cp "$archive" "$YACT_DIR"/backup
+   rm -rf "$tmpdir"
    echo "Storage migration is done."
   fi
 }

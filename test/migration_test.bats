@@ -6,6 +6,7 @@ load 'helper'
 setup() {
   _setup_yact
   _set_no_color
+  mkdir -p "$YACT_STORAGE_DIR"
 }
 
 teardown() {
@@ -44,7 +45,7 @@ teardown() {
   cp patches/_0001_add_type_to_entires.patch.bash \
      "$YACT_PATCH_DIR"
   # and create a new todo 
-  file="${YACT_DIR}/_1234567890.txt"
+  file="${YACT_STORAGE_DIR}/_1234567890.txt"
 
   (cat <<-'EOF'
 			This is a todo
@@ -61,8 +62,8 @@ teardown() {
   readarray -t __ < "$file"
   assert [ "${__[2]}" == "0;This is a task;1" ]
   assert [ "${__[3]}" == "0;This is another task;0" ]
-  assert [ -f "${YACT_DIR}/version" ]
-  readarray -t __ < "${YACT_DIR}/version"
+  assert [ -f "${YACT_STORAGE_DIR}/version" ]
+  readarray -t __ < "${YACT_STORAGE_DIR}/version"
   assert [ "${__[0]}" == "1" ]
 }
 

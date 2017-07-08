@@ -23,6 +23,16 @@ is_true() {
 }
 
 ################################################################################
+# Prints the current date time.
+# -- Globals: None
+# -- Input:
+# -- Output: The current date time.
+################################################################################
+date_time() {
+  date +"%Y-%m-%d_%H%M%S"
+}
+
+################################################################################
 # Prints the current timestamp.
 # -- Globals: None
 # -- Input: None
@@ -367,7 +377,7 @@ read_to() {
   local var="$2"
   shift 2
   eval "$* 1>&9"
-  printf '%s' $'\1' 1>&9
+  printf '\1' 1>&9
   read -r -u 9 -s -d $'\1' "$var"
 }
 
