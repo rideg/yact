@@ -4,26 +4,39 @@
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
   [line_length]="Maximum line lenght before wrapping text;positive-number"
-  [use_formatting]="If false then no formatting used when printing text;bool"
+  [use_formatting]="Turns formatting on or off;bool"
 )
 
 ################################################################################
 # Updates a given config param with a given value.
 # -- Globals:
-#  YACT_DIR - Working directory for YACT.
+#  CONFIG_OPTIONS - Available configurations.
 # -- Input:
-#  config - Configuration description (must be a in a format of name=value)
+#  config_name - Option name.
+#  value - The value to be set.
 # -- Output: None
 # -- Return: None
 ################################################################################
 set_config() {
-  IFS='=' read -ra split <<< "$1"
-  [[ ${#split[@]} -ne 2 ]] && fatal "Invalid config. $1"
-  [[ ${CONFIG_OPTIONS[${split[0]}]+1} -eq 1 ]] || \
-    fatal "No option with name: ${split[0]}"
-  config_type=${CONFIG_OPTIONS[${split[0]}]##*;}
-  validate_type "$config_type" "${split[1]}"
-  CONFIG[${split[0]}]="${split[1]}"
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  config_type=${CONFIG_OPTIONS[$1]##*;}
+  validate_type "$config_type" "$2"
+  CONFIG[$1]="$2"
+  write_config
+}
+
+################################################################################
+# Resets a given config param to its default.
+# -- Globals:
+#  CONFIG_OPTIONS - Available configurations.
+# -- Input:
+#  config_name - Option name.
+# -- Output: None
+# -- Return: None
+################################################################################
+unset_config() {
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  unset "CONFIG[$1]"
   write_config
 }
 
@@ -66,9 +79,33 @@ validate_type() {
 }
 
 ################################################################################
+# Shows the available config values.
+# -- Globals: 
+#  CONFIG_OPTIONS - Available configurations.
+# -- Input: None
+# -- Output: None
+# -- Return: None
+################################################################################
+print_config() {
+  declare -a output=()
+  let max_key=-1
+  for key in "${!CONFIG_OPTIONS[@]}"; do
+    output[${#output[@]}]="$key"
+    output[${#output[@]}]="${CONFIG_OPTIONS[$key]%;*}"
+    let max_key="max_key < ${#key} ? ${#key} : max_key"
+  done
+  let max_key=max_key+2
+  local format="%-${max_key}s--  %s\n" 
+  [[ "$1" == '-c' ]] && format="%s=%s\n"
+  # shellcheck disable=SC2059
+  printf "$format" "${output[@]}" 
+}
+
+################################################################################
 # Flushes config to the config file.
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.
+#  CONFIG - Configuration.
 # -- Input: None
 # -- Output: None
 # -- Return: None

@@ -20,7 +20,7 @@ teardown() {
   run $YACT done 1
 
   # when
-  run $YACT -a config hide_done=1
+  run $YACT -a config set hide_done 1
 
   # then
   run $YACT
@@ -31,13 +31,49 @@ teardown() {
 
 @test "config - set show done" {
   # given
-  run $YACT config hide_done=1
+  run $YACT -a config set hide_done 1
   run $YACT add "task 1"
   run $YACT add "task 2"
   run $YACT done 1
 
   # when
-  run $YACT -a config hide_done=0
+  run $YACT -a config set hide_done 0
+
+  # then
+  run $YACT
+  assert_output -p "2 [  ] task 2"
+  assert_output -p "1 [ok] task 1"
+}
+
+@test "config list - show all config options (pretty)" {
+  # when
+  run $YACT -a config
+
+  # then
+  assert_output -p "use_formatting  --  Turns formatting on or off"
+  assert_output -p "hide_done       --  If set done tasks won't be shown"
+  assert_output -p "line_length     --  Maximum line lenght before wrapping text"
+}
+
+@test "config list - show all config options (simple)" {
+  # when
+  run $YACT -a config -c
+
+  # then
+  assert_output -p "use_formatting=Turns formatting on or off"
+  assert_output -p "hide_done=If set done tasks won't be shown"
+  assert_output -p "line_length=Maximum line lenght before wrapping text"
+}
+
+@test "config unset - reset hide_done" {
+  # given
+  run $YACT -a config set hide_done 1
+  run $YACT add "task 1"
+  run $YACT add "task 2"
+  run $YACT done 1
+
+  # when
+  run $YACT -a config unset hide_done
 
   # then
   run $YACT

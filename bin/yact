@@ -165,13 +165,27 @@ _parse_task_opts() {
 # -- Output: None.
 ################################################################################
 _parse_admin_opts() {
-  local cmd=$1  
+  local cmd=$1
   shift
   [[ -z $cmd ]] && fatal "Please provde an admin command"
   case $cmd in
-    config) . lib/config.sh; set_config "$1";;
-    migrate) . lib/migrate.sh; migrate_storage;;
-    *) fatal "Unknown command: $cmd"
+    config)
+      . lib/config.sh
+      local subcmd=$1  
+      shift
+      case $subcmd in
+        set) set_config "$1" "$2";;
+        'unset') unset_config "$1";;
+        list|"") print_config  "$1";;
+        '-c') print_config -c;;
+        *) fatal "Unknown command: $subcmd";;
+      esac
+      ;; 
+    migrate)
+      . lib/migrate.sh
+      migrate_storage
+      ;;
+    *) fatal "Unknown command: $cmd";;
   esac
 }
 
