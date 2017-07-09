@@ -3,7 +3,7 @@
 # Available config names
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
-  [line_length]="Maximum line lenght before wrapping text;number"
+  [line_length]="Maximum line lenght before wrapping text;positive-number"
   [use_formatting]="If false then no formatting used when printing text;bool"
 )
 
@@ -39,29 +39,28 @@ set_config() {
 validate_type() {
   local config_type="$1"
   local value="$2"
-
   case $config_type in
     bool)
-      [[ $value -eq 0 || $value -eq 1 ]] || \
+      [[ "$value" == '0' || "$value" == '1' ]] || \
         fatal "The given value: '$value' is not a boolean."
       ;;
     number)
       is_number "$value" || \
-        fatal "The given value '$value' is not a number."
+        fatal "The given value: '$value' is not a number."
       ;;
     non-empty-text)
-      [[ -n "$value" ]] \
+      [[ -n "$value" ]] || \
         fatal "The given value is empty"
       ;;
     positive-number)
        # shellcheck disable=SC2015
        is_number "$value" && [[ $value -ge 0 ]] || \
-         fatal "The given value '$value' is not a positive number"
+         fatal "The given value: '$value' is not a positive number."
        ;;
     negative-number)
        # shellcheck disable=SC2015
        is_number "$value" && [[ $value -lt 0 ]] || \
-         eatal "The given value '$value' is not a negative number"
+         eatal "The given value: '$value' is not a negative number."
        ;;
   esac
 }
