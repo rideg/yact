@@ -60,7 +60,7 @@ validate_type() {
     negative-number)
        # shellcheck disable=SC2015
        is_number "$value" && [[ $value -lt 0 ]] || \
-         eatal "The given value: '$value' is not a negative number."
+         fatal "The given value: '$value' is not a negative number."
        ;;
   esac
 }
