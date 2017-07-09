@@ -164,9 +164,9 @@ parse_item() {
 # Shows a summary of the current list, which includes the list's' name and
 # and a list of tasks.
 # -- Globals:
+#  CONFIG - Configuration.
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks.
-#  HIDE_DONE - Global indicating whether the done task should be shown or not.
 #  GREEN - Green color.
 #  UNDRLINE - Underline formatting.
 #  BOLD - Bold formatting.
@@ -179,14 +179,14 @@ show_tasks() {
   local -i i
   let length=${#TASKS[@]}
   let max_available=$COLUMNS-9-${#length}
-  let max_length="LINE_LENGTH < $max_available ||
-                  $max_available < 0 ? 
-                    LINE_LENGTH : $max_available"
+  let max_length="${CONFIG[line_length]} < $max_available || 
+                  $max_available < 0 ?  
+                  ${CONFIG[line_length]} : $max_available"
   for item in "${TASKS[@]}"; do
     let i=i+1
     if [[ ${item: -1} -eq 1 ]]; then
       let d=d+1
-      if [[ $HIDE_DONE -eq 1 ]]; then
+      if [[ ${CONFIG[hide_done]} -eq 1 ]]; then
         continue
       fi
       buffer[${#buffer[@]}]=$i

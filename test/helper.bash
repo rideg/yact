@@ -39,7 +39,7 @@ _setup_yact() {
 # -- Output: None
 ################################################################################
 _set_no_color() {
-    echo "USE_FORMATTING=0" >> "${YACT_DIR}"/config
+    echo "CONFIG[use_formatting]=0" >> "${YACT_DIR}"/config
 }
 
 ################################################################################
@@ -102,6 +102,7 @@ _set_storage_version() {
 ################################################################################
 _create_patch() {
   printf -v file_name "%s/_%04d_test.patch.bash" "${YACT_PATCH_DIR}" "$1"
-  printf "#!/usr/bin/env bash\n\n__do_migrate() {\n%s\n}\n" "$2" > "$file_name"
+  printf "#!/usr/bin/env bash\n\n__do_migrate() {\n%s\n}\n" "${2-':'}" \
+    > "$file_name"
 }
 

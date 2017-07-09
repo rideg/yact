@@ -61,7 +61,6 @@ main() {
 
   [[ -f $YACT_DIR/config ]] && . "$YACT_DIR"/config
 
-
   export STORAGE_DIR=$YACT_DIR/storage
   [[ -d $STORAGE_DIR ]] || mkdir -p "$STORAGE_DIR"
 

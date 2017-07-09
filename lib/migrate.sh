@@ -76,7 +76,6 @@ execute_migration() {
  
   # shellcheck disable=SC2154 
   local archive=$tmpdir/backup-${dt}.tar.gz
-  echo "tar -czf $archive -C ${YACT_DIR%/*} ${YACT_DIR##*/}"
   tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" >/dev/null || \
     fatal "Could not create backup."
 

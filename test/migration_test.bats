@@ -48,7 +48,8 @@ teardown() {
 
 @test "migration - adds file type patch" {
   # given
-  cp patches/_0001_add_type_to_entires.patch.bash \
+  _create_patch 1 
+  cp patches/_0002_add_type_to_entires.patch.bash \
      "$YACT_PATCH_DIR"
   # and create a new todo 
   file="${YACT_STORAGE_DIR}/_1234567890.txt"
@@ -70,6 +71,6 @@ teardown() {
   assert [ "${__[3]}" == "0;This is another task;0" ]
   assert [ -f "${YACT_STORAGE_DIR}/version" ]
   readarray -t __ < "${YACT_STORAGE_DIR}/version"
-  assert [ "${__[0]}" == "1" ]
+  assert [ "${__[0]}" == "2" ]
 }
 

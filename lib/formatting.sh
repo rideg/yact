@@ -3,12 +3,12 @@
 ################################################################################
 # Initialize fromatting globals for colorized input if colors are enabled.
 # -- Globals:
-#  USE_FORMATTING - Configuration variable to enable/disable formatting.
+#  CONFIG - configuration
 # -- Input: None
 # -- Output: None
 ################################################################################
 _init_formatting() {
-  if [[ $USE_FORMATTING -eq 1 ]]; then
+  if [[ ${CONFIG[use_formatting]} -eq 1 ]]; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE \
            UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA \
            BG_CYAN BG_WHITE NORMAL

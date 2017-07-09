@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export LINE_LENGTH=70
-export HIDE_DONE=0
-export USE_FORMATTING=1
+declare -A CONFIG=(
+  [line_length]=70
+  [hide_done]=0
+  [use_formatting]=1
+)
 

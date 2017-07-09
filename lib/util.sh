@@ -135,8 +135,7 @@ get_tmp_file_content() {
 
 ################################################################################
 # Wraps a text into multiple lines if it is too long.
-# -- Globals:
-#  LINE_LENGTH - Line length to be taken into consideration when wrapping text.
+# -- Globals: None
 # -- Input:
 #  Text - the text to be wrapped.
 #  Max Id - the greatest id used in the task array.
