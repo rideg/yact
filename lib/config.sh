@@ -116,6 +116,5 @@ write_config() {
   for entry in "${!CONFIG[@]}"; do
     printf 'CONFIG[%s]=%s\n' "$entry" "${CONFIG[$entry]}" >> "$cfg"
   done
-  printf ')\n' >> "$cfg"
 }
 
