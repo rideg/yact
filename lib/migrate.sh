@@ -3,13 +3,13 @@
 ################################################################################
 # Reads the current file format version.
 # -- Globals:
-#  STORAGE_DIR - storage
+#  YACT_DIR - Working directory for YACT.
 # -- Input: None
 # -- Output: The version (or 0 if version is not specified)
 ################################################################################
 read_version() {
   __='0000'
-  [[ -f "$STORAGE_DIR/version" ]] && read -r __ <"$STORAGE_DIR/version"
+  [[ -f "$YACT_DIR/version" ]] && read -r __ <"$YACT_DIR/version"
   let __="10#$__"
 }
 
@@ -100,7 +100,7 @@ execute_migration() {
       fatal "Could not roll-back. However you can find your original files \
              in '$archive'."
   else 
-   echo "${#PATCHES[@]}" > "$STORAGE_DIR/version"
+   echo "${#PATCHES[@]}" > "$YACT_DIR/version"
    [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
    cp "$archive" "$YACT_DIR"/backup
    rm -rf "$tmpdir"

@@ -69,8 +69,8 @@ teardown() {
   readarray -t __ < "$file"
   assert [ "${__[2]}" == "0;This is a task;1" ]
   assert [ "${__[3]}" == "0;This is another task;0" ]
-  assert [ -f "${YACT_STORAGE_DIR}/version" ]
-  readarray -t __ < "${YACT_STORAGE_DIR}/version"
+  assert [ -f "${YACT_DIR}/version" ]
+  readarray -t __ < "${YACT_DIR}/version"
   assert [ "${__[0]}" == "2" ]
 }
 
