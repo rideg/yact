@@ -3,6 +3,7 @@
 # Available config names
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
+  [insert_top]="If set new tasks will be inserted to the top of the list;bool"
   [line_length]="Maximum line lenght before wrapping text;positive-number"
   [use_formatting]="Turns formatting on or off;bool"
 )

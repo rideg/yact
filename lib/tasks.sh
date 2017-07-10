@@ -21,6 +21,7 @@ set_done() {
 # Adds a new task to the current list.
 # -- Globals:
 #  TASKS - Current todo list's tasks array.
+#  CONFIG - Configuration.
 # -- Input:
 #  description -  Description of the new task.
 # -- Output: The item status after the change.
@@ -32,9 +33,17 @@ add_task() {
     shift 2
   fi
   get_description "$*" " "
-  TASKS=("${TASKS[@]}" "0;$__;0")
+  local task_line="0;$__;0"
+  local init_pos
+  if [[ ${CONFIG[insert_top]} -eq 1 ]]; then
+    TASKS=("$task_line" "${TASKS[@]}")
+    init_pos=1
+  else
+    TASKS=("${TASKS[@]}" "0;$__;0")
+    init_pos=${#TASKS[@]}
+  fi
   if [[ -n "$position" ]]; then
-    move_task "${#TASKS[@]}" "$position"
+    move_task "$init_pos" "$position"
   fi
 }
 

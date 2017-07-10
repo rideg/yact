@@ -4,5 +4,6 @@ declare -A CONFIG=(
   [line_length]=70
   [hide_done]=0
   [use_formatting]=1
+  [insert_top]=0
 )
 
