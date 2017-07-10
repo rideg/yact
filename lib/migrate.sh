@@ -18,7 +18,7 @@ read_version() {
 # -- Globals:
 #  YACT_PATCH_DIR - Directory for storage patches.
 # -- Input: None
-# -- Output: 
+# -- Output:
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
@@ -73,8 +73,8 @@ execute_migration() {
 
   read_to -v dt date_time
   read_to -v tmpdir mktemp -d
- 
-  # shellcheck disable=SC2154 
+
+  # shellcheck disable=SC2154
   local archive=$tmpdir/backup-${dt}.tar.gz
   tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" >/dev/null || \
     fatal "Could not create backup."
@@ -99,7 +99,7 @@ execute_migration() {
     tar -xzf "$archive" -C "${YACT_DIR%/*}" || \
       fatal "Could not roll-back. However you can find your original files \
              in '$archive'."
-  else 
+  else
    echo "${#PATCHES[@]}" > "$YACT_DIR/version"
    [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
    cp "$archive" "$YACT_DIR"/backup

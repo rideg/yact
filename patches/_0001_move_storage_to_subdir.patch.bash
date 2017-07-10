@@ -12,9 +12,8 @@ __do_migrate() {
   mkdir -p "$YACT_DIR"/backup
 
   mv "$YACT_DIR"/*.txt "$YACT_DIR"/storage
-  mv "$YACT_DIR"/.pipe "$YACT_DIR/.run"
-  mv "$YACT_DIR"/.last "$YACT_DIR/.run"
-  mv "$YACT_DIR"/.changed "$YACT_DIR/.run"
-  mv "${YACT_DIR}.bak" "$YACT_DIR"/backup
+  [[ -f "$YACT_DIR"/.pipe ]] && mv "$YACT_DIR"/.pipe "$YACT_DIR/.run"
+  [[ -f "$YACT_DIR"/.last ]] && mv "$YACT_DIR"/.last "$YACT_DIR/.run"
+  [[ -f "$YACT_DIR"/.changed ]] && mv "$YACT_DIR"/.changed "$YACT_DIR/.run"
 }
 
