@@ -5,15 +5,15 @@
 # -- Globals:
 #  TASKS - Current todo list's tasks array.
 # -- Input:
-#  id -  Task id. 
-# -- Output: None 
+#  id -  Task id.
+# -- Output: None
 ################################################################################
 set_done() {
   local id=$1
   check_task_id "$id"
   shift
   ((id--))
-  parse_item "${TASKS[$id]}" 
+  parse_item "${TASKS[$id]}"
   TASKS[$id]="0;${__[1]};$1"
 }
 
@@ -85,9 +85,9 @@ modify_task() {
   check_task_id "$id"
   shift
   ((id--))
-  let: -a task_array = parse_item "${TASKS[$id]}" 
-  let: description = get_description "$*" "${task_array[0]}"
-  TASKS[$id]="0;$description;${task_array[1]}"
+  let: -a task_array = parse_item "${TASKS[$id]}"
+  let: description = get_description "$*" "${task_array[1]}"
+  TASKS[$id]="0;$description;${task_array[2]}"
 }
 
 ################################################################################
@@ -179,8 +179,8 @@ show_tasks() {
   local -i i
   let length=${#TASKS[@]}
   let max_available=$COLUMNS-9-${#length}
-  let max_length="${CONFIG[line_length]} < $max_available || 
-                  $max_available < 0 ?  
+  let max_length="${CONFIG[line_length]} < $max_available ||
+                  $max_available < 0 ?
                   ${CONFIG[line_length]} : $max_available"
   for item in "${TASKS[@]}"; do
     let i=i+1
