@@ -62,9 +62,9 @@ teardown() {
   run $YACT -a config -c
 
   # then
-  assert_output -p "use_formatting=Turns formatting on or off"
-  assert_output -p "hide_done=If set done tasks won't be shown"
-  assert_output -p "line_length=Maximum line lenght before wrapping text"
+  assert_output -p "use_formatting:Turns formatting on or off"
+  assert_output -p "hide_done:If set done tasks won't be shown"
+  assert_output -p "line_length:Maximum line lenght before wrapping text"
 }
 
 @test "config unset - reset hide_done" {

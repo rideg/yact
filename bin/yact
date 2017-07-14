@@ -181,7 +181,7 @@ _parse_admin_opts() {
         '-c') print_config -c;;
         *) fatal "Unknown command: $subcmd";;
       esac
-      ;; 
+      ;;
     migrate)
       . lib/migrate.sh
       migrate_storage

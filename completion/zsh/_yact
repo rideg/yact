@@ -4,7 +4,6 @@
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 STORAGE_DIR=$YACT_DIR/storage
 
-
 __yact_list_commands() {
   local -a list
   list=(
@@ -15,6 +14,15 @@ __yact_list_commands() {
   show:'Shows all the extisting lists'
   )
   _describe -t list-commands 'list related commands' list
+}
+
+__yact_config_commands() {
+  local -a list
+  list=(
+  set:'Sets the given config option'
+  get:'Queries the given config option'
+  )
+  _describe -t config-commands 'config related commands' list
 }
 
 __yact_task_commands() {
@@ -91,7 +99,6 @@ else
 fi
 }
 
-
 __extended_task_id_list() {
   local max_id
   local current=1
@@ -107,34 +114,29 @@ __extended_task_id_list() {
   compadd -V "extended-ids" -Q -d list -a list
 }
 
-__yact_main() {
-  local curcontext="$curcontext" state line
-  typeset -A opt_args
-
-  _arguments -C \
-    '-l[Work with lists]: :->lists' \
-    '-v[version]: :->end' \
-    '-h[help]: :->end' \
-    '-a[admin]: :->admin' \
-    ': :->tasks' \
-    '(-)*:: :->arg' && return
-
-  case "$state" in
-    (tasks)
+__yact_handle_tasks() {
+   if [[ "$words[2]" == '-l' ]]; then
       case "$words[3]" in
-        (delete|switch|modify) __show_list_ids;;
-        (new|show) ;;
-        *) __yact_task_commands;;
-      esac;
-      ;;
-    (lists)
-      __yact_list_commands
-      ;;
-    (admin)
-      __yact_admin_commands
-      ;;
-    (arg)
-      case "$words[1]" in
+	 delete|switch|modify) __show_list_ids;;
+      esac
+   elif [[ "$words[2]" == '-a' ]]; then
+      if [[ "$words[3]" == 'config' ]]; then
+	  __yact_config_commands
+      fi
+   else
+     __yact_task_commands
+   fi
+}
+
+__yact_list_config_options() {
+   declare -a list
+   IFS=$'\n' list=($(yact -a config -c))
+  _describe -t config-options 'Configuration options' list
+
+}
+
+__yact_handle_args() {
+     case "$words[1]" in
         delete)
           if [[ ${#words[@]} -eq 2 \
             || ( ${#words[@]} -eq 3 \
@@ -170,8 +172,37 @@ __yact_main() {
         elif [[ ${#words[@]} -eq 3 && ${words[2]} == '-p' ]]; then
           __extended_task_id_list top bottom
         fi
+	;;
+      'set'|get)
+	__yact_list_config_options
         ;;
     esac
+}
+
+__yact_main() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  _arguments -C \
+    '-l[Work with lists]: :->lists' \
+    '-v[version]: :->end' \
+    '-h[help]: :->end' \
+    '-a[admin]: :->admin' \
+    ': :->tasks' \
+    '(-)*:: :->arg' && return
+
+  case "$state" in
+    (tasks)
+      __yact_handle_tasks
+      ;;
+    (lists)
+      __yact_list_commands
+      ;;
+    (admin)
+      __yact_admin_commands
+      ;;
+    (arg)
+      __yact_handle_args
     ;;
 esac
 }

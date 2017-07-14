@@ -113,7 +113,7 @@ print_config() {
   done
   let max_key=max_key+2
   local format="%-${max_key}s--  %s\n"
-  [[ "$1" == '-c' ]] && format="%s=%s\n"
+  [[ "$1" == '-c' ]] && format="%s:%s\n"
   # shellcheck disable=SC2059
   printf "$format" "${output[@]}"
 }
