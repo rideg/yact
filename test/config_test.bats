@@ -6,7 +6,7 @@ load 'helper'
 setup() {
   _setup_yact
   _set_no_color
-  run $YACT -l new "Main list for testing" 
+  run $YACT -l new "Main list for testing"
 }
 
 teardown() {
@@ -53,7 +53,8 @@ teardown() {
   assert_output -p "use_formatting  --  Turns formatting on or off"
   assert_output -p "hide_done       --  If set done tasks won't be shown"
   assert_output -p "line_length     --  Maximum line lenght before wrapping text"
-  assert_output -p "insert_top      --  If set new tasks will be inserted to the top of the list"
+  assert_output -p \
+    "insert_top      --  If set new tasks will be inserted to the top of the list"
 }
 
 @test "config list - show all config options (simple)" {
@@ -80,5 +81,18 @@ teardown() {
   run $YACT
   assert_output -p "2 [  ] task 2"
   assert_output -p "1 [ok] task 1"
+}
+
+@test "config get - shows value" {
+ # given
+ run $YACT -a config set hide_done 1
+
+ # when
+ run $YACT -a config get hide_done
+
+ # then
+ assert_output -p "name:         hide_done"
+ assert_output -p "description:  If set done tasks won't be shown"
+ assert_output -p "value:        1"
 }
 

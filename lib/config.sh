@@ -27,6 +27,22 @@ set_config() {
 }
 
 ################################################################################
+# Prints the value of the given config param.
+# -- Globals:
+#  CONFIG_OPTIONS - Available configurations.
+# -- Input:
+#  config_name - Option name.
+# -- Output: None
+# -- Return: None
+################################################################################
+get_config() {
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  printf 'name:         %s\n' "$1"
+  printf 'description:  %s\n' "${CONFIG_OPTIONS[$1]%;*}"
+  printf 'value:        %s\n' "${CONFIG[$1]}"
+}
+
+################################################################################
 # Resets a given config param to its default.
 # -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
@@ -81,7 +97,7 @@ validate_type() {
 
 ################################################################################
 # Shows the available config values.
-# -- Globals: 
+# -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
 # -- Input: None
 # -- Output: None
@@ -96,10 +112,10 @@ print_config() {
     let max_key="max_key < ${#key} ? ${#key} : max_key"
   done
   let max_key=max_key+2
-  local format="%-${max_key}s--  %s\n" 
+  local format="%-${max_key}s--  %s\n"
   [[ "$1" == '-c' ]] && format="%s=%s\n"
   # shellcheck disable=SC2059
-  printf "$format" "${output[@]}" 
+  printf "$format" "${output[@]}"
 }
 
 ################################################################################

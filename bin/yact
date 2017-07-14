@@ -24,7 +24,7 @@ _show_version() {
 ################################################################################
 # Initialisez the pipe which can be used to avoid subshell creation when we
 # need to store the output of some arbitary command.
-# -- Globals: 
+# -- Globals:
 #  RUN - Directory for runtime temproray files.
 # -- Input: none
 # -- Output: Version string.
@@ -72,7 +72,7 @@ main() {
   export FILE=$STORAGE_DIR/$TODO_FILE
 
   _init_pipe
-  _init_formatting 
+  _init_formatting
 
   case "$1" in
     -v) _show_version;;
@@ -171,11 +171,12 @@ _parse_admin_opts() {
   case $cmd in
     config)
       . lib/config.sh
-      local subcmd=$1  
+      local subcmd=$1
       shift
       case $subcmd in
         set) set_config "$1" "$2";;
         'unset') unset_config "$1";;
+        get) get_config "$1";;
         list|"") print_config  "$1";;
         '-c') print_config -c;;
         *) fatal "Unknown command: $subcmd";;
