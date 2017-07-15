@@ -61,8 +61,30 @@ delete_task() {
     force=1
     shift
   fi
+  declare -a ids=("$@")
+  [[ $# -eq 0 ]] && fatal "Please provide at least one task to delete"
+  if [[ $# -eq 1 ]]; then
+    if [[ "$1" =~ [0-9]+-[0-9]+ ]]; then
+       declare -i a=${1%-*}
+       declare -i b=${1#*-}
+       let lower="a>b?b:a"
+       let upper="a>b?a-1:b-1"
+       check_task_id "$lower"
+       check_task_id "$upper"
+       eval "ids=({$lower..$upper})"
+    elif [[ "$1" =~ [0-9]+.. ]]; then
+       declare -i lower=${1::-2}   
+       check_task_id "$lower"
+       eval "ids=({$lower..${#TASKS[@]}})"
+    elif [[ "$1" =~ ..[0-9]+ ]]; then
+       declare -i a=${1:2}
+       let upper=a-1
+       check_task_id "$upper"
+       eval "ids=({1..$upper})"
+    fi
+  fi
   declare -a tasks=("${TASKS[@]}")
-  for id in "$@"; do
+  for id in "${ids[@]}"; do
     check_task_id "$id"
     local task_id=$((id - 1))
     local should_delete=1

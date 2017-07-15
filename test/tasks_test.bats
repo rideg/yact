@@ -16,6 +16,7 @@ teardown() {
 ################################################################################
 ################################## SHOW ########################################
 ################################################################################
+
 @test "task show - shows message for empty list" {
     # when
     run $YACT
@@ -43,6 +44,7 @@ teardown() {
 ################################################################################
 ################################## ADD #########################################
 ################################################################################
+
 @test "task add - new item" {
     # when
     run $YACT add "A new task for test"
@@ -109,6 +111,7 @@ teardown() {
 ################################################################################
 ################################## DONE ########################################
 ################################################################################
+
 @test "task done - marks item as done" {
     # given
     run $YACT add "A new task for test"
@@ -122,6 +125,7 @@ teardown() {
 ################################################################################
 ################################## UNDONE ######################################
 ################################################################################
+
 @test "task undone - marks done item as not done" {
     # given
     run $YACT add "A new task for test"
@@ -136,6 +140,7 @@ teardown() {
 ################################################################################
 ################################## DELETE ######################################
 ################################################################################
+
 @test "task delete - deletes from list" {
     # given
     run $YACT add "A new task for test"
@@ -190,9 +195,78 @@ teardown() {
   refute_output -p '2 [  ] task2'
 }
 
+@test "task delete - should delete with start-end notation" {
+  # given
+  run $YACT add "task 1"
+  run $YACT add "task 2"
+  run $YACT add "task 3"
+  run $YACT add "task 4"
+  run $YACT add "task 5"
+
+  # when
+  run $YACT delete -f 2-5
+
+  # then
+  assert_output -p '1 [  ] task 1'
+  assert_output -p '2 [  ] task 5'
+  refute_output -p '3 [  ] '
+}
+
+@test "task delete - should delete with start-end notation (reverse)" {
+  # given
+  run $YACT add "task 1"
+  run $YACT add "task 2"
+  run $YACT add "task 3"
+  run $YACT add "task 4"
+  run $YACT add "task 5"
+
+  # when
+  run $YACT delete -f 5-2
+
+  # then
+  assert_output -p '1 [  ] task 1'
+  assert_output -p '2 [  ] task 5'
+  refute_output -p '3 [  ] '
+}
+
+@test "task delete - should delete with start.. notation" {
+  # given
+  run $YACT add "task 1"
+  run $YACT add "task 2"
+  run $YACT add "task 3"
+  run $YACT add "task 4"
+  run $YACT add "task 5"
+
+  # when
+  run $YACT delete -f 2..
+
+  # then
+  assert_output -p '1 [  ] task 1'
+  refute_output -p '2 [  ] '
+}
+
+@test "task delete - should delete with ..end notation" {
+  # given
+  run $YACT add "task 1"
+  run $YACT add "task 2"
+  run $YACT add "task 3"
+  run $YACT add "task 4"
+  run $YACT add "task 5"
+
+  # when
+  run $YACT delete -f ..3
+
+  # then
+  assert_output -p '1 [  ] task 3'
+  assert_output -p '2 [  ] task 4'
+  assert_output -p '3 [  ] task 5'
+  refute_output -p '4 [  ] '
+}
+
 ################################################################################
 ################################## MODIFY ######################################
 ################################################################################
+
 @test "task modify - changes item description" {
     # given
     run $YACT add "A new task for test"
@@ -225,6 +299,7 @@ teardown() {
 ################################################################################
 #################################### MOVE ######################################
 ################################################################################
+
 __create_three_tasks() {
     run $YACT add "First task"
     run $YACT add "Second task"
@@ -337,6 +412,7 @@ __create_three_tasks() {
 ################################################################################
 #################################### SWAP ######################################
 ################################################################################
+
 @test "task swap - should swap two tasks" {
   # given
   run $YACT add "task1"

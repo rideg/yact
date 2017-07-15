@@ -13,7 +13,7 @@ teardown() {
   _clean_test_dir
 }
 
-@test "move - shows error message if non-numeric id is provided" {
+@test "task move error - non-numeric id is provided" {
 	# when
 	run $YACT move hhklj 1
 	# then
@@ -21,7 +21,7 @@ teardown() {
 	assert_output -p "The provided id is not numeric [hhklj]"
 }
 
-@test "move - shows error if non-numeric position is provided" {
+@test "task move error - non-numeric position is provided" {
 	# when
 	run $YACT add "First task"
 	run $YACT move 1 hhklj
@@ -30,7 +30,7 @@ teardown() {
 	assert_output -p "The given position is not numeric [hhklj]"
 }
 
-@test "move - shows error if non-existing id is provided" {
+@test "task move error - non-existing id is provided" {
 	# when
 	run $YACT move 1 3
 	# then
@@ -38,7 +38,7 @@ teardown() {
 	assert_output -p "Out of range task position [1]"
 }
 
-@test "move - shows error if non-existing position is provided" {
+@test "task move error - non-existing position is provided" {
 	# when
 	run $YACT add "Test task 1"
 	run $YACT move 1 3
@@ -47,7 +47,7 @@ teardown() {
 	assert_output -p "Out of range task position [3]"
 }
 
-@test "new - interactive mode with empty tmp file show error" {
+@test "task new error - interactive mode with empty tmp file" {
   # given
   _spy_tool nano ':' 
   # when
@@ -56,7 +56,7 @@ teardown() {
   assert_output -p $'Please provide description.'
 }
 
-@test "delete - should show error message if one id is incorrect" {
+@test "task delete error - one id is incorrect" {
   # given
   run $YACT add "task1"
   run $YACT add "task2"
