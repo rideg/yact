@@ -97,8 +97,8 @@ execute_migration() {
     echo "Could not migrate storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
     tar -xzf "$archive" -C "${YACT_DIR%/*}" || \
-      fatal "Could not roll-back. However you can find your original files \
-             in '$archive'."
+      fatal \
+  "Could not roll-back. However you can find your original files in '$archive'."
   else
    echo "${#PATCHES[@]}" > "$YACT_DIR/version"
    [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
