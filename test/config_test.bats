@@ -25,7 +25,7 @@ teardown() {
   # then
   run $YACT
   assert_output -p "2 [  ] task 2"
-  refute_output -p "1 [  ] taks 1"
+  refute_output -p "1 [  ] task 1"
   assert_output -p "Main list for testing - (1/2)"
 }
 
@@ -52,7 +52,7 @@ teardown() {
   # then
   assert_output -p "use_formatting  --  Turns formatting on or off"
   assert_output -p "hide_done       --  If set done tasks won't be shown"
-  assert_output -p "line_length     --  Maximum line lenght before wrapping text"
+  assert_output -p "line_length     --  Maximum line length before wrapping text"
   assert_output -p \
     "insert_top      --  If set new tasks will be inserted to the top of the list"
 }
@@ -64,7 +64,7 @@ teardown() {
   # then
   assert_output -p "use_formatting:Turns formatting on or off"
   assert_output -p "hide_done:If set done tasks won't be shown"
-  assert_output -p "line_length:Maximum line lenght before wrapping text"
+  assert_output -p "line_length:Maximum line length before wrapping text"
 }
 
 @test "config unset - reset hide_done" {

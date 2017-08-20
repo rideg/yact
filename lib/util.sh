@@ -71,7 +71,7 @@ fatal() {
 ################################################################################
 # Creates a YACT template file for providing more complex descriptions.
 # -- Globals:
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 # -- Input:
 #  file_name - The name of the file.
 # -- Output: None
@@ -295,11 +295,11 @@ flush_task_file() {
 }
 
 ################################################################################
-# Syntactic sugar to simplifie return value assignment. Usage:
+# Syntactic sugar to simplify return value assignment. Usage:
 #    let: my_var = command "$arg1" "$arg2"
 # -- Globals: none
 # -- Input:
-#  variable - The name of the variable into which the result sould be saved.
+#  variable - The name of the variable into which the result should be saved.
 #  =        - Equal sign to support sugar.
 #  command  - The command to be executed.
 #  args...? - Command arguments.
@@ -313,7 +313,7 @@ let:() {
   else
     ret=$'"$__"'
   fi
-  [[ $# -lt 3 ]] && fatal "Not enought arguments."
+  [[ $# -lt 3 ]] && fatal "Not enough arguments."
   [[ "$2" != '=' ]] && fatal "Usage: let: <variable name> = command [args...]"
   local variable=$1
   local command=$3
@@ -364,7 +364,7 @@ lev_dist() {
 }
 
 ################################################################################
-# Executest the given command and read the output into a variable
+# Executes the given command and read the output into a variable
 # -- Globals: none
 # -- Input:
 #   variable_name: The name of the variable to save output.

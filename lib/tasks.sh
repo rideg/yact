@@ -192,14 +192,14 @@ parse_item() {
 }
 
 ################################################################################
-# Shows a summary of the current list, which includes the list's' name and
-# and a list of tasks.
+# Shows a summary of the current list, which includes the list's' name and a
+# list of tasks.
 # -- Globals:
 #  CONFIG - Configuration.
 #  HEADER - Current todo's header.
 #  TASKS - Current todo's tasks.
 #  GREEN - Green color.
-#  UNDRLINE - Underline formatting.
+#  UNDERLINE - Underline formatting.
 #  BOLD - Bold formatting.
 # -- Input: None
 # -- Output: The summary of the current list.
@@ -244,9 +244,9 @@ show_tasks() {
 }
 
 ################################################################################
-# Swaps two tasks in the tasklist
+# Swaps two tasks in the task list
 # -- Globals:
-#   TASKS - Currenct todos's tasks.
+#   TASKS - Current todos's tasks.
 # -- Input:
 #   id1 -- First task id
 #   id2 -- Second task id

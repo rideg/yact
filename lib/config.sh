@@ -4,12 +4,12 @@
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
   [insert_top]="If set new tasks will be inserted to the top of the list;bool"
-  [line_length]="Maximum line lenght before wrapping text;positive-number"
+  [line_length]="Maximum line length before wrapping text;positive-number"
   [use_formatting]="Turns formatting on or off;bool"
 )
 
 ################################################################################
-# Updates a given config param with a given value.
+# Updates a given configuration parameter with a given value.
 # -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
 # -- Input:
@@ -27,7 +27,7 @@ set_config() {
 }
 
 ################################################################################
-# Prints the value of the given config param.
+# Prints the value of the given configuration parameter.
 # -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
 # -- Input:
@@ -43,7 +43,7 @@ get_config() {
 }
 
 ################################################################################
-# Resets a given config param to its default.
+# Resets a given configuration parameter to its default.
 # -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
 # -- Input:
@@ -58,7 +58,7 @@ unset_config() {
 }
 
 ################################################################################
-# Validates whether the given value satifies the given type restrictions.
+# Validates whether the given value satisfies the given type restrictions.
 # -- Globals: None
 # -- Input:
 #  config_type: The type to be used.
@@ -96,7 +96,7 @@ validate_type() {
 }
 
 ################################################################################
-# Shows the available config values.
+# Shows the available configuration values.
 # -- Globals:
 #  CONFIG_OPTIONS - Available configurations.
 # -- Input: None
@@ -119,7 +119,7 @@ print_config() {
 }
 
 ################################################################################
-# Flushes config to the config file.
+# Flushes configuration to file.
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.
 #  CONFIG - Configuration.

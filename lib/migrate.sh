@@ -34,7 +34,7 @@ read_patches() {
 
 ################################################################################
 # Checks the current storage version against the desired version and if needed
-# executes the actual sotrage migration.
+# executes the actual storage migration.
 # -- Globals:
 #  PATCHES - the list of the available patches.
 # -- Input: None
@@ -53,7 +53,7 @@ migrate_storage() {
 }
 
 ################################################################################
-# Executes the storage migation: applies patches one by one. If something goes
+# Executes the storage migration: applies patches one by one. If something goes
 # wrong it tries to roll back.
 # -- Globals:
 #  PATCHES - The list of the available patches.

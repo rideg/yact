@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ################################################################################
-# Initialize fromatting globals for colorized input if colors are enabled.
+# Initialize formatting globals for colorized input if colors are enabled.
 # -- Globals:
 #  CONFIG - configuration
 # -- Input: None

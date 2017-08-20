@@ -22,10 +22,10 @@ _show_version() {
 }
 
 ################################################################################
-# Initialisez the pipe which can be used to avoid subshell creation when we
-# need to store the output of some arbitary command.
+# Initialises the pipe which can be used to avoid subshell creation when we
+# need to store the output of some arbitrary command.
 # -- Globals:
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 # -- Input: none
 # -- Output: Version string.
 ################################################################################
@@ -40,7 +40,7 @@ _init_pipe() {
 #  TRACE - enables tracing if set.
 #  YACT_DIR - Working directory for YACT.
 #  TODO_FILE - The file name of the current list.
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 #  YACT_PATCH_DIR - Directory for storage patches.
 #  STORAGE_DIR - storage
 # -- Input: Command.
@@ -86,7 +86,7 @@ main() {
 
 
 ################################################################################
-# Checks if the the actual list exists and if so then reads it to a global
+# Checks if the actual list exists and if so then reads it to a global
 # array.
 # -- Globals:
 #  FILE - Current todo list's file.
@@ -167,7 +167,7 @@ _parse_task_opts() {
 _parse_admin_opts() {
   local cmd=$1
   shift
-  [[ -z $cmd ]] && fatal "Please provde an admin command"
+  [[ -z $cmd ]] && fatal "Please provide an admin command"
   case $cmd in
     config)
       . lib/config.sh

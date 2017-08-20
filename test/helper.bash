@@ -2,12 +2,12 @@
 
 ################################################################################
 # Configures environment for test run:
-#  > Configures YACT exutable
+#  > Configures YACT executable
 #  > Creates sandbox directory for YACT.
 #  > Creates directory for fake commands and configures PATH.
 # -- Globals:
 #  BATS_TEST_DIRNAME - Directory where the test file is.
-#  BATS_TMPDIR - Temproray directory provided by bats.
+#  BATS_TMPDIR - Temporary directory provided by bats.
 #  YACT_TEST_DIR - Tmp directory for test run.
 #  YACT_DIR - Working directory for YACT.
 #  EXECUTABLE_DIR - Directory for fake tools.

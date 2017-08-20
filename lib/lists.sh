@@ -3,7 +3,7 @@
 # Creates a new list with the given description and marks it as current.
 # -- Globals:
 #  STORAGE_DIR - storage
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 # -- Input:
 #  Description - The description of the new list.
 # -- Output: The list status after adding the new list
@@ -25,7 +25,7 @@ new_list() {
 # Marks the given list as current.
 # -- Globals:
 #  STORAGE_DIR - storage
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 # -- Input:
 #  id - The id of the list to be marked.
 # -- Output: The list status after changing the current.
@@ -48,7 +48,7 @@ switch_list() {
 # id is provided it deletes the current list.
 # -- Globals:
 #  STORAGE_DIR - storage
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 #  FILE - current todo list
 # -- Input:
 #  id? -  Id of the list to be deleted.
@@ -87,7 +87,7 @@ delete_list() {
 # Updates the description of a given list.
 # -- Globals:
 #  STORAGE_DIR - storage
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 # -- Input:
 #  id -  Id of the list to be changed.
 #  description - The new description.
@@ -146,7 +146,7 @@ show_lists() {
 # Updates FILE global.
 # -- Globals:
 #  STORAGE_DIR - storage
-#  RUN - Directory for runtime temproray files.
+#  RUN - Directory for runtime temporary files.
 #  TODO_FILE - The file name of the current list.
 #  FILE - current todo list
 # -- Input: None
