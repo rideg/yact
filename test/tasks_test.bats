@@ -429,3 +429,24 @@ __create_three_tasks() {
   assert_output -p "3 [  ] task1"
 }
 
+################################################################################
+################################## REVERSE #####################################
+################################################################################
+
+@test "task reverse - reverses the task order" {
+  # given
+  run $YACT add "task1"
+  run $YACT add "task2"
+  run $YACT add "task3"
+  run $YACT add "task4"
+
+  # when
+  run $YACT reverse
+
+  # then
+  assert_output -p "1 [  ] task4"
+  assert_output -p "2 [  ] task3"
+  assert_output -p "3 [  ] task2"
+  assert_output -p "4 [  ] task1"
+}
+

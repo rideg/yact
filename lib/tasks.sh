@@ -262,3 +262,21 @@ swap_tasks() {
   TASKS[$id2]="$tmp"
 }
 
+################################################################################
+# Reverses the order of the tasks on the current list. 
+# -- Globals:
+#   TASKS - Current todos's tasks.
+# -- Input: none
+# -- Output: none
+################################################################################
+reverse_tasks() {
+  local -i endId=${#TASKS[@]}-1
+  local -i startId=0
+  while [[ endId -gt startId ]]; do
+    local tmp="${TASKS[$startId]}"
+    TASKS[$startId]="${TASKS[$endId]}" 
+    TASKS[$endId]="$tmp" 
+    let endId--
+    let startId++
+  done
+}

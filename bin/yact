@@ -150,6 +150,7 @@ _parse_task_opts() {
       'done') set_done "$1" 1;;
       undone) set_done "$1" 0;;
       swap) swap_tasks "$1" "$2";;
+      reverse) reverse_tasks;;
       show) ;;
       *) fatal "Cannot recognize command: $cmd";;
     esac

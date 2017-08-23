@@ -36,6 +36,7 @@ __yact_task_commands() {
   modify:'Modifies the a given task'
   move:'Moves the given task to a given position within the list'
   swap:'Swaps two tasks on the current list'
+  reverse:'Reverses the tasks on the current list'
   )
   _describe -t task-commands 'task related commands' list
 }
