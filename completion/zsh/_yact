@@ -1,5 +1,7 @@
 #compdef yact
 #autoload
+#
+zmodload zsh/mapfile
 
 test -z "$YACT_DIR" && YACT_DIR=~/.yact
 STORAGE_DIR=$YACT_DIR/storage
@@ -76,9 +78,11 @@ __yact_list_tasks() {
   file=$STORAGE_DIR/$TODO_FILE
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
     declare -a list description
+    local max_id
     local max_width
-    max_width="$(echo "$(wc -l < "$file")-2" | bc)"
-    max_width="${#max_width}"
+    max_id=("${(f@)mapfile[$file]}")
+    max_id=${#max_id[@]}
+    max_width=${#max_id}
     local id=1
     while IFS=';' read -r type task task_status; do
       if [[ ( ($cmd == 'done' &&  "$task_status" -eq 0) \
@@ -107,7 +111,9 @@ __extended_task_id_list() {
   list+=($@)
   test -e $YACT_DIR/run/.last && . "$YACT_DIR"/run/.last
   file=$STORAGE_DIR/$TODO_FILE
-  max_id="$(echo "$(wc -l < "$file")-2" | bc)"
+
+  max_id=("${(f@)mapfile[$file]}")
+  max_id=${#max_id[@]}
   while [[ $current -le $max_id ]]; do
     list+=("$current")
     ((current++))
