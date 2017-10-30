@@ -108,6 +108,38 @@ teardown() {
     assert_output -p '3 [  ] task 1'
 }
 
+@test "task add - inserts separator (all caps, hyphen filled)" {
+   # given
+   run $YACT -a config set line_length 30
+   run $YACT add "This is a task" 
+   
+   # when 
+   run $YACT add -s "new section" 
+   run $YACT add "This is another task"
+   
+   # then   
+   assert_output -p '1 [  ] This is a task'
+   assert_output -p '2 [##] --------NEW SECTION--------'
+   assert_output -p '3 [  ] This is another task'
+}
+
+@test "task add - inserts separator into position " {
+   # given
+   run $YACT -a config set line_length 30
+   run $YACT add "This is a task" 
+   run $YACT add "This is another task"
+   
+   # when
+   run $YACT add -p 2 -s "new section" 
+   run $YACT add -s -p 3 "separator" 
+   
+   # then
+   assert_output -p '1 [  ] This is a task'
+   assert_output -p '2 [##] --------NEW SECTION--------'
+   assert_output -p '3 [##] ---------SEPARATOR---------'
+   assert_output -p '4 [  ] This is another task'
+}
+
 ################################################################################
 ################################## DONE ########################################
 ################################################################################

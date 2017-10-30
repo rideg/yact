@@ -175,9 +175,18 @@ __yact_handle_args() {
       add)
         if [[ ${#words[@]} -eq 2 ]]; then
           _arguments '-p[Insert into a given position]' \
-            '*:: :->arg'
-        elif [[ ${#words[@]} -eq 3 && ${words[2]} == '-p' ]]; then
+                     '-s[Insert separator]' \
+                     '*:: :->arg'
+        elif [[ \
+          (${#words[@]} -eq 4 && ${words[2]} == '-s' && ${words[3]} == '-p') || \
+          (${#words[@]} -eq 3 && ${words[2]} == '-p') ]]; then
           __extended_task_id_list top bottom
+        elif [[ ${#words[@]} -eq 4 && ${words[2]} == '-p' ]]; then
+          _arguments '-s[Insert separator]' \
+            '*:: :->arg'
+        elif [[ ${#words[@]} -eq 3 && ${words[2]} == '-s' ]]; then
+          _arguments '-p[Insert into a given position]' \
+            '*:: :->arg'
         fi
 	;;
       'set'|get)

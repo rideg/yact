@@ -14,6 +14,9 @@ set_done() {
   shift
   ((id--))
   parse_item "${TASKS[$id]}"
+  if [[ ${__[2]} -eq 2 ]]; then # separator
+    fatal "Cannot mark seprator: '${__[1]}' as done"
+  fi
   TASKS[$id]="0;${__[1]};$1"
 }
 
@@ -28,18 +31,27 @@ set_done() {
 ################################################################################
 add_task() {
   local position
+  local item_type=0
+  if [[ "$1" == '-s' ]]; then
+    item_type=2
+    shift
+  fi
   if [[ "$1" == '-p' ]]; then
     position="$2"
     shift 2
   fi
+  if [[ "$1" == '-s' ]]; then
+    item_type=2
+    shift
+  fi
   get_description "$*" " "
-  local task_line="0;$__;0"
+  local task_line="0;$__;$item_type"
   local init_pos
   if [[ ${CONFIG[insert_top]} -eq 1 ]]; then
     TASKS=("$task_line" "${TASKS[@]}")
     init_pos=1
   else
-    TASKS=("${TASKS[@]}" "0;$__;0")
+    TASKS=("${TASKS[@]}" "0;$__;$item_type")
     init_pos=${#TASKS[@]}
   fi
   if [[ -n "$position" ]]; then
@@ -215,22 +227,34 @@ show_tasks() {
                   ${CONFIG[line_length]} : $max_available"
   for item in "${TASKS[@]}"; do
     let i=i+1
-    if [[ ${item: -1} -eq 1 ]]; then
+    let stat=${item: -1}
+    if [[ $stat -eq 1 ]]; then
       let d=d+1
       if [[ ${CONFIG[hide_done]} -eq 1 ]]; then
         continue
       fi
       buffer[${#buffer[@]}]=$i
-      buffer[${#buffer[@]}]=${GREEN}ok${NORMAL}
-    else
+      buffer[${#buffer[@]}]="${GREEN}ok${NORMAL}"
+    elif [[ $stat -eq 0 ]]; then 
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]='  '
+    else # separator
+      buffer[${#buffer[@]}]=$i 
+      buffer[${#buffer[@]}]='##'
     fi
-    if [[ ${#item} -ge $max_length ]]; then
-      wrap_text "${item:2:-2}" "$length" "$max_length"
+    local item_text=${item:2:-2}
+    if [[ $stat -eq 2 ]]; then
+      item_text=${item_text^^}
+      let pad_size="(max_length-${#item_text})>0?(max_length-${#item_text})/2-1:0"
+      local pad
+      eval "printf -v pad '%0.1s' '-'{1..$pad_size}"
+      item_text="${pad}${item_text}${pad}"
+    fi
+    if [[ ${#item_text} -ge $max_length ]]; then
+      wrap_text "$item_text" "$length" "$max_length"
       buffer[${#buffer[@]}]=$__
     else
-      buffer[${#buffer[@]}]=${item:2:-2}
+      buffer[${#buffer[@]}]=$item_text
     fi
   done
   printf '\n %s - (%d/%d)\n\n' \

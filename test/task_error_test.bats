@@ -68,3 +68,14 @@ teardown() {
   assert_output -p "The given position is not numeric [bela]"
 }
 
+@test "task done error - chaging a separator" {
+  # given
+  run $YACT add -s "separator"
+
+  # when
+  run $YACT done 1
+
+  # then
+  assert_output -p "Cannot mark seprator: 'separator' as done"
+}
+
