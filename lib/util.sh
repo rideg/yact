@@ -350,12 +350,12 @@ lev_dist() {
      local cost=0
      if [[ "${str1:$j:1}" != "${str2:$i:1}" ]]; then
        cost=1
-     fi 
+     fi
      let a=v2[j]+1
-     let b=v1[j+1]+1 
+     let b=v1[j+1]+1
      let c=v1[j]+cost
      let "v2[j+1]=a<b?(a<c?a:(b<c?b:c)):(b<c?b:(c<a?c:a))"
-   done 
+   done
    tmp=(${v1[@]})
    v1=(${v2[@]})
    v2=(${tmp[@]})
