@@ -50,6 +50,7 @@ timestamp() {
 # -- Output: None
 ################################################################################
 exit_() {
+  # shellcheck disable=SC2164
   popd &> /dev/null
   #set +x
   #exec 2>&3 3>&-
@@ -103,7 +104,7 @@ launch_editor() {
   local cmd
   local file="$1"
   cmd="$EDITOR"
-  test -z "$cmd" && cmd=vi
+  test -z "$cmd" && cmd='vi'
   which $cmd &> /dev/null
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
@@ -145,10 +146,10 @@ get_tmp_file_content() {
 wrap_text() {
   local text=$1
   local max_length=$3
-  let s_padding=${#2}+7
   local IFS=' '
   local line=''
   local wrapped=''
+	((s_padding=${#2}+7))
   printf -v padding '%*s' "$s_padding"
   for word in $text; do
     local t="$line $word"
@@ -273,7 +274,7 @@ read_task_file() {
 # -- Output: none
 ################################################################################
 read_lists() {
-	LISTS=($STORAGE_DIR/*.txt)
+	LISTS=("$STORAGE_DIR"/*.txt)
 	export LISTS
 }
 
@@ -381,22 +382,22 @@ lev_dist() {
    v1[$i]=$i
  done
  for (( i=0; i<${#str1}; i++ )); do
-   let v2[0]=i+1
+	 ((v2[0]=i+1))
    for (( j=0; j<${#str2}; j++ )); do
      local cost=0
      if [[ "${str1:$j:1}" != "${str2:$i:1}" ]]; then
        cost=1
      fi
-     let a=v2[j]+1
-     let b=v1[j+1]+1
-     let c=v1[j]+cost
-     let "v2[j+1]=a<b?(a<c?a:(b<c?b:c)):(b<c?b:(c<a?c:a))"
+		 ((a=v2[j]+1))
+		 ((b=v1[j+1]+1))
+		 ((c=v1[j]+cost))
+		 ((v2[j+1]=a<b?(a<c?a:(b<c?b:c)):(b<c?b:(c<a?c:a))))
    done
-   tmp=(${v1[@]})
-   v1=(${v2[@]})
-   v2=(${tmp[@]})
+   tmp=("${v1[@]}")
+   v1=("${v2[@]}")
+   v2=("${tmp[@]}")
  done
- __=(${v1[${#str2}]})
+ __=("${v1[${#str2}]}")
 }
 
 ################################################################################
