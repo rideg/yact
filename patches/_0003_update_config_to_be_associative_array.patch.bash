@@ -2,7 +2,7 @@
 #!/usr/bin/env bash
 
 ################################################################################
-# Updates config to use associative array.
+# Updates .last file
 # -- Globals:
 #  YACT_DIR - Working directory for YACT.
 # -- Input: None

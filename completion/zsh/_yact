@@ -55,13 +55,15 @@ __yact_admin_commands() {
 __show_list_ids() {
   local -a list
   list=()
+	local -i index=1
   for filename in "$STORAGE_DIR"/*.txt; do
-    list+=(${${filename/*_/}/\.txt/}:"$(head -n 1 "$filename")")
+    list+=($index:"$(head -n 1 "$filename")")
+		((index++))
   done
   if [[ ${#list} -ne 0 ]]; then
     _describe -t list-ids 'list ids' list
   else
-    _message -r "Cannot find list, have you created one?"
+    _message -r "Cannot find list, have you created any?"
   fi
 }
 

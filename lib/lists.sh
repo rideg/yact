@@ -15,8 +15,8 @@ new_list() {
   while [[ -e "$STORAGE_DIR/_${id}.txt" ]]; do
     ((id++))
   done
-  file_name="_$id.txt"
-  printf "%s\n\n" "$description" > "$STORAGE_DIR/$file_name"
+  file_name="$STORAGE_DIR/_$id.txt"
+  printf "%s\n\n" "$description" > "$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   _update_actual
 }
@@ -24,21 +24,15 @@ new_list() {
 ################################################################################
 # Marks the given list as current.
 # -- Globals:
-#  STORAGE_DIR - storage
+#  LISTS - list of list files.
 #  RUN - Directory for runtime temporary files.
 # -- Input:
 #  id - The id of the list to be marked.
 # -- Output: The list status after changing the current.
 ################################################################################
 switch_list() {
-  local list_id="$1"
-  if [[ -z "$list_id" ]]; then
-    fatal "Missing list id, please provide it."
-  fi
-  file_name="_${list_id}.txt"
-  if [[ ! -f "$STORAGE_DIR/$file_name" ]]; then
-    fatal "Non-existing list id $list_id"
-  fi
+	check_list_id "$1"
+  file_name="${LISTS[$1-1]}"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   _update_actual
 }
@@ -47,7 +41,6 @@ switch_list() {
 # Deletes the given list and marks the last recently used as current. Or if no
 # id is provided it deletes the current list.
 # -- Globals:
-#  STORAGE_DIR - storage
 #  RUN - Directory for runtime temporary files.
 #  FILE - current todo list
 # -- Input:
@@ -58,9 +51,10 @@ delete_list() {
   local to_delete="$FILE"
   local consent
 
-  [[ -n "$1" ]] && to_delete="$STORAGE_DIR/_${1}.txt"
-  [[ -f "$to_delete" ]] || fatal "Non-existing list id: $1"
-
+  if [[ -n "$1" ]]; then
+		check_list_id "$1"
+		to_delete="${LISTS[$1-1]}"
+	fi
   read_to -v header head -n 1 "$to_delete"
   # shellcheck disable=SC2154
   echo "List name: $header"
@@ -76,7 +70,7 @@ delete_list() {
       if [[ -z "$next_file" ]]; then
         rm "$RUN"/.last
       else
-        printf 'TODO_FILE=%s\n' "$(basename "$next_file")" > "$RUN"/.last
+        printf 'TODO_FILE=%s\n' "$next_file" > "$RUN"/.last
         _update_actual
       fi
     fi
@@ -86,7 +80,6 @@ delete_list() {
 ################################################################################
 # Updates the description of a given list.
 # -- Globals:
-#  STORAGE_DIR - storage
 #  RUN - Directory for runtime temporary files.
 # -- Input:
 #  id -  Id of the list to be changed.
@@ -96,9 +89,8 @@ delete_list() {
 modify_list() {
   local description
   local id=$1
-  [[ -n "$id" ]] || fatal 'Please provide an id.'
-  local file="${STORAGE_DIR}/_${id}.txt"
-  [[ -f "$file" ]] || fatal "Non-existing file. ${file}"
+	check_list_id "$id"
+  local file="${LISTS[$id-1]}"
   shift
   store_current
   read_task_file "$file"
@@ -119,25 +111,25 @@ modify_list() {
 # -- Output: The list status.
 ################################################################################
 show_lists() {
-  local -i d
+  local -i done_tasks
+	local -i index
+	local l=${#LISTS[@]}
   local indicator
   format 'You have the following lists' "$BOLD" "$UNDERLINE"
-  printf \ "\n %s:\n\n" "$__"
-  for actual_file in "$STORAGE_DIR"/_*.txt; do
+  printf \ "\n%s:\n\n" "$__"
+  for actual_file in "${LISTS[@]}"; do
+    indicator=''
+		((index++))
     if [[ "$actual_file" = "$FILE" ]]; then
-      indicator='*'
+      indicator=' *'
     fi
-    d=0
+		done_tasks=0
     readarray -t __ < "$actual_file"
     for item in "${__[@]:2}"; do
-      [[ ${item: -1} -eq 1 ]] && ((d++))
+      [[ ${item: -1} -eq 1 ]] && ((done_tasks++))
     done
-    actual_file=${actual_file##*_}
-    actual_file=${actual_file%.txt*}
-    printf ' %-1s %s\t%s (%d/%d)\n' "$indicator" \
-      "$actual_file" \
-      "${__[0]}" "$d" "$((${#__[@]}-2))"
-    indicator=''
+		printf " %${#l}d %s (%d/%d)%s\n" "$index" "${__[0]}" "$done_tasks" \
+			"$((${#__[@]}-2))" "$indicator"
   done
   printf '\n'
 }
@@ -145,7 +137,6 @@ show_lists() {
 ################################################################################
 # Updates FILE global.
 # -- Globals:
-#  STORAGE_DIR - storage
 #  RUN - Directory for runtime temporary files.
 #  TODO_FILE - The file name of the current list.
 #  FILE - current todo list
@@ -155,7 +146,7 @@ show_lists() {
 _update_actual() {
   # shellcheck source=/dev/null
   . "$RUN/.last"
-  FILE="$STORAGE_DIR/$TODO_FILE"
+  FILE="$TODO_FILE"
   _require_actual
 }
 
