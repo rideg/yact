@@ -7,7 +7,7 @@
 # -- Input: None
 # -- Output: The version (or 0 if version is not specified)
 ################################################################################
-read_version() {
+yact::migrate::read_version() {
   __='0000'
   [[ -f "$YACT_DIR/version" ]] && read -r __ < "$YACT_DIR/version"
   ((__ = 10#$__))
@@ -21,7 +21,7 @@ read_version() {
 # -- Output:
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
-read_patches() {
+yact::migrate::read_patches() {
   export PATCHES
   ((prefix = ${#YACT_PATCH_DIR} + 2))
   for file in "$YACT_PATCH_DIR"/*.patch.bash; do
@@ -40,12 +40,12 @@ read_patches() {
 # -- Input: None
 # -- Output: None
 ################################################################################
-migrate_storage() {
-  read_version
-  read_patches
+yact::migrate::migrate_storage() {
+  yact::migrate::read_version
+  yact::migrate::read_patches
   ((next_version = __ + 1))
   if [[ $next_version -le ${#PATCHES[@]} ]]; then
-    execute_migration "$__"
+    yact::migrate::execute "$__"
   else
     echo "Storage is up to date."
   fi
@@ -66,7 +66,7 @@ migrate_storage() {
 #  current_version - Current storage version.
 # -- Output: None
 ################################################################################
-execute_migration() {
+yact::migrate::execute() {
   echo "Storage migration is needed."
   echo "Current storage version is: $1."
   echo "Desired version is: ${#PATCHES[@]}."
