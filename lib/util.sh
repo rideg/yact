@@ -109,7 +109,7 @@ launch_editor() {
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
   if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
-     cmd="${cmd} +4"
+    cmd="${cmd} +4"
   fi
   $cmd "$file"
 }
@@ -149,7 +149,7 @@ wrap_text() {
   local IFS=' '
   local line=''
   local wrapped=''
-	((s_padding=${#2}+7))
+  ((s_padding = ${#2} + 7))
   printf -v padding '%*s' "$s_padding"
   for word in $text; do
     local t="$line $word"
@@ -220,7 +220,7 @@ get_description() {
 # -- Output: none
 ################################################################################
 check_task_id() {
-	check_range "$1" "${#TASKS[@]}"
+  check_range "$1" "${#TASKS[@]}"
 }
 
 ################################################################################
@@ -232,11 +232,11 @@ check_task_id() {
 # -- Output: none
 ################################################################################
 check_list_id() {
-	check_range "$1" "${#LISTS[@]}"
+  check_range "$1" "${#LISTS[@]}"
 }
 
 ################################################################################
-# Checks if a given value is a valid index within a range. 
+# Checks if a given value is a valid index within a range.
 # -- Globals: None
 # -- Input:
 #  id - The given id to be checked.
@@ -246,7 +246,7 @@ check_list_id() {
 check_range() {
   [[ -z "$1" ]] && fatal "Please provide a position"
   is_number "$1" || fatal "The given position is not numeric [$1]"
-  [[ $1 -lt 1 || $1 -gt "$2" ]] && \
+  [[ $1 -lt 1 || $1 -gt "$2" ]] &&
     fatal "Out of range position [$1]"
 }
 
@@ -274,8 +274,8 @@ read_task_file() {
 # -- Output: none
 ################################################################################
 read_lists() {
-	LISTS=("$STORAGE_DIR"/*.txt)
-	export LISTS
+  LISTS=("$STORAGE_DIR"/*.txt)
+  export LISTS
 }
 
 ################################################################################
@@ -289,8 +289,8 @@ read_lists() {
 # -- Output: none
 ################################################################################
 store_current() {
- __STORED_TASKS=("${TASKS[@]}")
- __STORED_HEADER="$HEADER"
+  __STORED_TASKS=("${TASKS[@]}")
+  __STORED_HEADER="$HEADER"
 }
 
 ################################################################################
@@ -304,8 +304,8 @@ store_current() {
 # -- Output: none
 ################################################################################
 restore_current() {
- TASKS=("${__STORED_TASKS[@]}")
- HEADER="$__STORED_HEADER"
+  TASKS=("${__STORED_TASKS[@]}")
+  HEADER="$__STORED_HEADER"
 }
 
 ################################################################################
@@ -322,8 +322,7 @@ restore_current() {
 ################################################################################
 flush_task_file() {
   local file=${1-$FILE}
-  if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || \
-        "$HEADER" != "$__STORED_HEADER" ]]; then
+  if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || "$HEADER" != "$__STORED_HEADER" ]]; then
     printf '%s\n\n' "$HEADER" > "$file"
     if [[ ${#TASKS[@]} -gt 0 ]]; then
       printf '%s\n' "${TASKS[@]}" >> "$file"
@@ -372,32 +371,32 @@ let:() {
 #   __: the Levenshtein distance
 ################################################################################
 lev_dist() {
- [[ $# -ne 2 ]] && fatal "Two arguments are required."
- local str1=$1
- local str2=$2
- declare -a v1
- declare -a v2
- declare -a tmp
- for (( i=0; i<=${#str2}; i++ )); do
-   v1[$i]=$i
- done
- for (( i=0; i<${#str1}; i++ )); do
-	 ((v2[0]=i+1))
-   for (( j=0; j<${#str2}; j++ )); do
-     local cost=0
-     if [[ "${str1:$j:1}" != "${str2:$i:1}" ]]; then
-       cost=1
-     fi
-		 ((a=v2[j]+1))
-		 ((b=v1[j+1]+1))
-		 ((c=v1[j]+cost))
-		 ((v2[j+1]=a<b?(a<c?a:(b<c?b:c)):(b<c?b:(c<a?c:a))))
-   done
-   tmp=("${v1[@]}")
-   v1=("${v2[@]}")
-   v2=("${tmp[@]}")
- done
- __=("${v1[${#str2}]}")
+  [[ $# -ne 2 ]] && fatal "Two arguments are required."
+  local str1=$1
+  local str2=$2
+  declare -a v1
+  declare -a v2
+  declare -a tmp
+  for ((i = 0; i <= ${#str2}; i++)); do
+    v1[$i]=$i
+  done
+  for ((i = 0; i < ${#str1}; i++)); do
+    ((v2[0] = i + 1))
+    for ((j = 0; j < ${#str2}; j++)); do
+      local cost=0
+      if [[ "${str1:$j:1}" != "${str2:$i:1}" ]]; then
+        cost=1
+      fi
+      ((a = v2[j] + 1))
+      ((b = v1[j + 1] + 1))
+      ((c = v1[j] + cost))
+      ((v2[j + 1] = a < b ? (a < c ? a : (b < c ? b : c)) : (b < c ? b : (c < a ? c : a))))
+    done
+    tmp=("${v1[@]}")
+    v1=("${v2[@]}")
+    v2=("${tmp[@]}")
+  done
+  __=("${v1[${#str2}]}")
 }
 
 ################################################################################
@@ -409,11 +408,10 @@ lev_dist() {
 # -- Output: none
 ################################################################################
 read_to() {
-  [[ "$1" = '-v' ]] || fatal "Variable name is mandatory."
+  [[ "$1" == '-v' ]] || fatal "Variable name is mandatory."
   local var="$2"
   shift 2
   eval "$* 1>&9"
   printf '\1' 1>&9
   read -r -u 9 -s -d $'\1' "$var"
 }
-

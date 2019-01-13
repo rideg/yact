@@ -10,9 +10,8 @@
 # -- Output: None
 ################################################################################
 __do_migrate() {
-	if [[ -f "$RUN/.last" ]]; then
-		. "$RUN/.last"
+  if [[ -f "$RUN/.last" ]]; then
+    . "$RUN/.last"
     echo "TODO_FILE=${STORAGE_DIR}/$TODO_FILE" > "$RUN/.last"
-	fi
+  fi
 }
-
