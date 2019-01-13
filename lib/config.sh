@@ -18,12 +18,12 @@ declare -A CONFIG_OPTIONS=(
 # -- Output: None
 # -- Return: None
 ################################################################################
-set_config() {
+yact::config::set_config() {
   [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
   config_type=${CONFIG_OPTIONS[$1]##*;}
-  validate_type "$config_type" "$2"
+  yact::config::validate_type "$config_type" "$2"
   CONFIG[$1]="$2"
-  write_config
+  yact::config::write_config
 }
 
 ################################################################################
@@ -35,7 +35,7 @@ set_config() {
 # -- Output: None
 # -- Return: None
 ################################################################################
-get_config() {
+yact::config::get_config() {
   [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
   printf 'name:         %s\n' "$1"
   printf 'description:  %s\n' "${CONFIG_OPTIONS[$1]%;*}"
@@ -51,10 +51,10 @@ get_config() {
 # -- Output: None
 # -- Return: None
 ################################################################################
-unset_config() {
+yact::config::unset_config() {
   [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
   unset "CONFIG[$1]"
-  write_config
+  yact::config::write_config
 }
 
 ################################################################################
@@ -66,7 +66,7 @@ unset_config() {
 # -- Output: None
 # -- Return: None
 ################################################################################
-validate_type() {
+yact::config::validate_type() {
   local config_type="$1"
   local value="$2"
   case $config_type in
@@ -103,7 +103,7 @@ validate_type() {
 # -- Output: None
 # -- Return: None
 ################################################################################
-print_config() {
+yact::config::print_config() {
   declare -a output=()
   ((max_key=-1))
   for key in "${!CONFIG_OPTIONS[@]}"; do
@@ -127,7 +127,7 @@ print_config() {
 # -- Output: None
 # -- Return: None
 ################################################################################
-write_config() {
+yact::config::write_config() {
   local cfg=$YACT_DIR/config
   printf '#!/usr/bin/env bash\n\n' > "$cfg"
   for entry in "${!CONFIG[@]}"; do

@@ -177,11 +177,11 @@ _parse_admin_opts() {
       local subcmd=$1
       shift
       case $subcmd in
-        set) set_config "$1" "$2";;
-        'unset') unset_config "$1";;
-        get) get_config "$1";;
-        list|"") print_config  "$1";;
-        '-c') print_config -c;;
+        set) yact::config::set_config "$1" "$2";;
+        'unset') yact::config::unset_config "$1";;
+        get) yact::config::get_config "$1";;
+        list|"") yact::config::print_config  "$1";;
+        '-c') yact::config::print_config -c;;
         *) fatal "Unknown command: $subcmd";;
       esac
       ;;
