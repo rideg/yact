@@ -7,7 +7,7 @@
 #  value - value to be checked.
 # -- Output: true if the value is number
 ################################################################################
-is_number() {
+yact::util::is_number() {
   [[ "$1" =~ ^-?[0-9]+$ ]]
 }
 
@@ -18,7 +18,7 @@ is_number() {
 #  value - value to be checked.
 # -- Output: true if the value is 1
 ################################################################################
-is_true() {
+yact::util::is_true() {
   test "$1" -eq 1
 }
 
@@ -28,7 +28,7 @@ is_true() {
 # -- Input:
 # -- Output: The current date time.
 ################################################################################
-date_time() {
+yact::util::date_time() {
   date +"%Y-%m-%d_%H%M%S"
 }
 
@@ -38,7 +38,7 @@ date_time() {
 # -- Input: None
 # -- Output: The current timestamp.
 ################################################################################
-timestamp() {
+yact::util::timestamp() {
   date +"%s"
 }
 
@@ -49,7 +49,7 @@ timestamp() {
 #  exit_code - Code to exit with.
 # -- Output: None
 ################################################################################
-exit_() {
+yact::util::exit_() {
   # shellcheck disable=SC2164
   popd &> /dev/null
   #set +x
@@ -64,9 +64,9 @@ exit_() {
 #  message - The error message.
 # -- Output: The error message.
 ################################################################################
-fatal() {
+yact::util::fatal() {
   printf '%s\n' "$1" >&2
-  exit_ 1
+  yact::util::exit_ 1
 }
 
 ################################################################################
@@ -78,7 +78,7 @@ fatal() {
 # -- Output: None
 # -- Return: The path to the file.
 ################################################################################
-create_tmp_file() {
+yact::util::create_tmp_file() {
   local file_name
   file_name="$RUN/_tmp.file.txt"
   cat > "$file_name" <<- EOF
@@ -100,12 +100,12 @@ EOF
 #  file - The file to be read.
 # -- Output: None
 ################################################################################
-launch_editor() {
+yact::util::launch_editor() {
   local cmd
   local file="$1"
   cmd="$EDITOR"
   test -z "$cmd" && cmd='vi'
-  which $cmd &> /dev/null
+  command -v $cmd &> /dev/null
   test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && fatal "Non existing file: $file"
   if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
@@ -122,7 +122,7 @@ launch_editor() {
 # -- Output: None
 # -- Return: The content of the file.
 ################################################################################
-get_tmp_file_content() {
+yact::util::get_tmp_file_content() {
   local file="$1"
   local description
   while read -r line || [[ -n $line ]]; do
@@ -130,7 +130,7 @@ get_tmp_file_content() {
       description="${description}${line} "
     fi
   done < "$file"
-  trim "$description"
+  yact::util::trim "$description"
   rm -f "$file"
 }
 
@@ -143,13 +143,14 @@ get_tmp_file_content() {
 #  Max length - the maximal line length
 # -- Output: Wrapped text.
 ################################################################################
-wrap_text() {
+yact::util::wrap_text() {
   local text=$1
   local max_length=$3
   local IFS=' '
   local line=''
   local wrapped=''
   ((s_padding = ${#2} + 7))
+	# shellcheck disable=SC2183
   printf -v padding '%*s' "$s_padding"
   for word in $text; do
     local t="$line $word"
@@ -174,7 +175,7 @@ wrap_text() {
 # -- Output: None
 # -- Return: Trimmed string
 ################################################################################
-trim() {
+yact::util::trim() {
   local string="$1"
   string=${string#"${string%%[![:space:]]*}"}
   string=${string%"${string##*[![:space:]]}"}
@@ -190,7 +191,7 @@ trim() {
 # -- Output: None
 # -- Return: Description.
 ################################################################################
-get_description() {
+yact::util::get_description() {
   local new
   local old
   if [[ $# -eq 2 ]]; then
@@ -202,11 +203,11 @@ get_description() {
   if [[ -n "$new" ]]; then
     __="$new"
   else
-    create_tmp_file "$old"
-    launch_editor "$__"
-    get_tmp_file_content "$__"
+    yact::util::create_tmp_file "$old"
+    yact::util::launch_editor "$__"
+    yact::util::get_tmp_file_content "$__"
   fi
-  [[ -z "$__" ]] && fatal "Please provide description."
+  [[ -z "$__" ]] && yact::util::fatal "Please provide description."
   # replace any new line character with spaces
   __=${__//$'\n'/ }
 }
@@ -219,8 +220,8 @@ get_description() {
 #  id - The given id to be checked.
 # -- Output: none
 ################################################################################
-check_task_id() {
-  check_range "$1" "${#TASKS[@]}"
+yact::util::check_task_id() {
+  yact::util::check_range "$1" "${#TASKS[@]}"
 }
 
 ################################################################################
@@ -231,8 +232,8 @@ check_task_id() {
 #  id - The given id to be checked.
 # -- Output: none
 ################################################################################
-check_list_id() {
-  check_range "$1" "${#LISTS[@]}"
+yact::util::check_list_id() {
+  yact::util::check_range "$1" "${#LISTS[@]}"
 }
 
 ################################################################################
@@ -243,11 +244,12 @@ check_list_id() {
 #  max - Upper limit.
 # -- Output: none
 ################################################################################
-check_range() {
-  [[ -z "$1" ]] && fatal "Please provide a position"
-  is_number "$1" || fatal "The given position is not numeric [$1]"
+yact::util::check_range() {
+  [[ -z "$1" ]] && yact::util::fatal "Please provide a position"
+  yact::util::is_number "$1" || yact::util::fatal \
+    "The given position is not numeric [$1]"
   [[ $1 -lt 1 || $1 -gt "$2" ]] &&
-    fatal "Out of range position [$1]"
+    yact::util::fatal "Out of range position [$1]"
 }
 
 ################################################################################
@@ -259,7 +261,7 @@ check_range() {
 #  file_name? - a file name to be read.
 # -- Output: none
 ################################################################################
-read_task_file() {
+yact::util::read_task_file() {
   readarray -t __ < "${1-$FILE}"
   TASKS=("${__[@]:2}")
   HEADER="${__[0]}"
@@ -273,7 +275,7 @@ read_task_file() {
 # -- Inputs: none
 # -- Output: none
 ################################################################################
-read_lists() {
+yact::util::read_lists() {
   LISTS=("$STORAGE_DIR"/*.txt)
   export LISTS
 }
@@ -288,7 +290,7 @@ read_lists() {
 # -- Inputs: none
 # -- Output: none
 ################################################################################
-store_current() {
+yact::util::store_current() {
   __STORED_TASKS=("${TASKS[@]}")
   __STORED_HEADER="$HEADER"
 }
@@ -303,7 +305,7 @@ store_current() {
 # -- Inputs: none
 # -- Output: none
 ################################################################################
-restore_current() {
+yact::util::restore_current() {
   TASKS=("${__STORED_TASKS[@]}")
   HEADER="$__STORED_HEADER"
 }
@@ -320,7 +322,7 @@ restore_current() {
 #  file - File to flush tasks. Defaults to FILE.
 # -- Output: none
 ################################################################################
-flush_task_file() {
+yact::util::flush_task_file() {
   local file=${1-$FILE}
   if [[ "${TASKS[*]}" != "${__STORED_TASKS[*]}" || "$HEADER" != "$__STORED_HEADER" ]]; then
     printf '%s\n\n' "$HEADER" > "$file"
@@ -370,7 +372,7 @@ let:() {
 # -- Output:
 #   __: the Levenshtein distance
 ################################################################################
-lev_dist() {
+yact::util::lev_dist() {
   [[ $# -ne 2 ]] && fatal "Two arguments are required."
   local str1=$1
   local str2=$2
@@ -407,7 +409,7 @@ lev_dist() {
 #   args...: The command to be executed.
 # -- Output: none
 ################################################################################
-read_to() {
+yact::util::read_to() {
   [[ "$1" == '-v' ]] || fatal "Variable name is mandatory."
   local var="$2"
   shift 2

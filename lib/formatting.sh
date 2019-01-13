@@ -33,7 +33,7 @@ _init_formatting() {
     BG_CYAN=$'\e[46m'
     BG_WHITE=$'\e[107m'
     NORMAL=$'\e[0m'
-    read_to -v COLUMNS tput cols
+    yact::util::read_to -v COLUMNS tput cols
   fi
 }
 

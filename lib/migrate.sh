@@ -24,7 +24,7 @@ read_version() {
 read_patches() {
   export PATCHES
   ((prefix = ${#YACT_PATCH_DIR} + 2))
-  for file in $YACT_PATCH_DIR/*.patch.bash; do
+  for file in "$YACT_PATCH_DIR"/*.patch.bash; do
     # If directory does not contain such files
     [[ "$file" == "$YACT_PATCH_DIR/*.patch.bash" ]] && break
     version="10#${file:$prefix:4}"
@@ -49,7 +49,7 @@ migrate_storage() {
   else
     echo "Storage is up to date."
   fi
-  exit_ 0
+  yact::util::exit_ 0
 }
 
 ################################################################################
@@ -71,13 +71,13 @@ execute_migration() {
   echo "Current storage version is: $1."
   echo "Desired version is: ${#PATCHES[@]}."
 
-  read_to -v dt date_time
-  read_to -v tmpdir mktemp -d
+  yact::util::read_to -v dt yact::util::date_time
+  yact::util::read_to -v tmpdir mktemp -d
 
   # shellcheck disable=SC2154
   local archive=$tmpdir/backup-${dt}.tar.gz
   tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" > /dev/null ||
-    fatal "Could not create backup."
+    yact::list::fatal "Could not create backup."
 
   ((next_version = $1 + 1))
   export error_message
@@ -97,7 +97,7 @@ execute_migration() {
     echo "Could not migrate storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
     tar -xzf "$archive" -C "${YACT_DIR%/*}" ||
-      fatal \
+      yact::list::fatal \
         "Could not roll-back. However you can find your original files in '$archive'."
   else
     echo "${#PATCHES[@]}" > "$YACT_DIR/version"

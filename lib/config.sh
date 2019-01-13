@@ -19,7 +19,8 @@ declare -A CONFIG_OPTIONS=(
 # -- Return: None
 ################################################################################
 yact::config::set_config() {
-  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] ||
+    yact::util::fatal "No option with name: $1"
   config_type=${CONFIG_OPTIONS[$1]##*;}
   yact::config::validate_type "$config_type" "$2"
   CONFIG[$1]="$2"
@@ -36,7 +37,8 @@ yact::config::set_config() {
 # -- Return: None
 ################################################################################
 yact::config::get_config() {
-  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] ||
+    yact::util::fatal "No option with name: $1"
   printf 'name:         %s\n' "$1"
   printf 'description:  %s\n' "${CONFIG_OPTIONS[$1]%;*}"
   printf 'value:        %s\n' "${CONFIG[$1]}"
@@ -52,7 +54,8 @@ yact::config::get_config() {
 # -- Return: None
 ################################################################################
 yact::config::unset_config() {
-  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] || fatal "No option with name: $1"
+  [[ ${CONFIG_OPTIONS[$1]+1} -eq 1 ]] ||
+    yact::util::fatal "No option with name: $1"
   unset "CONFIG[$1]"
   yact::config::write_config
 }
@@ -72,25 +75,25 @@ yact::config::validate_type() {
   case $config_type in
     bool)
       [[ "$value" == '0' || "$value" == '1' ]] ||
-        fatal "The given value: '$value' is not a boolean."
+        yact::util::fatal "The given value: '$value' is not a boolean."
       ;;
     number)
-      is_number "$value" ||
-        fatal "The given value: '$value' is not a number."
+      yact::util::is_number "$value" ||
+        yact::util::fatal "The given value: '$value' is not a number."
       ;;
     non-empty-text)
       [[ -n "$value" ]] ||
-        fatal "The given value is empty"
+        yact::util::fatal "The given value is empty"
       ;;
     positive-number)
       # shellcheck disable=SC2015
-      is_number "$value" && [[ $value -ge 0 ]] ||
-        fatal "The given value: '$value' is not a positive number."
+      yact::util::is_number "$value" && [[ $value -ge 0 ]] ||
+        yact::util::fatal "The given value: '$value' is not a positive number."
       ;;
     negative-number)
       # shellcheck disable=SC2015
-      is_number "$value" && [[ $value -lt 0 ]] ||
-        fatal "The given value: '$value' is not a negative number."
+      yact::util::is_number "$value" && [[ $value -lt 0 ]] ||
+        yact::util::fatal "The given value: '$value' is not a negative number."
       ;;
   esac
 }

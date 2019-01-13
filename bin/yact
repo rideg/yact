@@ -88,7 +88,7 @@ main() {
       ;;
     *) _parse_task_opts "$@" ;;
   esac
-  exit_ 0
+  yact::util::exit_ 0
 }
 
 ################################################################################
@@ -102,9 +102,9 @@ main() {
 ################################################################################
 _require_actual() {
   [[ -f "$FILE" ]] ||
-    fatal 'No todo list has been selected, please select/create one.'
-  read_task_file
-  store_current
+    yact::util::fatal 'No todo list has been selected, please select/create one.'
+  yact::util::read_task_file
+  yact::util::store_current
 }
 
 ################################################################################
@@ -116,7 +116,7 @@ _require_actual() {
 _parse_list_opts() {
   local cmd=$1
   shift
-  read_lists
+  yact::util::read_lists
   if [[ "$cmd" != 'new' ]]; then
     _require_actual
   fi
@@ -131,7 +131,7 @@ _parse_list_opts() {
         yact::list::show
         return 0
         ;;
-      *) fatal "Cannot recognize command: $cmd" ;;
+      *) yact::util::fatal "Cannot recognize command: $cmd" ;;
     esac
     . lib/tasks.sh
     yact::task::show
@@ -162,11 +162,11 @@ _parse_task_opts() {
       swap) yact::task::swap "$1" "$2" ;;
       reverse) yact::task::reverse ;;
       show) ;;
-      *) fatal "Cannot recognize command: $cmd" ;;
+      *) yact::util::fatal "Cannot recognize command: $cmd" ;;
     esac
   fi
   yact::task::show
-  flush_task_file
+  yact::util::flush_task_file
 }
 
 ################################################################################
@@ -178,7 +178,7 @@ _parse_task_opts() {
 _parse_admin_opts() {
   local cmd=$1
   shift
-  [[ -z $cmd ]] && fatal "Please provide an admin command"
+  [[ -z $cmd ]] && yact::util::fatal "Please provide an admin command"
   case $cmd in
     config)
       . lib/config.sh
@@ -190,14 +190,14 @@ _parse_admin_opts() {
         get) yact::config::get_config "$1" ;;
         list | "") yact::config::print_config "$1" ;;
         '-c') yact::config::print_config -c ;;
-        *) fatal "Unknown command: $subcmd" ;;
+        *) yact::util::fatal "Unknown command: $subcmd" ;;
       esac
       ;;
     migrate)
       . lib/migrate.sh
       migrate_storage
       ;;
-    *) fatal "Unknown command: $cmd" ;;
+    *) yact::util::fatal "Unknown command: $cmd" ;;
   esac
 }
 
