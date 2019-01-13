@@ -73,7 +73,7 @@ main() {
   export FILE=$TODO_FILE
 
   _init_pipe
-  _init_formatting
+  yact::format::init
 
   case "$1" in
     -v) _show_version ;;

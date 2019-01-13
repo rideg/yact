@@ -7,7 +7,7 @@
 # -- Input: None
 # -- Output: None
 ################################################################################
-_init_formatting() {
+yact::format::init() {
   if [[ ${CONFIG[use_formatting]} -eq 1 ]]; then
     export BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BOLD REVERSE \
       UNDERLINE BG_BLACK BG_RED BG_GREEN BG_YELLOW BG_BLUE BG_MAGENTA \
@@ -46,7 +46,7 @@ _init_formatting() {
 #  format... - List of color globals.
 # -- Output: The formatted string.
 ################################################################################
-format() {
+yact::format::format() {
   local text=$1
   shift
   export __="$*$text$NORMAL"
