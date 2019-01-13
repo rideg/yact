@@ -8,7 +8,7 @@
 #  Description - The description of the new list.
 # -- Output: The list status after adding the new list
 ################################################################################
-new_list() {
+yact::list::new() {
   get_description "$*" " "
   local description=$__
   read_to -v id timestamp
@@ -18,7 +18,7 @@ new_list() {
   file_name="$STORAGE_DIR/_$id.txt"
   printf "%s\\n\\n" "$description" > "$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
-  _update_actual
+  yact::list::_update_actual
 }
 
 ################################################################################
@@ -30,11 +30,11 @@ new_list() {
 #  id - The id of the list to be marked.
 # -- Output: The list status after changing the current.
 ################################################################################
-switch_list() {
-	check_list_id "$1"
-  file_name="${LISTS[$1-1]}"
+yact::list::switch() {
+  check_list_id "$1"
+  file_name="${LISTS[$1 - 1]}"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
-  _update_actual
+  yact::list::_update_actual
 }
 
 ################################################################################
@@ -47,14 +47,14 @@ switch_list() {
 #  id? -  Id of the list to be deleted.
 # -- Output: The list status after deleting the list.
 ################################################################################
-delete_list() {
+yact::list::delete() {
   local to_delete="$FILE"
   local consent
 
   if [[ -n "$1" ]]; then
-		check_list_id "$1"
-		to_delete="${LISTS[$1-1]}"
-	fi
+    check_list_id "$1"
+    to_delete="${LISTS[$1 - 1]}"
+  fi
   read_to -v header head -n 1 "$to_delete"
   # shellcheck disable=SC2154
   echo "List name: $header"
@@ -63,7 +63,7 @@ delete_list() {
 
   if [[ $consent == 'y' ]]; then
     rm -f "$to_delete" &> /dev/null
-    if [[ "$to_delete" = "$FILE" ]]; then
+    if [[ "$to_delete" == "$FILE" ]]; then
       local next_file
       # shellcheck disable=SC2012
       next_file="$(ls -ur "$STORAGE_DIR"/_*.txt 2> /dev/null | head -n1)"
@@ -71,7 +71,7 @@ delete_list() {
         rm "$RUN"/.last
       else
         printf 'TODO_FILE=%s\n' "$next_file" > "$RUN"/.last
-        _update_actual
+        yact::list::_update_actual
       fi
     fi
   fi
@@ -86,11 +86,11 @@ delete_list() {
 #  description - The new description.
 # -- Output: The list status after changing the description.
 ################################################################################
-modify_list() {
+yact::list::modify() {
   local description
   local id=$1
-	check_list_id "$id"
-  local file="${LISTS[$id-1]}"
+  check_list_id "$id"
+  local file="${LISTS[$id - 1]}"
   shift
   store_current
   read_task_file "$file"
@@ -110,26 +110,26 @@ modify_list() {
 # -- Input: None
 # -- Output: The list status.
 ################################################################################
-show_lists() {
+yact::list::show() {
   local -i done_tasks
-	local -i index
-	local l=${#LISTS[@]}
+  local -i index
+  local l=${#LISTS[@]}
   local indicator
   format 'You have the following lists' "$BOLD" "$UNDERLINE"
   printf \ "\\n%s:\\n\\n" "$__"
   for actual_file in "${LISTS[@]}"; do
     indicator=''
-		((index++))
-    if [[ "$actual_file" = "$FILE" ]]; then
+    ((index++))
+    if [[ "$actual_file" == "$FILE" ]]; then
       indicator=' *'
     fi
-		done_tasks=0
+    done_tasks=0
     readarray -t __ < "$actual_file"
     for item in "${__[@]:2}"; do
       [[ ${item: -1} -eq 1 ]] && ((done_tasks++))
     done
-		printf " %${#l}d %s (%d/%d)%s\\n" "$index" "${__[0]}" "$done_tasks" \
-			"$((${#__[@]}-2))" "$indicator"
+    printf " %${#l}d %s (%d/%d)%s\\n" "$index" "${__[0]}" "$done_tasks" \
+      "$((${#__[@]} - 2))" "$indicator"
   done
   printf '\n'
 }
@@ -143,10 +143,9 @@ show_lists() {
 # -- Input: None
 # -- Output: The list status.
 ################################################################################
-_update_actual() {
+yact::list::_update_actual() {
   # shellcheck source=/dev/null
   . "$RUN/.last"
   FILE="$TODO_FILE"
   _require_actual
 }
-
