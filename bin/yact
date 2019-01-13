@@ -6,7 +6,7 @@
 # -- Input: none
 # -- Output: Help message.
 ################################################################################
-_show_help() {
+yact::main::_show_help() {
   echo "Yact - Yet Another Commandline Todo"
   echo "Usage: yact [-lhv] [command] ..."
 }
@@ -17,7 +17,7 @@ _show_help() {
 # -- Input: none
 # -- Output: Version string.
 ################################################################################
-_show_version() {
+yact::main::_show_version() {
   cat .version
 }
 
@@ -29,7 +29,7 @@ _show_version() {
 # -- Input: none
 # -- Output: Version string.
 ################################################################################
-_init_pipe() {
+yact::main::_init_pipe() {
   [[ -p "${RUN}/.pipe" ]] || mkfifo "${RUN}/.pipe"
   exec 9<> "${RUN}/.pipe"
 }
@@ -47,7 +47,7 @@ _init_pipe() {
 # -- Output: The result of the command.
 ################################################################################
 # shellcheck source=/dev/null
-main() {
+yact::main::run() {
   [[ "$TRACE" ]] && set -x
 
   # shellcheck disable=SC2164
@@ -72,21 +72,21 @@ main() {
   [[ -f $RUN/.last ]] && . "$RUN"/.last
   export FILE=$TODO_FILE
 
-  _init_pipe
+  yact::main::_init_pipe
   yact::format::init
 
   case "$1" in
-    -v) _show_version ;;
-    -h) _show_help ;;
+    -v) yact::main::_show_version ;;
+    -h) yact::main::_show_help ;;
     -l)
       shift
-      _parse_list_opts "$@"
+      yact::main::_parse_list_opts "$@"
       ;;
     -a)
       shift
-      _parse_admin_opts "$@"
+      yact::main::_parse_admin_opts "$@"
       ;;
-    *) _parse_task_opts "$@" ;;
+    *) yact::main::_parse_task_opts "$@" ;;
   esac
   yact::util::exit_ 0
 }
@@ -97,7 +97,7 @@ main() {
 # -- Input: Arguments for list operations.
 # -- Output: None.
 ################################################################################
-_parse_list_opts() {
+yact::main::_parse_list_opts() {
   local cmd=$1
   shift
   yact::util::read_lists
@@ -130,7 +130,7 @@ _parse_list_opts() {
 # -- Input: Arguments for task operations.
 # -- Output: None.
 ################################################################################
-_parse_task_opts() {
+yact::main::_parse_task_opts() {
   yact::util::require_actual
   local cmd=$1
   shift
@@ -159,7 +159,7 @@ _parse_task_opts() {
 # -- Input: Arguments for task operations.
 # -- Output: None.
 ################################################################################
-_parse_admin_opts() {
+yact::main::_parse_admin_opts() {
   local cmd=$1
   shift
   [[ -z $cmd ]] && yact::util::fatal "Please provide an admin command"
@@ -185,4 +185,4 @@ _parse_admin_opts() {
   esac
 }
 
-main "$@"
+yact::main::run "$@"
