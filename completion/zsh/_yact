@@ -77,7 +77,7 @@ __yact_list_tasks() {
   cmd=$1
   # shellcheck source=/dev/null
   test -e $YACT_DIR/.run/.last && . "$YACT_DIR"/.run/.last
-  file=$STORAGE_DIR/$TODO_FILE
+  file=$TODO_FILE
   if [[ -n "$file" ]] && [[ -e "$file" ]]; then
     declare -a list description
     local max_id
