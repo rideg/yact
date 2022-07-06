@@ -118,17 +118,17 @@ _parse_list_opts() {
   . lib/lists.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
-      switch) switch_list "$1";;
-      new) new_list "$@";;
-      delete) delete_list "$1";;
-      modify) modify_list "$@";;
-      show) show_list; return 0;;
+      switch) yact::list::switch "$1";;
+      new) yact::list::new "$@";;
+      delete) yact::list::delete "$1";;
+      modify) yact::list::modify "$@";;
+      show) yact::list::show; return 0;;
       *) fatal "Cannot recognize command: $cmd"
     esac
     . lib/tasks.sh
     show_tasks
   else
-    show_lists
+    yact::list::show
   fi
 }
 
