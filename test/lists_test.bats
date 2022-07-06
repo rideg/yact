@@ -87,7 +87,7 @@ teardown() {
 }
 
 @test "Update list information based on the task" {
-  # given 
+  # given
   run $YACT -l new This is a list.
   run $YACT add this is a task
   run $YACT add this is a task2
@@ -110,7 +110,7 @@ teardown() {
 
 @test "Modify list description (interactive)" {
   # given
-  _spy_tool nano 'echo "The new description" > $1' 
+  _spy_tool nano 'echo "The new description" > $1'
   run $YACT -l new "This is a list."
   # when
   run $YACT -l modify 1234123 "The new description."
@@ -121,16 +121,16 @@ teardown() {
 
 @test "Create new list interactive" {
   # given
-  _spy_tool nano 'echo "The new description." > $1' 
+  _spy_tool nano 'echo "The new description." > $1'
   # when
-  run $YACT -l new 
+  run $YACT -l new
   # then
   run $YACT -l
   assert_output -p $' * 1234123\tThe new description. (0/0)'
 }
 
 @test "Should show tasks from list after switchig to a different list" {
-  # given 
+  # given
   run $YACT -l new "Initial list"
   run $YACT add "Task 1"
   run $YACT -l new "Other list"

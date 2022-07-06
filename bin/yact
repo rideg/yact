@@ -11,6 +11,8 @@ _show_help() {
   echo "Usage: yact [-lhv] [command] ..."
 }
 
+hello="haho"
+
 ################################################################################
 # Prints version string.
 # -- Globals: none

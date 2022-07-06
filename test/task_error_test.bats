@@ -35,7 +35,7 @@ teardown() {
 	run $YACT move 1 3
 	# then
 	assert_failure
-	assert_output -p "Out of range task position [1]"
+	assert_output -p "Out of range position [1]"
 }
 
 @test "task move error - non-existing position is provided" {
@@ -44,7 +44,7 @@ teardown() {
 	run $YACT move 1 3
 	# then
 	assert_failure
-	assert_output -p "Out of range task position [3]"
+	assert_output -p "Out of range position [3]"
 }
 
 @test "task new error - interactive mode with empty tmp file" {

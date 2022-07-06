@@ -132,7 +132,7 @@ show_lists() {
     for item in "${__[@]:2}"; do
       [[ ${item: -1} -eq 1 ]] && ((d++))
     done
-    actual_file=${actual_file#*_}
+    actual_file=${actual_file##*_}
     actual_file=${actual_file%.txt*}
     printf ' %-1s %s\t%s (%d/%d)\n' "$indicator" \
       "$actual_file" \
