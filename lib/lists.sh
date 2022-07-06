@@ -9,9 +9,9 @@
 # -- Output: The list status after adding the new list
 ################################################################################
 yact::list::new() {
-  get_description "$*" " "
+  yact::util::get_description "$*" " "
   local description=$__
-  read_to -v id timestamp
+  yact::util::read_to -v id yact::util::timestamp
   while [[ -e "$STORAGE_DIR/_${id}.txt" ]]; do
     ((id++))
   done
@@ -31,7 +31,7 @@ yact::list::new() {
 # -- Output: The list status after changing the current.
 ################################################################################
 yact::list::switch() {
-  check_list_id "$1"
+  yact::util::check_list_id "$1"
   file_name="${LISTS[$1 - 1]}"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   yact::list::_update_actual
@@ -52,10 +52,10 @@ yact::list::delete() {
   local consent
 
   if [[ -n "$1" ]]; then
-    check_list_id "$1"
+    yact::util::check_list_id "$1"
     to_delete="${LISTS[$1 - 1]}"
   fi
-  read_to -v header head -n 1 "$to_delete"
+  yact::util::read_to -v header head -n 1 "$to_delete"
   # shellcheck disable=SC2154
   echo "List name: $header"
   echo "Are you sure to delete? y/[n]"
@@ -89,14 +89,14 @@ yact::list::delete() {
 yact::list::modify() {
   local description
   local id=$1
-  check_list_id "$id"
+  yact::util::check_list_id "$id"
   local file="${LISTS[$id - 1]}"
   shift
-  store_current
-  read_task_file "$file"
-  let: HEADER = get_description "$@" "$HEADER"
-  flush_task_file "$file"
-  restore_current
+  yact::util::store_current
+  yact::util::read_task_file "$file"
+  let: HEADER = yact::util::get_description "$@" "$HEADER"
+  yact::util::flush_task_file "$file"
+  yact::list::restore_current
 }
 
 ################################################################################

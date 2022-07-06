@@ -10,12 +10,12 @@
 ################################################################################
 yact::task::set() {
   local id=$1
-  check_task_id "$id"
+  yact::util::check_task_id "$id"
   shift
   ((id--))
   yact::task::_parse_item "${TASKS[$id]}"
   if [[ ${__[2]} -eq 2 ]]; then # separator
-    fatal "Cannot mark seprator: '${__[1]}' as done"
+    yact::util::fatal "Cannot mark seprator: '${__[1]}' as done"
   fi
   TASKS[$id]="0;${__[1]};$1"
 }
@@ -44,7 +44,7 @@ yact::task::add() {
     item_type=2
     shift
   fi
-  get_description "$*" " "
+  yact::util::get_description "$*" " "
   local task_line="0;$__;$item_type"
   local init_pos
   if [[ ${CONFIG[insert_top]} -eq 1 ]]; then
@@ -74,30 +74,31 @@ yact::task::delete() {
     shift
   fi
   declare -a ids=("$@")
-  [[ $# -eq 0 ]] && fatal "Please provide at least one task to delete"
+  [[ $# -eq 0 ]] &&
+    yact::util::fatal "Please provide at least one task to delete"
   if [[ $# -eq 1 ]]; then
     if [[ "$1" =~ [0-9]+-[0-9]+ ]]; then
       declare -i a=${1%-*}
       declare -i b=${1#*-}
       ((lower = a > b ? b : a))
       ((upper = a > b ? a - 1 : b - 1))
-      check_task_id "$lower"
-      check_task_id "$upper"
+      yact::util::check_task_id "$lower"
+      yact::util::check_task_id "$upper"
       eval "ids=({$lower..$upper})"
     elif [[ "$1" =~ [0-9]+.. ]]; then
       declare -i lower=${1::-2}
-      check_task_id "$lower"
+      yact::util::check_task_id "$lower"
       eval "ids=({$lower..${#TASKS[@]}})"
     elif [[ "$1" =~ ..[0-9]+ ]]; then
       declare -i a=${1:2}
       ((upper = a - 1))
-      check_task_id "$upper"
+      yact::util::check_task_id "$upper"
       eval "ids=({1..$upper})"
     fi
   fi
   declare -a tasks=("${TASKS[@]}")
   for id in "${ids[@]}"; do
-    check_task_id "$id"
+    yact::util::check_task_id "$id"
     local task_id=$((id - 1))
     local should_delete=1
     if [[ $force -eq 0 ]]; then
@@ -125,11 +126,11 @@ yact::task::modify() {
   local id=$1
   declare -a task_array
   local description
-  check_task_id "$id"
+  yact::util::check_task_id "$id"
   shift
   ((id--))
   let: -a task_array = yact::task::_parse_item "${TASKS[$id]}"
-  let: description = get_description "$*" "${task_array[1]}"
+  let: description = yact::util::get_description "$*" "${task_array[1]}"
   TASKS[$id]="0;$description;${task_array[2]}"
 }
 
@@ -145,10 +146,11 @@ yact::task::modify() {
 yact::task::move() {
   local id=$1
   local position
-  is_number "$id" || fatal "The provided id is not numeric [${id}]"
+  yact::util::is_number "$id" ||
+    yact::util::fatal "The provided id is not numeric [${id}]"
   let: position = yact::task::_get_position "$id" "$2"
-  check_task_id "$id"
-  check_task_id "$position"
+  yact::util::check_task_id "$id"
+  yact::util::check_task_id "$position"
   ((id--))
   ((position--))
   if [[ $id -ne $position ]]; then
@@ -172,7 +174,7 @@ yact::task::move() {
 yact::task::_get_position() {
   local id=$1
   local position=$2
-  if ! is_number "$position"; then
+  if ! yact::util::is_number "$position"; then
     case "$position" in
       up)
         position=$id
@@ -223,8 +225,9 @@ yact::task::show() {
   ll='line_length'
   ((length = ${#TASKS[@]}))
   ((max_available = COLUMNS - 9 - ${#length}))
-  # shellcheck disable=SC2149
+  # shellcheck disable=SC2004
   ((max_length = CONFIG[$ll] < max_available || max_available < 0 ? CONFIG[$ll] : max_available))
+
   local tag_pattern=".*[^${YELLOW}](#[^[:space:]]+).*"
   for item in "${TASKS[@]}"; do
     ((i = i + 1))
@@ -259,6 +262,7 @@ yact::task::show() {
     fi
     if [[ ${#item_text} -ge $max_length ]]; then
       wrap_text "$item_text" "$length" "$max_length"
+			# shellcheck disable=SC2128
       buffer[${#buffer[@]}]=$__
     else
       buffer[${#buffer[@]}]=$item_text
@@ -284,8 +288,8 @@ yact::task::show() {
 # -- Output: none
 ################################################################################
 yact::task::swap() {
-  check_task_id "$1"
-  check_task_id "$2"
+  yact::util::check_task_id "$1"
+  yact::util::check_task_id "$2"
   local -i id1=$(($1 - 1))
   local -i id2=$(($2 - 1))
   local tmp="${TASKS[$id1]}"

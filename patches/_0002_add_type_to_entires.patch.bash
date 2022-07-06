@@ -11,7 +11,7 @@
 ################################################################################
 __do_migrate() {
   for file in "$STORAGE_DIR"/*.txt; do
-    read_task_file "$file"
+    yact::util::read_task_file "$file"
     printf "%s\n\n" "$HEADER" > "$file"
     printf "0;%s\n" "${TASKS[@]}" >> "$file"
   done
