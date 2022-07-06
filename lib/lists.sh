@@ -115,7 +115,7 @@ yact::list::show() {
   local -i index
   local l=${#LISTS[@]}
   local indicator
-  format 'You have the following lists' "$BOLD" "$UNDERLINE"
+  yact::format::format 'You have the following lists' "$BOLD" "$UNDERLINE"
   printf \ "\\n%s:\\n\\n" "$__"
   for actual_file in "${LISTS[@]}"; do
     indicator=''

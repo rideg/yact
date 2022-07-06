@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Available config names
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
@@ -115,10 +113,10 @@ yact::config::print_config() {
     ((max_key = "max_key < ${#key} ? ${#key} : max_key"))
   done
   ((max_key = max_key + 2))
-  local format="%-${max_key}s--  %s\\n"
-  [[ "$1" == '-c' ]] && format="%s:%s\\n"
+  local print_format="%-${max_key}s--  %s\\n"
+  [[ "$1" == '-c' ]] && print_format="%s:%s\\n"
   # shellcheck disable=SC2059
-  printf "$format" "${output[@]}"
+  printf "$print_format" "${output[@]}"
 }
 
 ################################################################################
