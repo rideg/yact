@@ -96,7 +96,7 @@ yact::list::modify() {
   yact::util::read_task_file "$file"
   let: HEADER = yact::util::get_description "$@" "$HEADER"
   yact::util::flush_task_file "$file"
-  yact::list::restore_current
+  yact::util::restore_current
 }
 
 ################################################################################
