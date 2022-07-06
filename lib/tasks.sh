@@ -261,7 +261,7 @@ yact::task::show() {
       item_text=${item_text:1}
     fi
     if [[ ${#item_text} -ge $max_length ]]; then
-      wrap_text "$item_text" "$length" "$max_length"
+      yact::util::wrap_text "$item_text" "$length" "$max_length"
 			# shellcheck disable=SC2128
       buffer[${#buffer[@]}]=$__
     else
