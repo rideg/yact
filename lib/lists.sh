@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+################################################################################
 # Creates a new list with the given description and marks it as current.
 # -- Globals:
 #  STORAGE_DIR - storage

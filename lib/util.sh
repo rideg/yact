@@ -402,10 +402,10 @@ yact::util::lev_dist() {
 }
 
 ################################################################################
-# Executes the given command and read the output into a variable
+# Executes the given command and reads the output into a variable
 # -- Globals: none
 # -- Input:
-#   variable_name: The name of the variable to save output.
+#   variable_name: The name of the variable to save the output.
 #   args...: The command to be executed.
 # -- Output: none
 ################################################################################
