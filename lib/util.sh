@@ -150,7 +150,7 @@ yact::util::wrap_text() {
   local line=''
   local wrapped=''
   ((s_padding = ${#2} + 7))
-	# shellcheck disable=SC2183
+  # shellcheck disable=SC2183
   printf -v padding '%*s' "$s_padding"
   for word in $text; do
     local t="$line $word"
@@ -416,4 +416,20 @@ yact::util::read_to() {
   eval "$* 1>&9"
   printf '\1' 1>&9
   read -r -u 9 -s -d $'\1' "$var"
+}
+
+################################################################################
+# Checks if the actual list exists and if so then reads it to a global
+# array.
+# -- Globals:
+#  FILE - Current todo list's file.
+#  FILE_CONTENT - lines of the file as an array.
+# -- Input: Arguments for list operations.
+# -- Output: None.
+################################################################################
+yact::util::require_actual() {
+  [[ -f "$FILE" ]] ||
+    yact::util::fatal 'No todo list has been selected, please select/create one.'
+  yact::util::read_task_file
+  yact::util::store_current
 }

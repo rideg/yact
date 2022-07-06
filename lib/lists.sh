@@ -147,5 +147,5 @@ yact::list::_update_actual() {
   # shellcheck source=/dev/null
   . "$RUN/.last"
   FILE="$TODO_FILE"
-  _require_actual
+  yact::util::require_actual
 }

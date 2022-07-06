@@ -92,22 +92,6 @@ main() {
 }
 
 ################################################################################
-# Checks if the actual list exists and if so then reads it to a global
-# array.
-# -- Globals:
-#  FILE - Current todo list's file.
-#  FILE_CONTENT - lines of the file as an array.
-# -- Input: Arguments for list operations.
-# -- Output: None.
-################################################################################
-_require_actual() {
-  [[ -f "$FILE" ]] ||
-    yact::util::fatal 'No todo list has been selected, please select/create one.'
-  yact::util::read_task_file
-  yact::util::store_current
-}
-
-################################################################################
 # Parses the options for lists.
 # -- Globals: None.
 # -- Input: Arguments for list operations.
@@ -118,7 +102,7 @@ _parse_list_opts() {
   shift
   yact::util::read_lists
   if [[ "$cmd" != 'new' ]]; then
-    _require_actual
+    yact::util::require_actual
   fi
   . lib/lists.sh
   if [[ -n "$cmd" ]]; then
@@ -147,7 +131,7 @@ _parse_list_opts() {
 # -- Output: None.
 ################################################################################
 _parse_task_opts() {
-  _require_actual
+  yact::util::require_actual
   local cmd=$1
   shift
   . lib/tasks.sh
