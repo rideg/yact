@@ -85,7 +85,7 @@ delete_task() {
        check_task_id "$upper"
        eval "ids=({$lower..$upper})"
     elif [[ "$1" =~ [0-9]+.. ]]; then
-       declare -i lower=${1::-2}   
+       declare -i lower=${1::-2}
        check_task_id "$lower"
        eval "ids=({$lower..${#TASKS[@]}})"
     elif [[ "$1" =~ ..[0-9]+ ]]; then
@@ -235,11 +235,11 @@ show_tasks() {
       fi
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]="${GREEN}ok${NORMAL}"
-    elif [[ $stat -eq 0 ]]; then 
+    elif [[ $stat -eq 0 ]]; then
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]='  '
     else # separator
-      buffer[${#buffer[@]}]=$i 
+      buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]='##'
     fi
     local item_text=${item:2:-2}
@@ -287,7 +287,7 @@ swap_tasks() {
 }
 
 ################################################################################
-# Reverses the order of the tasks on the current list. 
+# Reverses the order of the tasks on the current list.
 # -- Globals:
 #   TASKS - Current todos's tasks.
 # -- Input: none
@@ -298,8 +298,8 @@ reverse_tasks() {
   local -i startId=0
   while [[ endId -gt startId ]]; do
     local tmp="${TASKS[$startId]}"
-    TASKS[$startId]="${TASKS[$endId]}" 
-    TASKS[$endId]="$tmp" 
+    TASKS[$startId]="${TASKS[$endId]}"
+    TASKS[$endId]="$tmp"
     let endId--
     let startId++
   done

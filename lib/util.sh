@@ -326,20 +326,20 @@ let:() {
 }
 
 ################################################################################
-# Calculates the Levenshtein distance between two strings. 
+# Calculates the Levenshtein distance between two strings.
 # -- Globals: none
 # -- Input:
 #   str1: first string
 #   str2: second string
-# -- Output: 
+# -- Output:
 #   __: the Levenshtein distance
 ################################################################################
 lev_dist() {
- [[ $# -ne 2 ]] && fatal "Two arguments are required." 
+ [[ $# -ne 2 ]] && fatal "Two arguments are required."
  local str1=$1
  local str2=$2
  declare -a v1
- declare -a v2 
+ declare -a v2
  declare -a tmp
  for (( i=0; i<=${#str2}; i++ )); do
    v1[$i]=$i
@@ -369,7 +369,7 @@ lev_dist() {
 # -- Input:
 #   variable_name: The name of the variable to save output.
 #   args...: The command to be executed.
-# -- Output: none 
+# -- Output: none
 ################################################################################
 read_to() {
   [[ "$1" = '-v' ]] || fatal "Variable name is mandatory."

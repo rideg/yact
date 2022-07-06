@@ -60,7 +60,7 @@ delete_list() {
 
   [[ -n "$1" ]] && to_delete="$STORAGE_DIR/_${1}.txt"
   [[ -f "$to_delete" ]] || fatal "Non-existing list id: $1"
-  
+
   read_to -v header head -n 1 "$to_delete"
   # shellcheck disable=SC2154
   echo "List name: $header"
@@ -101,7 +101,7 @@ modify_list() {
   [[ -f "$file" ]] || fatal "Non-existing file. ${file}"
   shift
   store_current
-  read_task_file "$file"  
+  read_task_file "$file"
   let: HEADER = get_description "$@" "$HEADER"
   flush_task_file "$file"
   restore_current
@@ -130,7 +130,7 @@ show_lists() {
     d=0
     readarray -t __ < "$actual_file"
     for item in "${__[@]:2}"; do
-      [[ ${item: -1} -eq 1 ]] && ((d++)) 
+      [[ ${item: -1} -eq 1 ]] && ((d++))
     done
     actual_file=${actual_file#*_}
     actual_file=${actual_file%.txt*}
