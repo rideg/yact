@@ -225,6 +225,7 @@ show_tasks() {
   let max_length="${CONFIG[line_length]} < $max_available ||
                   $max_available < 0 ?
                   ${CONFIG[line_length]} : $max_available"
+  local tag_pattern=".*[^${YELLOW}](#[^[:space:]]+).*"
   for item in "${TASKS[@]}"; do
     let i=i+1
     let stat=${item: -1}
@@ -249,6 +250,12 @@ show_tasks() {
       local pad
       eval "printf -v pad '%0.1s' '-'{1..$pad_size}"
       item_text="${pad}${item_text}${pad}"
+    elif [[ ${CONFIG[use_formatting]} -eq 1 ]]; then
+        item_text=" ${item_text}"
+        while [[ $item_text =~ $tag_pattern ]]; do
+            item_text=${item_text/${BASH_REMATCH[1]/\#/\\\#}/${YELLOW}${BASH_REMATCH[1]}${NORMAL}}
+        done
+        item_text=${item_text:1}
     fi
     if [[ ${#item_text} -ge $max_length ]]; then
       wrap_text "$item_text" "$length" "$max_length"
