@@ -71,27 +71,27 @@ yact::config::validate_type() {
   local value="$2"
   case $config_type in
     bool)
-      [[ "$value" == '0' || "$value" == '1' ]] || \
+      [[ "$value" == '0' || "$value" == '1' ]] ||
         fatal "The given value: '$value' is not a boolean."
       ;;
     number)
-      is_number "$value" || \
+      is_number "$value" ||
         fatal "The given value: '$value' is not a number."
       ;;
     non-empty-text)
-      [[ -n "$value" ]] || \
+      [[ -n "$value" ]] ||
         fatal "The given value is empty"
       ;;
     positive-number)
-       # shellcheck disable=SC2015
-       is_number "$value" && [[ $value -ge 0 ]] || \
-         fatal "The given value: '$value' is not a positive number."
-       ;;
+      # shellcheck disable=SC2015
+      is_number "$value" && [[ $value -ge 0 ]] ||
+        fatal "The given value: '$value' is not a positive number."
+      ;;
     negative-number)
-       # shellcheck disable=SC2015
-       is_number "$value" && [[ $value -lt 0 ]] || \
-         fatal "The given value: '$value' is not a negative number."
-       ;;
+      # shellcheck disable=SC2015
+      is_number "$value" && [[ $value -lt 0 ]] ||
+        fatal "The given value: '$value' is not a negative number."
+      ;;
   esac
 }
 
@@ -105,13 +105,13 @@ yact::config::validate_type() {
 ################################################################################
 yact::config::print_config() {
   declare -a output=()
-  ((max_key=-1))
+  ((max_key = -1))
   for key in "${!CONFIG_OPTIONS[@]}"; do
     output[${#output[@]}]="$key"
     output[${#output[@]}]="${CONFIG_OPTIONS[$key]%;*}"
-    ((max_key="max_key < ${#key} ? ${#key} : max_key"))
+    ((max_key = "max_key < ${#key} ? ${#key} : max_key"))
   done
-  ((max_key=max_key+2))
+  ((max_key = max_key + 2))
   local format="%-${max_key}s--  %s\\n"
   [[ "$1" == '-c' ]] && format="%s:%s\\n"
   # shellcheck disable=SC2059
@@ -134,4 +134,3 @@ yact::config::write_config() {
     printf 'CONFIG[%s]=%s\n' "$entry" "${CONFIG[$entry]}" >> "$cfg"
   done
 }
-

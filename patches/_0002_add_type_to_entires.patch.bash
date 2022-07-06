@@ -10,10 +10,9 @@
 # -- Output: None
 ################################################################################
 __do_migrate() {
- for file in "$STORAGE_DIR"/*.txt; do
-   read_task_file "$file"
-   printf "%s\n\n" "$HEADER" > "$file"
-   printf "0;%s\n" "${TASKS[@]}" >> "$file"
- done
+  for file in "$STORAGE_DIR"/*.txt; do
+    read_task_file "$file"
+    printf "%s\n\n" "$HEADER" > "$file"
+    printf "0;%s\n" "${TASKS[@]}" >> "$file"
+  done
 }
-

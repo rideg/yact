@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 ################################################################################
@@ -14,4 +13,3 @@ __do_migrate() {
   printf 'CONFIG[line_length]=%d\n' "${LINE_LENGTH-70}" >> "$cfg"
   printf 'CONFIG[use_formatting]=%d\n' "${USE_FORMATTING-1}" >> "$cfg"
 }
-

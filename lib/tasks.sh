@@ -77,22 +77,22 @@ delete_task() {
   [[ $# -eq 0 ]] && fatal "Please provide at least one task to delete"
   if [[ $# -eq 1 ]]; then
     if [[ "$1" =~ [0-9]+-[0-9]+ ]]; then
-       declare -i a=${1%-*}
-       declare -i b=${1#*-}
-			 ((lower=a>b?b:a))
-			 ((upper=a>b?a-1:b-1))
-       check_task_id "$lower"
-       check_task_id "$upper"
-       eval "ids=({$lower..$upper})"
+      declare -i a=${1%-*}
+      declare -i b=${1#*-}
+      ((lower = a > b ? b : a))
+      ((upper = a > b ? a - 1 : b - 1))
+      check_task_id "$lower"
+      check_task_id "$upper"
+      eval "ids=({$lower..$upper})"
     elif [[ "$1" =~ [0-9]+.. ]]; then
-       declare -i lower=${1::-2}
-       check_task_id "$lower"
-       eval "ids=({$lower..${#TASKS[@]}})"
+      declare -i lower=${1::-2}
+      check_task_id "$lower"
+      eval "ids=({$lower..${#TASKS[@]}})"
     elif [[ "$1" =~ ..[0-9]+ ]]; then
-       declare -i a=${1:2}
-			 ((upper=a-1))
-       check_task_id "$upper"
-       eval "ids=({1..$upper})"
+      declare -i a=${1:2}
+      ((upper = a - 1))
+      check_task_id "$upper"
+      eval "ids=({1..$upper})"
     fi
   fi
   declare -a tasks=("${TASKS[@]}")
@@ -220,17 +220,17 @@ show_tasks() {
   local -i d
   local -a buffer
   local -i i
-	ll='line_length'
-	((length=${#TASKS[@]}))
-	((max_available=COLUMNS-9-${#length}))
-	# shellcheck disable=SC2149
-  ((max_length=CONFIG[$ll]<max_available||max_available<0?CONFIG[$ll]:max_available))
+  ll='line_length'
+  ((length = ${#TASKS[@]}))
+  ((max_available = COLUMNS - 9 - ${#length}))
+  # shellcheck disable=SC2149
+  ((max_length = CONFIG[$ll] < max_available || max_available < 0 ? CONFIG[$ll] : max_available))
   local tag_pattern=".*[^${YELLOW}](#[^[:space:]]+).*"
   for item in "${TASKS[@]}"; do
-		((i=i+1))
-		((stat=${item: -1}))
+    ((i = i + 1))
+    ((stat = ${item: -1}))
     if [[ $stat -eq 1 ]]; then
-			((d=d+1))
+      ((d = d + 1))
       if [[ ${CONFIG[hide_done]} -eq 1 ]]; then
         continue
       fi
@@ -246,16 +246,16 @@ show_tasks() {
     local item_text=${item:2:-2}
     if [[ $stat -eq 2 ]]; then
       item_text=${item_text^^}
-			((pad_size=(max_length-${#item_text})>0?(max_length-${#item_text})/2-1:0))
+      ((pad_size = (max_length - ${#item_text}) > 0 ? (max_length - ${#item_text}) / 2 - 1 : 0))
       local pad
       eval "printf -v pad '%0.1s' '-'{1..$pad_size}"
       item_text="${pad}${item_text}${pad}"
     elif [[ ${CONFIG[use_formatting]} -eq 1 ]]; then
-        item_text=" ${item_text}"
-        while [[ $item_text =~ $tag_pattern ]]; do
-            item_text=${item_text/${BASH_REMATCH[1]/\#/\\\#}/${YELLOW}${BASH_REMATCH[1]}${NORMAL}}
-        done
-        item_text=${item_text:1}
+      item_text=" ${item_text}"
+      while [[ $item_text =~ $tag_pattern ]]; do
+        item_text=${item_text/${BASH_REMATCH[1]/\#/\\\#}/${YELLOW}${BASH_REMATCH[1]}${NORMAL}}
+      done
+      item_text=${item_text:1}
     fi
     if [[ ${#item_text} -ge $max_length ]]; then
       wrap_text "$item_text" "$length" "$max_length"
@@ -307,7 +307,7 @@ reverse_tasks() {
     local tmp="${TASKS[$startId]}"
     TASKS[$startId]="${TASKS[$endId]}"
     TASKS[$endId]="$tmp"
-		((endId--))
-		((startId++))
+    ((endId--))
+    ((startId++))
   done
 }

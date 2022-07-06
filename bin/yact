@@ -50,7 +50,7 @@ _init_pipe() {
 main() {
   [[ "$TRACE" ]] && set -x
 
-	# shellcheck disable=SC2164
+  # shellcheck disable=SC2164
   pushd "${0%/*}" &> /dev/null
   cd ..
 
@@ -76,15 +76,20 @@ main() {
   _init_formatting
 
   case "$1" in
-    -v) _show_version;;
-    -h) _show_help;;
-    -l) shift; _parse_list_opts "$@";;
-    -a) shift; _parse_admin_opts "$@";;
-    *) _parse_task_opts "$@";;
+    -v) _show_version ;;
+    -h) _show_help ;;
+    -l)
+      shift
+      _parse_list_opts "$@"
+      ;;
+    -a)
+      shift
+      _parse_admin_opts "$@"
+      ;;
+    *) _parse_task_opts "$@" ;;
   esac
   exit_ 0
 }
-
 
 ################################################################################
 # Checks if the actual list exists and if so then reads it to a global
@@ -96,7 +101,7 @@ main() {
 # -- Output: None.
 ################################################################################
 _require_actual() {
-  [[ -f "$FILE" ]] || \
+  [[ -f "$FILE" ]] ||
     fatal 'No todo list has been selected, please select/create one.'
   read_task_file
   store_current
@@ -111,19 +116,22 @@ _require_actual() {
 _parse_list_opts() {
   local cmd=$1
   shift
-	read_lists
+  read_lists
   if [[ "$cmd" != 'new' ]]; then
     _require_actual
   fi
   . lib/lists.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
-      switch) yact::list::switch "$1";;
-      new) yact::list::new "$@";;
-      delete) yact::list::delete "$1";;
-      modify) yact::list::modify "$@";;
-      show) yact::list::show; return 0;;
-      *) fatal "Cannot recognize command: $cmd"
+      switch) yact::list::switch "$1" ;;
+      new) yact::list::new "$@" ;;
+      delete) yact::list::delete "$1" ;;
+      modify) yact::list::modify "$@" ;;
+      show)
+        yact::list::show
+        return 0
+        ;;
+      *) fatal "Cannot recognize command: $cmd" ;;
     esac
     . lib/tasks.sh
     show_tasks
@@ -145,16 +153,16 @@ _parse_task_opts() {
   . lib/tasks.sh
   if [[ -n "$cmd" ]]; then
     case $cmd in
-      add) add_task "$@";;
-      delete) delete_task "$@";;
-      modify) modify_task "$@";;
-      move) move_task "$1" "$2";;
-      'done') set_done "$1" 1;;
-      undone) set_done "$1" 0;;
-      swap) swap_tasks "$1" "$2";;
-      reverse) reverse_tasks;;
+      add) add_task "$@" ;;
+      delete) delete_task "$@" ;;
+      modify) modify_task "$@" ;;
+      move) move_task "$1" "$2" ;;
+      'done') set_done "$1" 1 ;;
+      undone) set_done "$1" 0 ;;
+      swap) swap_tasks "$1" "$2" ;;
+      reverse) reverse_tasks ;;
       show) ;;
-      *) fatal "Cannot recognize command: $cmd";;
+      *) fatal "Cannot recognize command: $cmd" ;;
     esac
   fi
   show_tasks
@@ -177,21 +185,20 @@ _parse_admin_opts() {
       local subcmd=$1
       shift
       case $subcmd in
-        set) yact::config::set_config "$1" "$2";;
-        'unset') yact::config::unset_config "$1";;
-        get) yact::config::get_config "$1";;
-        list|"") yact::config::print_config  "$1";;
-        '-c') yact::config::print_config -c;;
-        *) fatal "Unknown command: $subcmd";;
+        set) yact::config::set_config "$1" "$2" ;;
+        'unset') yact::config::unset_config "$1" ;;
+        get) yact::config::get_config "$1" ;;
+        list | "") yact::config::print_config "$1" ;;
+        '-c') yact::config::print_config -c ;;
+        *) fatal "Unknown command: $subcmd" ;;
       esac
       ;;
     migrate)
       . lib/migrate.sh
       migrate_storage
       ;;
-    *) fatal "Unknown command: $cmd";;
+    *) fatal "Unknown command: $cmd" ;;
   esac
 }
 
 main "$@"
-

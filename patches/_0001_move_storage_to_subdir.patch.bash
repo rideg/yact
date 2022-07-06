@@ -16,4 +16,3 @@ __do_migrate() {
   [[ -f "$YACT_DIR"/.last ]] && mv "$YACT_DIR"/.last "$YACT_DIR/.run"
   [[ -f "$YACT_DIR"/.changed ]] && mv "$YACT_DIR"/.changed "$YACT_DIR/.run"
 }
-

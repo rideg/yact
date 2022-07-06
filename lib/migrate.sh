@@ -9,8 +9,8 @@
 ################################################################################
 read_version() {
   __='0000'
-  [[ -f "$YACT_DIR/version" ]] && read -r __ <"$YACT_DIR/version"
-  ((__=10#$__))
+  [[ -f "$YACT_DIR/version" ]] && read -r __ < "$YACT_DIR/version"
+  ((__ = 10#$__))
 }
 
 ################################################################################
@@ -22,14 +22,14 @@ read_version() {
 #  PATCHES - The map of serial number to patch file.
 ################################################################################
 read_patches() {
- export PATCHES
- ((prefix=${#YACT_PATCH_DIR}+2))
- for file in $YACT_PATCH_DIR/*.patch.bash; do
-   # If directory does not contain such files
-   [[ "$file" = "$YACT_PATCH_DIR/*.patch.bash" ]] && break
-   version="10#${file:$prefix:4}"
-   PATCHES[$version]="$file"
- done
+  export PATCHES
+  ((prefix = ${#YACT_PATCH_DIR} + 2))
+  for file in $YACT_PATCH_DIR/*.patch.bash; do
+    # If directory does not contain such files
+    [[ "$file" == "$YACT_PATCH_DIR/*.patch.bash" ]] && break
+    version="10#${file:$prefix:4}"
+    PATCHES[$version]="$file"
+  done
 }
 
 ################################################################################
@@ -43,7 +43,7 @@ read_patches() {
 migrate_storage() {
   read_version
   read_patches
-  ((next_version=__+1))
+  ((next_version = __ + 1))
   if [[ $next_version -le ${#PATCHES[@]} ]]; then
     execute_migration "$__"
   else
@@ -76,12 +76,12 @@ execute_migration() {
 
   # shellcheck disable=SC2154
   local archive=$tmpdir/backup-${dt}.tar.gz
-  tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" >/dev/null || \
+  tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" > /dev/null ||
     fatal "Could not create backup."
 
-  ((next_version=$1+1))
+  ((next_version = $1 + 1))
   export error_message
-  for ((i=next_version; i<=${#PATCHES[@]}; i++)); do
+  for ((i = next_version; i <= ${#PATCHES[@]}; i++)); do
     # shellcheck disable=SC1090
     . "${PATCHES[$i]}"
     printf "Applying patch: '%s'" "${PATCHES[$i]}"
@@ -96,15 +96,14 @@ execute_migration() {
   if [[ -n "$error_message" ]]; then
     echo "Could not migrate storage: $error_message"
     rm -rf "$YACT_DIR" > /dev/null
-    tar -xzf "$archive" -C "${YACT_DIR%/*}" || \
+    tar -xzf "$archive" -C "${YACT_DIR%/*}" ||
       fatal \
-  "Could not roll-back. However you can find your original files in '$archive'."
+        "Could not roll-back. However you can find your original files in '$archive'."
   else
-   echo "${#PATCHES[@]}" > "$YACT_DIR/version"
-   [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
-   cp "$archive" "$YACT_DIR"/backup
-   rm -rf "$tmpdir"
-   echo "Storage migration is done."
+    echo "${#PATCHES[@]}" > "$YACT_DIR/version"
+    [[ -d $YACT_DIR/backup ]] || mkdir -p "$YACT_DIR"/backup
+    cp "$archive" "$YACT_DIR"/backup
+    rm -rf "$tmpdir"
+    echo "Storage migration is done."
   fi
 }
-
