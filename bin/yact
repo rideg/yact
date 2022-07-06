@@ -71,7 +71,7 @@ main() {
   . lib/util.sh
   . lib/formatting.sh
   [[ -f $RUN/.last ]] && . "$RUN"/.last
-  export FILE=$STORAGE_DIR/$TODO_FILE
+  export FILE=$TODO_FILE
 
   _init_pipe
   _init_formatting
@@ -112,6 +112,7 @@ _require_actual() {
 _parse_list_opts() {
   local cmd=$1
   shift
+	read_lists
   if [[ "$cmd" != 'new' ]]; then
     _require_actual
   fi

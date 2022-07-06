@@ -223,6 +223,18 @@ check_task_id() {
 }
 
 ################################################################################
+# Checks if a given value is a valid list id.
+# -- Globals:
+#  LISTS - List of list files.
+# -- Input:
+#  id - The given id to be checked.
+# -- Output: none
+################################################################################
+check_list_id() {
+	check_range "$1" "${#LISTS[@]}"
+}
+
+################################################################################
 # Checks if a given value is a valid index within a range. 
 # -- Globals: None
 # -- Input:
@@ -233,7 +245,7 @@ check_task_id() {
 check_range() {
   [[ -z "$1" ]] && fatal "Please provide a position"
   is_number "$1" || fatal "The given position is not numeric [$1]"
-  [[ $1 -lt 1 || $1 -gt ${#TASKS[@]} ]] && \
+  [[ $1 -lt 1 || $1 -gt "$2" ]] && \
     fatal "Out of range position [$1]"
 }
 
@@ -251,6 +263,18 @@ read_task_file() {
   TASKS=("${__[@]:2}")
   HEADER="${__[0]}"
   export TASKS HEADER
+}
+
+################################################################################
+# Reads list file names into an array.
+# -- Globals:
+#  LISTS - List of list files.
+# -- Inputs: none
+# -- Output: none
+################################################################################
+read_lists() {
+	LISTS=($STORAGE_DIR/*.txt)
+	export LISTS
 }
 
 ################################################################################

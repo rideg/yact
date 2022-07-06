@@ -18,34 +18,34 @@ teardown() {
   # when
   run $YACT -l switch
   # then
-  assert_output 'Missing list id, please provide it.'
+  assert_output 'Please provide a position'
 }
 
 @test "switch - error for unknonw list id" {
   # when
   run $YACT -l switch kklsfa
   # then
-  assert_output 'Non-existing list id kklsfa'
+  assert_output 'The given position is not numeric [kklsfa]'
 }
 
 @test "modify - error for no list id" {
  # when
  run $YACT -l modify
  # then
- assert_output 'Please provide an id.'
+ assert_output 'Please provide a position'
 }
 
 @test "modify - error for non-existing list id is provided" {
  # when
  run $YACT -l modify dsfsadv
  # then
- assert_output "Non-existing file. $YACT_STORAGE_DIR/_dsfsadv.txt"
+ assert_output "The given position is not numeric [dsfsadv]"
 }
 
 @test "delete - error if non existing list id is given" {
   # when
   run $YACT -l delete non-existing
   # then
-  assert_output "Non-existing list id: non-existing"
+  assert_output "The given position is not numeric [non-existing]"
 } 
 
