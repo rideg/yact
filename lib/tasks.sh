@@ -8,12 +8,12 @@
 #  id -  Task id.
 # -- Output: None
 ################################################################################
-set_done() {
+yact::task::set() {
   local id=$1
   check_task_id "$id"
   shift
   ((id--))
-  parse_item "${TASKS[$id]}"
+  yact::task::_parse_item "${TASKS[$id]}"
   if [[ ${__[2]} -eq 2 ]]; then # separator
     fatal "Cannot mark seprator: '${__[1]}' as done"
   fi
@@ -29,7 +29,7 @@ set_done() {
 #  description -  Description of the new task.
 # -- Output: The item status after the change.
 ################################################################################
-add_task() {
+yact::task::add() {
   local position
   local item_type=0
   if [[ "$1" == '-s' ]]; then
@@ -55,7 +55,7 @@ add_task() {
     init_pos=${#TASKS[@]}
   fi
   if [[ -n "$position" ]]; then
-    move_task "$init_pos" "$position"
+    yact::task::move "$init_pos" "$position"
   fi
 }
 
@@ -67,7 +67,7 @@ add_task() {
 #  id -  Task ids to be deleted.
 # -- Output: The item status after the deletion.
 ################################################################################
-delete_task() {
+yact::task::delete() {
   local force=0
   if [[ "$1" == "-f" ]]; then
     force=1
@@ -121,14 +121,14 @@ delete_task() {
 #  id -  Task id to be deleted.
 # -- Output: The item status after the change.
 ################################################################################
-modify_task() {
+yact::task::modify() {
   local id=$1
   declare -a task_array
   local description
   check_task_id "$id"
   shift
   ((id--))
-  let: -a task_array = parse_item "${TASKS[$id]}"
+  let: -a task_array = yact::task::_parse_item "${TASKS[$id]}"
   let: description = get_description "$*" "${task_array[1]}"
   TASKS[$id]="0;$description;${task_array[2]}"
 }
@@ -142,11 +142,11 @@ modify_task() {
 #  position - Target position.
 # -- Output: The item status after the move.
 ################################################################################
-move_task() {
+yact::task::move() {
   local id=$1
   local position
   is_number "$id" || fatal "The provided id is not numeric [${id}]"
-  let: position = _get_position "$id" "$2"
+  let: position = yact::task::_get_position "$id" "$2"
   check_task_id "$id"
   check_task_id "$position"
   ((id--))
@@ -169,7 +169,7 @@ move_task() {
 #  position - Target position (numeric or "up"/"down"/"bottom"/"top")
 # -- Output: The numeric position.
 ################################################################################
-_get_position() {
+yact::task::_get_position() {
   local id=$1
   local position=$2
   if ! is_number "$position"; then
@@ -199,7 +199,7 @@ _get_position() {
 # -- Input: Task line
 # -- Output: Array of task line elements (id, description, status)
 ################################################################################
-parse_item() {
+yact::task::_parse_item() {
   IFS=';' read -r -a __ <<< "$1"
 }
 
@@ -216,7 +216,7 @@ parse_item() {
 # -- Input: None
 # -- Output: The summary of the current list.
 ################################################################################
-show_tasks() {
+yact::task::show() {
   local -i d
   local -a buffer
   local -i i
@@ -283,7 +283,7 @@ show_tasks() {
 #   id2 -- Second task id
 # -- Output: none
 ################################################################################
-swap_tasks() {
+yact::task::swap() {
   check_task_id "$1"
   check_task_id "$2"
   local -i id1=$(($1 - 1))
@@ -300,7 +300,7 @@ swap_tasks() {
 # -- Input: none
 # -- Output: none
 ################################################################################
-reverse_tasks() {
+yact::task::reverse() {
   local -i endId=${#TASKS[@]}-1
   local -i startId=0
   while [[ endId -gt startId ]]; do
