@@ -10,7 +10,7 @@
 read_version() {
   __='0000'
   [[ -f "$YACT_DIR/version" ]] && read -r __ <"$YACT_DIR/version"
-  let __="10#$__"
+  ((__=10#$__))
 }
 
 ################################################################################
@@ -23,11 +23,11 @@ read_version() {
 ################################################################################
 read_patches() {
  export PATCHES
- let prefix=${#YACT_PATCH_DIR}+2
+ ((prefix=${#YACT_PATCH_DIR}+2))
  for file in $YACT_PATCH_DIR/*.patch.bash; do
    # If directory does not contain such files
    [[ "$file" = "$YACT_PATCH_DIR/*.patch.bash" ]] && break
-   let version="10#${file:$prefix:4}"
+   version="10#${file:$prefix:4}"
    PATCHES[$version]="$file"
  done
 }
@@ -43,7 +43,7 @@ read_patches() {
 migrate_storage() {
   read_version
   read_patches
-  let next_version=__+1
+  ((next_version=__+1))
   if [[ $next_version -le ${#PATCHES[@]} ]]; then
     execute_migration "$__"
   else
@@ -79,7 +79,7 @@ execute_migration() {
   tar -czf "$archive" -C "${YACT_DIR%/*}" "${YACT_DIR##*/}" >/dev/null || \
     fatal "Could not create backup."
 
-  let next_version=$1+1
+  ((next_version=$1+1))
   export error_message
   for ((i=next_version; i<=${#PATCHES[@]}; i++)); do
     # shellcheck disable=SC1090

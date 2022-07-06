@@ -11,8 +11,6 @@ _show_help() {
   echo "Usage: yact [-lhv] [command] ..."
 }
 
-hello="haho"
-
 ################################################################################
 # Prints version string.
 # -- Globals: none
@@ -52,6 +50,7 @@ _init_pipe() {
 main() {
   [[ "$TRACE" ]] && set -x
 
+	# shellcheck disable=SC2164
   pushd "${0%/*}" &> /dev/null
   cd ..
 

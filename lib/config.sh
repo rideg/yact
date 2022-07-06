@@ -105,15 +105,15 @@ validate_type() {
 ################################################################################
 print_config() {
   declare -a output=()
-  let max_key=-1
+  ((max_key=-1))
   for key in "${!CONFIG_OPTIONS[@]}"; do
     output[${#output[@]}]="$key"
     output[${#output[@]}]="${CONFIG_OPTIONS[$key]%;*}"
-    let max_key="max_key < ${#key} ? ${#key} : max_key"
+    ((max_key="max_key < ${#key} ? ${#key} : max_key"))
   done
-  let max_key=max_key+2
-  local format="%-${max_key}s--  %s\n"
-  [[ "$1" == '-c' ]] && format="%s:%s\n"
+  ((max_key=max_key+2))
+  local format="%-${max_key}s--  %s\\n"
+  [[ "$1" == '-c' ]] && format="%s:%s\\n"
   # shellcheck disable=SC2059
   printf "$format" "${output[@]}"
 }

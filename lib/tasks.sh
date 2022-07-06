@@ -79,8 +79,8 @@ delete_task() {
     if [[ "$1" =~ [0-9]+-[0-9]+ ]]; then
        declare -i a=${1%-*}
        declare -i b=${1#*-}
-       let lower="a>b?b:a"
-       let upper="a>b?a-1:b-1"
+			 ((lower=a>b?b:a))
+			 ((upper=a>b?a-1:b-1))
        check_task_id "$lower"
        check_task_id "$upper"
        eval "ids=({$lower..$upper})"
@@ -90,7 +90,7 @@ delete_task() {
        eval "ids=({$lower..${#TASKS[@]}})"
     elif [[ "$1" =~ ..[0-9]+ ]]; then
        declare -i a=${1:2}
-       let upper=a-1
+			 ((upper=a-1))
        check_task_id "$upper"
        eval "ids=({1..$upper})"
     fi
@@ -220,17 +220,17 @@ show_tasks() {
   local -i d
   local -a buffer
   local -i i
-  let length=${#TASKS[@]}
-  let max_available=$COLUMNS-9-${#length}
-  let max_length="${CONFIG[line_length]} < $max_available ||
-                  $max_available < 0 ?
-                  ${CONFIG[line_length]} : $max_available"
+	ll='line_length'
+	((length=${#TASKS[@]}))
+	((max_available=COLUMNS-9-${#length}))
+	# shellcheck disable=SC2149
+  ((max_length=CONFIG[$ll]<max_available||max_available<0?CONFIG[$ll]:max_available))
   local tag_pattern=".*[^${YELLOW}](#[^[:space:]]+).*"
   for item in "${TASKS[@]}"; do
-    let i=i+1
-    let stat=${item: -1}
+		((i=i+1))
+		((stat=${item: -1}))
     if [[ $stat -eq 1 ]]; then
-      let d=d+1
+			((d=d+1))
       if [[ ${CONFIG[hide_done]} -eq 1 ]]; then
         continue
       fi
@@ -246,7 +246,7 @@ show_tasks() {
     local item_text=${item:2:-2}
     if [[ $stat -eq 2 ]]; then
       item_text=${item_text^^}
-      let pad_size="(max_length-${#item_text})>0?(max_length-${#item_text})/2-1:0"
+			((pad_size=(max_length-${#item_text})>0?(max_length-${#item_text})/2-1:0))
       local pad
       eval "printf -v pad '%0.1s' '-'{1..$pad_size}"
       item_text="${pad}${item_text}${pad}"
@@ -269,7 +269,7 @@ show_tasks() {
   if [[ ${#TASKS[@]} -eq 0 ]]; then
     echo ' There are now tasks defined yet.'
   else
-    printf " %${#i}d [%s] %s\n" "${buffer[@]}"
+    printf " %${#i}d [%s] %s\\n" "${buffer[@]}"
   fi
   echo
 }
@@ -307,7 +307,7 @@ reverse_tasks() {
     local tmp="${TASKS[$startId]}"
     TASKS[$startId]="${TASKS[$endId]}"
     TASKS[$endId]="$tmp"
-    let endId--
-    let startId++
+		((endId--))
+		((startId++))
   done
 }

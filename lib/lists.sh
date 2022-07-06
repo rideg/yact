@@ -16,7 +16,7 @@ new_list() {
     ((id++))
   done
   file_name="$STORAGE_DIR/_$id.txt"
-  printf "%s\n\n" "$description" > "$file_name"
+  printf "%s\\n\\n" "$description" > "$file_name"
   printf 'TODO_FILE=%s\n' "$file_name" > "$RUN/.last"
   _update_actual
 }
@@ -116,7 +116,7 @@ show_lists() {
 	local l=${#LISTS[@]}
   local indicator
   format 'You have the following lists' "$BOLD" "$UNDERLINE"
-  printf \ "\n%s:\n\n" "$__"
+  printf \ "\\n%s:\\n\\n" "$__"
   for actual_file in "${LISTS[@]}"; do
     indicator=''
 		((index++))
@@ -128,7 +128,7 @@ show_lists() {
     for item in "${__[@]:2}"; do
       [[ ${item: -1} -eq 1 ]] && ((done_tasks++))
     done
-		printf " %${#l}d %s (%d/%d)%s\n" "$index" "${__[0]}" "$done_tasks" \
+		printf " %${#l}d %s (%d/%d)%s\\n" "$index" "${__[0]}" "$done_tasks" \
 			"$((${#__[@]}-2))" "$indicator"
   done
   printf '\n'
