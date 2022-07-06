@@ -12,7 +12,7 @@
 __do_migrate() {
 	if [[ -f "$RUN/.last" ]]; then
 		. "$RUN/.last"
-    echo "${STORAGE_DIR}/{$TODO_FILE}" > "$RUN/.last"
+    echo "TODO_FILE=${STORAGE_DIR}/$TODO_FILE" > "$RUN/.last"
 	fi
 }
 
