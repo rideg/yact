@@ -46,7 +46,7 @@ yact::util::timestamp() {
 # Cleans runtime tmp folder, restore working directory then exits.
 # -- Globals: None
 # -- Input:
-#  exit_code - Code to exit with.
+#  exit_code - Status code to exit with.
 # -- Output: None
 ################################################################################
 yact::util::exit_() {
