@@ -195,7 +195,7 @@ _parse_admin_opts() {
       ;;
     migrate)
       . lib/migrate.sh
-      migrate_storage
+      yact::migrate::migrate_storage
       ;;
     *) yact::util::fatal "Unknown command: $cmd" ;;
   esac
