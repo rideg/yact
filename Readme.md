@@ -2,4 +2,4 @@
 
 ### Yet another command line to-do application
 
-Here I would like to add some stuff
+Here I would **like** to add some stuff
