@@ -93,8 +93,8 @@ __yact_list_tasks() {
         || $cmd == 'move' || $cmd == 'swap' ) && -n "$task" ]]; then
       list+=("$id")
       description+=("$(printf "%-${max_width}d -- %s" "$id" "$task")")
+      fi
       ((id++))
-    fi
   done <<<"$(sed '1,2d'  "$file")"
   if [[ ${#list} -ne 0 && ${#list} -gt 0 ]]; then
     compadd -V "task-ids" -Q -l -d description -a list

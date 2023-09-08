@@ -46,7 +46,7 @@ yact::util::timestamp() {
 # Cleans runtime tmp folder, restore working directory then exits.
 # -- Globals: None
 # -- Input:
-#  exit_code - Code to exit with.
+#  exit_code - Status code to exit with.
 # -- Output: None
 ################################################################################
 yact::util::exit_() {
@@ -86,7 +86,7 @@ yact::util::create_tmp_file() {
 	# Empty, and all lines starting with # will be ignored.
 	
 EOF
-  test $? -eq 1 && fatal "Cannot create tmp file: $file_name"
+  test $? -eq 1 && yact::util::fatal "Cannot create tmp file: $file_name"
   # Appends the given line to the file.
   test -n "$*" && echo "$*" >> "$file_name"
   __=$file_name
@@ -106,8 +106,8 @@ yact::util::launch_editor() {
   cmd="$EDITOR"
   test -z "$cmd" && cmd='vi'
   command -v $cmd &> /dev/null
-  test $? -eq 1 && fatal "Cannot find a suitable editor: $cmd"
-  test ! -f "$file" && fatal "Non existing file: $file"
+  test $? -eq 1 && yact::util::fatal "Cannot find a suitable editor: $cmd"
+  test ! -f "$file" && yact::util::fatal "Non existing file: $file"
   if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
     cmd="${cmd} +4"
   fi
@@ -351,8 +351,8 @@ let:() {
   else
     ret=$'"$__"'
   fi
-  [[ $# -lt 3 ]] && fatal "Not enough arguments."
-  [[ "$2" != '=' ]] && fatal "Usage: let: <variable name> = command [args...]"
+  [[ $# -lt 3 ]] && yact::util::fatal "Not enough arguments."
+  [[ "$2" != '=' ]] && yact::util::fatal "Usage: let: <variable name> = command [args...]"
   local variable=$1
   local command=$3
   shift 3
@@ -373,7 +373,7 @@ let:() {
 #   __: the Levenshtein distance
 ################################################################################
 yact::util::lev_dist() {
-  [[ $# -ne 2 ]] && fatal "Two arguments are required."
+  [[ $# -ne 2 ]] && yact::util::fatal "Two arguments are required."
   local str1=$1
   local str2=$2
   declare -a v1
@@ -402,15 +402,15 @@ yact::util::lev_dist() {
 }
 
 ################################################################################
-# Executes the given command and read the output into a variable
+# Executes the given command and reads the output into a variable
 # -- Globals: none
 # -- Input:
-#   variable_name: The name of the variable to save output.
+#   variable_name: The name of the variable to save the output.
 #   args...: The command to be executed.
 # -- Output: none
 ################################################################################
 yact::util::read_to() {
-  [[ "$1" == '-v' ]] || fatal "Variable name is mandatory."
+  [[ "$1" == '-v' ]] || yact::util::fatal "Variable name is mandatory."
   local var="$2"
   shift 2
   eval "$* 1>&9"
@@ -430,6 +430,6 @@ yact::util::read_to() {
 yact::util::require_actual() {
   [[ -f "$FILE" ]] ||
     yact::util::fatal 'No todo list has been selected, please select/create one.'
-  yact::util::read_task_file
+  yact::util::read_task_file "$FILE"
   yact::util::store_current
 }

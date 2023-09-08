@@ -22,8 +22,8 @@ yact::main::_show_version() {
 }
 
 ################################################################################
-# Initialises the pipe which can be used to avoid subshell creation when we
-# need to store the output of some arbitrary command.
+# Initialises the pipe that can be used to avoid subshell creation when we
+# need to store the output of an arbitrary command.
 # -- Globals:
 #  RUN - Directory for runtime temporary files.
 # -- Input: none
