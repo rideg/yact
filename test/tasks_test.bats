@@ -41,6 +41,19 @@ teardown() {
     assert_output -p '3 [  ] This is a task3'
 }
 
+@test "task show - separators don't count as task" {
+    # given
+    run $YACT add "This is a task1"
+    run $YACT add -s "Separator"
+    run $YACT add "This is a task2"
+    run $YACT done 3 
+
+    # when
+    run $YACT
+
+    assert_output -p 'Main list for testing - (1/2)'
+}
+
 ################################################################################
 ################################## ADD #########################################
 ################################################################################

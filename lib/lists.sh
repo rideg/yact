@@ -113,9 +113,11 @@ yact::list::modify() {
 ################################################################################
 yact::list::show() {
   local -i done_tasks
+  local -i nr_of_task
   local -i index
   local l=${#LISTS[@]}
   local indicator
+  local stat
   yact::format::format 'You have the following lists' "$BOLD" "$UNDERLINE"
   printf \ "\\n%s:\\n\\n" "$__"
   for actual_file in "${LISTS[@]}"; do
@@ -125,12 +127,15 @@ yact::list::show() {
       indicator=' *'
     fi
     done_tasks=0
+    nr_of_task=0
     readarray -t __ < "$actual_file"
     for item in "${__[@]:2}"; do
-      [[ ${item: -1} -eq 1 ]] && ((done_tasks++))
+      ((stat=${item: -1}))
+      [[ $stat -eq 1 ]] && ((done_tasks++))
+      [[ $stat -ne 2 ]] && ((nr_of_task++))
     done
     printf " %${#l}d %s (%d/%d)%s\\n" "$index" "${__[0]}" "$done_tasks" \
-      "$((${#__[@]} - 2))" "$indicator"
+      "$nr_of_task" "$indicator"
   done
   printf '\n'
 }

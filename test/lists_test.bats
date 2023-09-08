@@ -92,6 +92,7 @@ teardown() {
   run $YACT add this is a task
   run $YACT add this is a task2
   run $YACT done 1
+  run $YACT add -s separator
   # when
   run $YACT -l
   # then
