@@ -10,10 +10,10 @@ __yact_list_commands() {
   local -a list
   list=(
   new:'Creates a new list.'
-  delete:'Deletes and existing list'
-  modify:'Modifies the description of a current a list'
+  delete:'Deletes an existing list'
+  modify:'Modifies the description of the current a list'
   switch:'Switches to the given list'
-  show:'Shows all the extisting lists'
+  show:'Shows all extisting lists'
   )
   _describe -t list-commands 'list related commands' list
 }
@@ -21,8 +21,8 @@ __yact_list_commands() {
 __yact_config_commands() {
   local -a list
   list=(
-  set:'Sets the given config option'
-  get:'Queries the given config option'
+  set:'Sets the given configuration option'
+  get:'Gets the given configuration option'
   )
   _describe -t config-commands 'config related commands' list
 }
@@ -36,7 +36,7 @@ __yact_task_commands() {
   undone:'Marks the given task as not yet finished'
   show:'Shows the tasks from the current list'
   modify:'Modifies the a given task'
-  move:'Moves the given task to a given position within the list'
+  move:'Moves the given task to a given position'
   swap:'Swaps two tasks on the current list'
   reverse:'Reverses the tasks on the current list'
   )

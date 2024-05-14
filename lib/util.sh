@@ -105,7 +105,7 @@ yact::util::launch_editor() {
   local file="$1"
   cmd="$EDITOR"
   test -z "$cmd" && cmd='vi'
-  command -v $cmd &> /dev/null
+  command -v "$cmd" &> /dev/null
   test $? -eq 1 && yact::util::fatal "Cannot find a suitable editor: $cmd"
   test ! -f "$file" && yact::util::fatal "Non existing file: $file"
   if [[ "$cmd" == 'vi' || "$cmd" == 'vim' ]]; then
@@ -380,7 +380,7 @@ yact::util::lev_dist() {
   declare -a v2
   declare -a tmp
   for ((i = 0; i <= ${#str2}; i++)); do
-    v1[$i]=$i
+    v1[i]=$i
   done
   for ((i = 0; i < ${#str1}; i++)); do
     ((v2[0] = i + 1))

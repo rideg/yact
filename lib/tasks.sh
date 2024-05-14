@@ -17,7 +17,7 @@ yact::task::set() {
   if [[ ${__[2]} -eq 2 ]]; then # separator
     yact::util::fatal "Cannot mark seprator: '${__[1]}' as done"
   fi
-  TASKS[$id]="0;${__[1]};$1"
+  TASKS[id]="0;${__[1]};$1"
 }
 
 ################################################################################
@@ -131,7 +131,7 @@ yact::task::modify() {
   ((id--))
   let: -a task_array = yact::task::_parse_item "${TASKS[$id]}"
   let: description = yact::util::get_description "$*" "${task_array[1]}"
-  TASKS[$id]="0;$description;${task_array[2]}"
+  TASKS[id]="0;$description;${task_array[2]}"
 }
 
 ################################################################################
@@ -293,8 +293,8 @@ yact::task::swap() {
   local -i id1=$(($1 - 1))
   local -i id2=$(($2 - 1))
   local tmp="${TASKS[$id1]}"
-  TASKS[$id1]="${TASKS[$id2]}"
-  TASKS[$id2]="$tmp"
+  TASKS[id1]="${TASKS[$id2]}"
+  TASKS[id2]="$tmp"
 }
 
 ################################################################################
@@ -309,8 +309,8 @@ yact::task::reverse() {
   local -i startId=0
   while [[ endId -gt startId ]]; do
     local tmp="${TASKS[$startId]}"
-    TASKS[$startId]="${TASKS[$endId]}"
-    TASKS[$endId]="$tmp"
+    TASKS[startId]="${TASKS[$endId]}"
+    TASKS[endId]="$tmp"
     ((endId--))
     ((startId++))
   done

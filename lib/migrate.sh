@@ -28,7 +28,7 @@ yact::migrate::read_patches() {
     # If directory does not contain such files
     [[ "$file" == "$YACT_PATCH_DIR/*.patch.bash" ]] && break
     version="10#${file:$prefix:4}"
-    PATCHES[$version]="$file"
+    PATCHES[version]="$file"
   done
 }
 
