@@ -220,6 +220,7 @@ yact::task::_parse_item() {
 ################################################################################
 yact::task::show() {
   local -i d
+  local -i tasknr
   local -a buffer
   local -i i
   ll='line_length'
@@ -233,13 +234,15 @@ yact::task::show() {
     ((i = i + 1))
     ((stat = ${item: -1}))
     if [[ $stat -eq 1 ]]; then
-      ((d = d + 1))
+      ((d++))
+      ((tasknr++))
       if [[ ${CONFIG[hide_done]} -eq 1 ]]; then
         continue
       fi
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]="${GREEN}ok${NORMAL}"
     elif [[ $stat -eq 0 ]]; then
+      ((tasknr++))
       buffer[${#buffer[@]}]=$i
       buffer[${#buffer[@]}]='  '
     else # separator
@@ -269,7 +272,7 @@ yact::task::show() {
     fi
   done
   printf '\n %s - (%d/%d)\n\n' \
-    "$BOLD$UNDERLINE$HEADER$NORMAL" "$d" "${#TASKS[@]}"
+    "$BOLD$UNDERLINE$HEADER$NORMAL" "$d" "$tasknr"
   if [[ ${#TASKS[@]} -eq 0 ]]; then
     echo ' There are now tasks defined yet.'
   else

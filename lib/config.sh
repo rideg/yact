@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Available config names
 declare -A CONFIG_OPTIONS=(
   [hide_done]="If set done tasks won't be shown;bool"
